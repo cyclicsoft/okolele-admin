@@ -1,0 +1,42 @@
+.sectionDiv {
+    display: flex;
+  }
+  
+  .sectionPara {
+    font-weight: bold;
+    margin-left: 1vw;
+    margin-top: 0.3vh;
+  }
+  
+  .removeSelectedImg {
+      position: absolute;
+      color: darkgray;
+  }
+  .removeSelectedImg:hover {
+      cursor: pointer;
+      color: #f50057;
+  }
+  
+  .imgAddIcon {
+    color: #f50057; 
+    margin-top: 41px;
+  }
+  
+  .imgPickerImg {
+    height: 98px;
+    width: 98px;
+  }
+
+  .resetIcon-container {
+      display: flex;
+      font-weight: bold;
+      margin-top: 20px;
+  }
+
+  .reset-inputs {
+    margin: -2px 1px 0px 20px;
+  }
+  
+  .reset-inputs:hover {
+    cursor: pointer;
+  }

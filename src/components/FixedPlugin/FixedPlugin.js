@@ -142,6 +142,7 @@ export default function FixedPlugin(props) {
             </a>
           </li>
           <li className="header-title">SIDEBAR BACKGROUND</li>
+          {/* SIDEBAR BACKGROUND */}
           <li className="adjustments-line">
             <a className="switch-trigger active-color">
               <div className="badge-colors text-center">
@@ -185,6 +186,7 @@ export default function FixedPlugin(props) {
           <li className="adjustments-line">
             <a className="switch-trigger">
               <p className="switch-label">Sidebar Mini</p>
+              {/* Sidebar Mini */}
               <Switch
                 checked={props.miniActive}
                 onChange={handleChange("miniActive")}
@@ -202,6 +204,7 @@ export default function FixedPlugin(props) {
           <li className="adjustments-line">
             <a className="switch-trigger">
               <p className="switch-label">Sidebar Image</p>
+              {/* Sidebar Image */}
               <Switch
                 checked={showImage}
                 onChange={handleChange("image")}
@@ -217,6 +220,7 @@ export default function FixedPlugin(props) {
             </a>
           </li>
           <li className="header-title">Images</li>
+          {/* Images */}
           <li className={bgImage === imagine1 ? "active" : ""}>
             <a
               className="img-holder switch-trigger"
@@ -265,7 +269,7 @@ export default function FixedPlugin(props) {
               <img src={imagine4} alt="..." />
             </a>
           </li>
-          <li className="button-container">
+          {/* <li className="button-container">
             <div>
               <Button
                 color="warning"
@@ -292,7 +296,7 @@ export default function FixedPlugin(props) {
           <li className="header-title" id="sharrreTitle">
             Thank you for sharing!
             <br />
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>

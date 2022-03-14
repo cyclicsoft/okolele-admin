@@ -1,0 +1,102 @@
+.sectionDiv {
+  display: flex;
+}
+
+.sectionPara {
+  font-weight: bold;
+  margin-left: 1vw;
+  margin-top: 0.3vh;
+}
+
+.removeSelectedImg {
+  position: absolute;
+  color: darkgray;
+}
+.removeSelectedImg:hover {
+  cursor: pointer;
+  color: #f50057;
+}
+
+.imgAddIcon {
+  color: #f50057;
+  margin-top: 41px;
+}
+
+.imgPickerImg {
+  height: 98px;
+  width: 98px;
+}
+
+.resetIcon-container {
+  display: flex;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.reset-input {
+  margin: -2px 1px 0px 0px;
+}
+
+.reset-input:hover {
+  cursor: pointer;
+}
+
+.productDetails-gridItem {
+  border-style: double;
+}
+
+.gridItem-firstcolumn {
+  width: 8vw;
+  color: #ff2400;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.gridItem-secondcolumn {
+  width: 10vw;
+}
+
+.discountPercent-section {
+  height: 4vh;
+  max-height: 45px;
+  width: 10vh;
+  margin-top: 10px;
+  margin-right: 0px;
+  margin-bottom: 25px;
+  margin-left: 2px;
+  padding-top: 0.5vh;
+  text-align: center;
+  background-color: #ff5501;
+  color: white;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+.user-comments {
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.cart-order-btn {
+  margin-left: 20vw;
+  margin-top: 1vh;
+}
+
+.flexDisplay {
+  display: flex;
+}
+
+.colorFF2400 {
+  color: #ff2400;
+}
+
+.color2196F3 {
+  color: #2196f3;
+}
+
+.currten-price {
+  color: red;
+}
+.old-price {
+  text-decoration: line-through;
+}

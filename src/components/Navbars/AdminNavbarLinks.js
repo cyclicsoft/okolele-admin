@@ -1,7 +1,9 @@
-//index->App->Admin->AdminNavbar->AdminNavbarLinks
-
+//index->App->SectionContainer->AdminNavbar->AdminNavbarLinks
 
 import React from "react";
+// Global State
+import { store, useGlobalState } from "state-pool";
+
 import classNames from "classnames";
 import PropTypes from "prop-types";
 // import { Manager, Target, Popper } from "react-popper";
@@ -41,10 +43,7 @@ import Instruction from "components/Instruction/Instruction.js";
 import noticeModal1 from "assets/img/card-1.jpeg";
 import noticeModal2 from "assets/img/card-2.jpeg";
 
-
-
 // @material-ui/icons
-
 
 // core components
 
@@ -55,11 +54,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
+  const [adminInfo, setAdminInfo, updateAdminInfo] = useGlobalState(
+    "loggedInAdminInfo"
+  );
 
   const [noticeModal, setNoticeModal] = React.useState(false);
   const [openNotification, setOpenNotification] = React.useState(null);
 
-  const handleClickNotification = event => {
+  const handleClickNotification = (event) => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
     } else {
@@ -70,7 +72,7 @@ export default function HeaderLinks(props) {
     setOpenNotification(null);
   };
   const [openProfile, setOpenProfile] = React.useState(null);
-  const handleClickProfile = event => {
+  const handleClickProfile = (event) => {
     if (openProfile && openProfile.contains(event.target)) {
       setOpenProfile(null);
     } else {
@@ -80,6 +82,17 @@ export default function HeaderLinks(props) {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+
+  const handleLogOut = () => {
+    setOpenProfile(null);
+    try {
+      localStorage.clear();
+      window.location.href = "/";
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
   const classes = useStyles();
   const { rtlActive } = props;
   const searchButton =
@@ -88,16 +101,16 @@ export default function HeaderLinks(props) {
     classes.searchButton +
     " " +
     classNames({
-      [classes.searchRTL]: rtlActive
+      [classes.searchRTL]: rtlActive,
     });
   const dropdownItem = classNames(classes.dropdownItem, classes.primaryHover, {
-    [classes.dropdownItemRTL]: rtlActive
+    [classes.dropdownItemRTL]: rtlActive,
   });
   const wrapper = classNames({
-    [classes.wrapperRTL]: rtlActive
+    [classes.wrapperRTL]: rtlActive,
   });
   const managerClasses = classNames({
-    [classes.managerClasses]: true
+    [classes.managerClasses]: true,
   });
   return (
     <div className={wrapper}>
@@ -123,8 +136,6 @@ export default function HeaderLinks(props) {
       >
         <Search className={classes.headerLinksSvg + " " + classes.searchIcon} />
       </Button> */}
-
-
 
       {/* <Button
         color="transparent"
@@ -160,7 +171,7 @@ export default function HeaderLinks(props) {
           onClick={setNoticeModal}
           className={rtlActive ? classes.buttonLinkRTL : classes.buttonLink}
           muiClasses={{
-            label: rtlActive ? classes.labelRTL : ""
+            label: rtlActive ? classes.labelRTL : "",
           }}
         >
           <Notifications
@@ -174,20 +185,16 @@ export default function HeaderLinks(props) {
           />
           <span className={classes.notifications}>5</span>
           <Hidden mdUp implementation="css">
-            <span
-              onClick={setNoticeModal}
-              className={classes.linkText}
-            >
+            <span onClick={setNoticeModal} className={classes.linkText}>
               {rtlActive ? "إعلام" : "Notification"}
             </span>
           </Hidden>
         </Button>
 
-
         <Dialog
           classes={{
             root: classes.center + " " + classes.modalRoot,
-            paper: classes.modal
+            paper: classes.modal,
           }}
           open={noticeModal}
           TransitionComponent={Transition}
@@ -228,17 +235,11 @@ export default function HeaderLinks(props) {
             />
           </DialogContent>
           <DialogActions
-            className={
-              classes.modalFooter + " " + classes.modalFooterCenter
-            }
+            className={classes.modalFooter + " " + classes.modalFooterCenter}
           >
-            <Button
-              onClick={() => setNoticeModal(false)}
-              color="info"
-              round
-            >
+            <Button onClick={() => setNoticeModal(false)} color="info" round>
               Close
-                        </Button>
+            </Button>
           </DialogActions>
         </Dialog>
 
@@ -315,23 +316,15 @@ export default function HeaderLinks(props) {
           aria-owns={openProfile ? "profile-menu-list" : null}
           aria-haspopup="true"
           onClick={handleClickProfile}
-          className={rtlActive ? classes.buttonLinkRTL : classes.buttonLink}
+          className={classes.buttonLink}
           muiClasses={{
-            label: rtlActive ? classes.labelRTL : ""
+            label: "",
           }}
         >
-          <Person
-            className={
-              classes.headerLinksSvg +
-              " " +
-              (rtlActive
-                ? classes.links + " " + classes.linksRTL
-                : classes.links)
-            }
-          />
+          <Person className={classes.headerLinksSvg + " " + classes.links} />
           <Hidden mdUp implementation="css">
             <span onClick={handleClickProfile} className={classes.linkText}>
-              {rtlActive ? "الملف الشخصي" : "Profile"}
+              {"Profile"}
             </span>
           </Hidden>
         </Button>
@@ -344,7 +337,7 @@ export default function HeaderLinks(props) {
           className={classNames({
             [classes.popperClose]: !openProfile,
             [classes.popperResponsive]: true,
-            [classes.popperNav]: true
+            [classes.popperNav]: true,
           })}
         >
           {({ TransitionProps }) => (
@@ -369,11 +362,8 @@ export default function HeaderLinks(props) {
                       {rtlActive ? "الإعدادات" : "Settings"}
                     </MenuItem> */}
                     <Divider light />
-                    <MenuItem
-                      onClick={handleCloseProfile}
-                      className={dropdownItem}
-                    >
-                      {rtlActive ? "الخروج" : "Log out"}
+                    <MenuItem onClick={handleLogOut} className={dropdownItem}>
+                      {"Log out"}
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
@@ -381,12 +371,14 @@ export default function HeaderLinks(props) {
             </Grow>
           )}
         </Popper>
-        Admin Name
+        {adminInfo.username != "" && adminInfo.username != undefined
+          ? adminInfo.username
+          : "Admin"}
       </div>
     </div>
   );
 }
 
 HeaderLinks.propTypes = {
-  rtlActive: PropTypes.bool
+  rtlActive: PropTypes.bool,
 };

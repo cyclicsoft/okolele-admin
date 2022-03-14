@@ -1,4 +1,4 @@
-//index->App->Admin->Sidebar->AdminProfile
+//index->App->SectionContainer->Sidebar->AdminProfile
 //Ghorwali Component
 
 import React, { useState, useEffect } from "react";

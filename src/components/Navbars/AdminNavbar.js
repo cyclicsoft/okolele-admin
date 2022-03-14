@@ -1,4 +1,4 @@
-//index->App->Admin->AdminNavbar
+//index->App->SectionContainer->AdminNavbar
 
 
 import React from "react";
