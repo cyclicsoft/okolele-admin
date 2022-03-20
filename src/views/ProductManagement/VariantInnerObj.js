@@ -1,24 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // SCSS
 import "../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
 const VariantInnerObj = (props) => {
+  // console.log("VariantInnerObj/props.variants: ", props.variants);
+
   const [innerObj, setInnerObj] = useState([{}]);
+
+  useEffect(() => {
+    if (Object.keys(props.variants).length > 0) {
+      setInnerObj(props.variants);
+    } else {
+      setInnerObj([{}]);
+    }
+  }, [props.variants]);
 
   // handle input change
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
     const list = [...innerObj];
-    // console.log("Value...: ".value);
     list[index][name] = value;
-    // console.log("handleInputChange/list...: ", list);
     setInnerObj(list);
   };
 
   // handle click event of the Remove button
   const handleRemoveClick = (index) => {
-    console.log("Inner Obj Index: ", index);
     const list = [...innerObj];
     list.splice(index, 1);
     setInnerObj(list);
@@ -36,16 +43,21 @@ const VariantInnerObj = (props) => {
   };
 
   return (
-    <div onBlur={dataSender}>
+    <div onBlur={dataSender} key={props.variantIndex}>
       {innerObj.map((x, i) => {
         return (
           <div style={{ display: "flex" }}>
+            {/* {console.log(
+              "VariantInnerObj/return/innerObj & Index: ",
+              innerObj,
+              props.variantIndex
+            )} */}
             <input
               name="ram"
               placeholder="RAM"
               className="input-field"
               style={{ marginRight: "10px" }}
-              value={x.ram}
+              value={x !== undefined ? x.ram : ""}
               onChange={(e) => handleInputChange(e, i)}
             />
             <input
@@ -53,7 +65,7 @@ const VariantInnerObj = (props) => {
               placeholder="ROM"
               className="input-field"
               style={{ marginRight: "10px" }}
-              value={x.rom}
+              value={x !== undefined ? x.rom : ""}
               onChange={(e) => handleInputChange(e, i)}
             />
             <input
@@ -61,7 +73,7 @@ const VariantInnerObj = (props) => {
               placeholder="Base Price"
               className="input-field"
               style={{ marginRight: "10px" }}
-              value={x.basePrice}
+              value={x !== undefined ? x.basePrice : ""}
               onChange={(e) => handleInputChange(e, i)}
             />
             <div style={{ display: "flex" }}>

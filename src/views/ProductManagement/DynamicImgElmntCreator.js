@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // material-ui icons
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
@@ -14,47 +14,52 @@ import "../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 import ImgCropper from "views/OkoleleImageCropper/ImgCropper";
 
 const DynamicImgElmntCreator = (props) => {
-  const [imgObj, setImgObj] = useState([{}]);
+  // console.log("DynamicImgElmntCreator/props.images: ", props.images);
 
-  const [productImages, setProductImages] = useState([""]);
+  // Img HTML elements
+  const [productImages, setProductImages] = useState([{}]);
+
+  useEffect(() => {
+    // console.log("props.images.length: ", props.images.length);
+    setProductImages(props.images);
+  }, [props.images]);
 
   // Preview and Crop Img
   const [shouldPreview, setShouldPreview] = useState(false);
   const [imgIdToPreview, setImgIdToPreview] = useState("");
 
-  // handle click event of the Remove button
-  const handleRemoveImgElement = (index) => {
-    // Remove the img first
-    console.log("removeSelectedImg id: ", index);
-    let tempArray = [...productImages];
-    tempArray.splice(index, 1);
-    setProductImages(tempArray);
-
-    // Remove the element after removing the img
-    const list = [...imgObj];
-    list.splice(index, 1);
-    setImgObj(list);
-  };
-
   // Add HTML Img Element
   const handleAddImgElement = () => {
-    setImgObj([...imgObj, {}]);
     setProductImages([...productImages, ""]);
   };
 
+  // handle click event of the Remove button
+  const handleRemoveImgElement = (index) => {
+    // Remove the img first
+    // console.log("removeSelectedImg id: ", index);
+    let tempArray = [...productImages];
+    tempArray.splice(index, 1);
+    setProductImages(tempArray);
+  };
+
   // select Img From Loacl Storage
-  const selectImgFromLoacl = (event, id) => {
-    const file = event.target.files[0];
-    getBase64(file).then((base64) => {
-      // console.log("selectImgFromLoacl/Converted Img: ", base64);
-      localStorage["fileBase64"] = base64;
+  const imgAddRemoveHandler = (event, id, addRemoveFlag) => {
+    if (addRemoveFlag === "add") {
+      const file = event.target.files[0];
+      getBase64(file).then((base64) => {
+        // console.log("imgAddRemoveHandler/Converted Img: ", base64);
+        localStorage["fileBase64"] = base64;
+        let tempArray = [...productImages]; // copying the old datas array
+        tempArray[id] = base64; // replace e.target.value with whatever you want to change it to
+
+        setProductImages(tempArray);
+      });
+    } else if (addRemoveFlag === "remove") {
       let tempArray = [...productImages]; // copying the old datas array
-      tempArray[id] = base64; // replace e.target.value with whatever you want to change it to
+      tempArray[id] = ""; // replace e.target.value with whatever you want to change it to
 
       setProductImages(tempArray);
-
-      // props.imgPickerCallbackFun(tempArray, props.variantIndex);
-    });
+    }
   };
 
   // Convert to base64
@@ -65,15 +70,6 @@ const DynamicImgElmntCreator = (props) => {
       reader.onerror = (error) => reject(error);
       reader.readAsDataURL(file);
     });
-  };
-
-  // remove Selected Img
-  const removeSelectedImg = (id) => {
-    console.log("removeSelectedImg id: ", id);
-    let tempArray = [...productImages]; // copying the old datas array
-    tempArray[id] = ""; // replace e.target.value with whatever you want to change it to
-    setProductImages(tempArray);
-    // props.imgPickerCallbackFun(tempArray, props.variantIndex);
   };
 
   // Preview & Crop Image
@@ -93,21 +89,26 @@ const DynamicImgElmntCreator = (props) => {
   };
 
   const dataSender = () => {
-    console.log("dataSender/productImages: ", productImages);
+    // console.log("dataSender/productImages: ", productImages);
     props.imgPickerCallbackFun(productImages, props.variantIndex);
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex" }} key={props.variantIndex}>
       {shouldPreview && (
         <ImgCropper
           src={productImages[imgIdToPreview]}
           onCloseImgCropper={onCloseImgCropper}
         />
       )}
-      {imgObj.map((x, i) => {
+      {productImages.map((x, i) => {
         return (
-          <div style={{ marginRight: "15px" }} key={i}>
+          <div style={{ marginRight: "15px" }}>
+            {/* {console.log(
+              "productImages & Index...........: ",
+              productImages,
+              props.variantIndex
+            )} */}
             {/* Img Selector  */}
             <div className="picture-container">
               <div
@@ -121,14 +122,14 @@ const DynamicImgElmntCreator = (props) => {
                       <AddToPhotosIcon className="imgAddIcon" />
                       <input
                         type="file"
-                        onChange={(e) => selectImgFromLoacl(e, i)}
+                        onChange={(e) => imgAddRemoveHandler(e, i, "add")}
                       />
                     </div>
                   ) : (
                     <div>
                       <DeleteIcon
                         className="removeSelectedImg"
-                        onClick={() => removeSelectedImg(i)}
+                        onClick={() => imgAddRemoveHandler(null, i, "remove")}
                       />
                       <VisibilityIcon
                         className="previewSelectedImg"
@@ -147,7 +148,7 @@ const DynamicImgElmntCreator = (props) => {
 
             {/* Add & Remove Button  */}
             <div style={{ display: "flex" }}>
-              {imgObj.length !== 1 && (
+              {productImages.length !== 1 && (
                 <button
                   className="add-remove-btn"
                   style={{ width: "5vh", marginTop: "0", marginLeft: "13px" }}
@@ -157,7 +158,7 @@ const DynamicImgElmntCreator = (props) => {
                 </button>
               )}
 
-              {imgObj.length - 1 === i && (
+              {productImages.length - 1 === i && (
                 <button
                   className="add-remove-btn"
                   style={{ width: "5vh", marginTop: "0", marginLeft: "13px" }}

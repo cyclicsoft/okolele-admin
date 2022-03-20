@@ -32,7 +32,7 @@ class App extends Component {
 
     return (
       <div>
-        {isLoggedin === false ? (
+        {isLoggedin === false ? ( //To bypass login set it true
           <AdminLogin LoginStatusChange={this.LoginStatusHandler} />
         ) : (
           <Router history={hist}>

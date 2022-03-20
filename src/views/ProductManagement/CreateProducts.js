@@ -47,11 +47,11 @@ export default function CreateProducts() {
 
   return (
     <>
-      {/* ############################# Create Admin############################# */}
+      {/* ############################# Create Products############################# */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
           {/* md={8} */}
-          <Card>
+          <Card style={{ background: "#f5f5f5" }}>
             <CardHeader color="rose" icon>
               <CardIcon color="rose">
                 <CardGiftcardIcon />

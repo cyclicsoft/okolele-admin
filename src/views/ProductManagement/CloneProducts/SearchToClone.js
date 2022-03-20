@@ -98,7 +98,7 @@ function SearchToClone(props) {
       ) : null}
 
       {/* Search Product to clone*/}
-      <div style={{ display: "flex", marginLeft: "54vw" }}>
+      <div style={{ display: "flex", marginLeft: "50vw" }}>
         {/* Search Product by Name */}
         <div className="search-field">
           <CustomInput
@@ -116,7 +116,7 @@ function SearchToClone(props) {
 
         {/* Search Button */}
         <Button
-          style={{ marginTop: "1%" }}
+          style={{ marginTop: "5%" }}
           color="white"
           aria-label="edit"
           justIcon

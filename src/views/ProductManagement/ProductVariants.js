@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // material-ui icons
 import Add from "@material-ui/icons/Add";
@@ -17,6 +17,7 @@ import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
+import Select from "@mui/material/Select";
 // Images
 import updateIcon from "assets/img/okolele-img/updated.png";
 // SCSS
@@ -32,7 +33,33 @@ const useStyles = makeStyles(styles);
 
 const ProductVariants = (props) => {
   const classes = useStyles();
-  const [productVariants, setProductVariants] = useState([{}]);
+  const [productVariants, setProductVariants] = useState([
+    {
+      color: "",
+      colorCode: "",
+      ramUnit: "GB",
+      romUnit: "GB",
+      images: [{}],
+      variants: [{}],
+    },
+  ]);
+
+  useEffect(() => {
+    if (Object.keys(props.objectValue).length > 0) {
+      setProductVariants(props.objectValue);
+    } else {
+      setProductVariants([
+        {
+          color: "",
+          colorCode: "",
+          ramUnit: "GB",
+          romUnit: "GB",
+          images: [{}],
+          variants: [{}],
+        },
+      ]);
+    }
+  }, [props.objectValue]);
 
   // handle input change
   const handleInputChange = (e, index, isInnerObj, objName) => {
@@ -55,32 +82,38 @@ const ProductVariants = (props) => {
 
   // handle click event of the Add button
   const handleAddVariant = () => {
-    setProductVariants([...productVariants, {}]);
+    setProductVariants([
+      ...productVariants,
+      {
+        color: "",
+        colorCode: "",
+        ramUnit: "GB",
+        romUnit: "GB",
+        images: [{}],
+        variants: [{}],
+      },
+    ]);
   };
 
   // handle click event of the Remove button
   const handleRemoveVariant = (index) => {
     const list = [...productVariants];
-    console.log("productVariants and Index before removal: ", list, index);
+    console.log("handleRemoveVariant");
     list.splice(index, 1);
-    console.log("productVariants and Index after removal: ", list, index);
     setProductVariants(list);
   };
 
   // Response received from VariantInnerObj.js is setting to local var
   const innerObjCallbackFun = (responseData, variantIndex) => {
-    console.log("innerObjCallbackFun/InnerObj", responseData);
     handleInputChange(responseData, variantIndex, true, "variants");
   };
 
   // Response received from DynamicImgElmntCreator.js is setting to local var
   const imgPickerCallbackFun = (responseData, variantIndex) => {
-    console.log("imgPickerCallbackFun/productImages", responseData);
     handleInputChange(responseData, variantIndex, true, "images");
   };
 
   const callBackDataSender = () => {
-    console.log("callBackDataSender/productVariants: ", productVariants);
     props.productVariantsSetter(productVariants);
   };
 
@@ -88,14 +121,11 @@ const ProductVariants = (props) => {
     // onBlur={callBackDataSender}
     <div style={{ marginBottom: "15px" }}>
       {productVariants.map((x, i) => {
-        {
-          console.log("//////productVariants/////:", productVariants);
-        }
         return (
           <div key={i}>
             {/* Color Code & Name */}
             <GridContainer>
-              {/* Color Code */}
+              {/* Color Name */}
               <GridItem xs={12} sm={12} md={3}>
                 <input
                   name="color"
@@ -106,7 +136,7 @@ const ProductVariants = (props) => {
                   onChange={(e) => handleInputChange(e, i, false, null)}
                 />
               </GridItem>
-              {/* Color Name */}
+              {/* Color Code */}
               <GridItem xs={12} sm={12} md={3}>
                 <input
                   name="colorCode"
@@ -117,23 +147,75 @@ const ProductVariants = (props) => {
                   onChange={(e) => handleInputChange(e, i, false, null)}
                 />
               </GridItem>
+            </GridContainer>
+
+            {/* Stock Info & Base Price */}
+            <GridContainer>
+              {/* RAM Unit */}
+              <GridItem xs={12} sm={12} md={3}>
+                <FormControl
+                  variant="standard"
+                  style={{ width: "100%", margin: "27px 0px 17px 0px" }}
+                >
+                  <Select
+                    labelId="ramUnit"
+                    id="ramUnit"
+                    name="ramUnit"
+                    value={x.ramUnit}
+                    onChange={(e) => handleInputChange(e, i, false, null)}
+                    label="RAM Unit"
+                  >
+                    <MenuItem value={"KB"}>KB</MenuItem>
+                    <MenuItem value={"MB"}>MB</MenuItem>
+                    <MenuItem value={"GB"}>GB</MenuItem>
+                  </Select>
+                </FormControl>
+              </GridItem>
+
+              {/* ROM Unit */}
+              <GridItem xs={12} sm={12} md={3}>
+                <FormControl
+                  variant="standard"
+                  style={{ width: "100%", margin: "27px 0px 17px 0px" }}
+                >
+                  <Select
+                    labelId="romUnit"
+                    id="romUnit"
+                    name="romUnit"
+                    value={x.romUnit}
+                    onChange={(e) => handleInputChange(e, i, false, null)}
+                    label="RAM Unit"
+                  >
+                    <MenuItem value={"KB"}>KB</MenuItem>
+                    <MenuItem value={"MB"}>MB</MenuItem>
+                    <MenuItem value={"GB"}>GB</MenuItem>
+                  </Select>
+                </FormControl>
+              </GridItem>
 
               {/* Inner Obj: Ram, Rom, Base Price */}
               <GridItem xs={12} sm={12} md={6} key={i}>
                 <VariantInnerObj
                   variantIndex={i}
                   innerObjCallbackFun={innerObjCallbackFun}
+                  variants={productVariants[i].variants}
                 />
               </GridItem>
             </GridContainer>
 
             {/* Img Picker */}
             <GridContainer>
-              <GridItem xs={12} sm={12} md={12}>
+              <div
+                style={{ fontWeight: "bold", color: "red", marginLeft: "15px" }}
+              >
+                Image aspect ratio must be 1:1 & Dimension should be 1080px X
+                1080px
+              </div>
+              <GridItem xs={12} sm={12} md={12} key={i}>
                 <DynamicImgElmntCreator
-                  key={i}
                   variantIndex={i}
                   imgPickerCallbackFun={imgPickerCallbackFun}
+                  images={productVariants[i].images}
                 />
               </GridItem>
             </GridContainer>

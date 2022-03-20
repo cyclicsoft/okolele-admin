@@ -112,21 +112,10 @@ function CreatePhone() {
   // Basic
   const [category, setCategory] = useState("1"); //category 1 is fixed for phone
   const [mName, setmName] = useState("");
-  const [mBasePrice, setmBasePrice] = useState(0);
-  // const [mNewPrice, setmNewPrice] = useState("0");
   const [mDiscountType, setmDiscountType] = useState("FLAT");
   const [mDiscountValue, setmDiscountValue] = useState(0);
-  const [mTotalQuantity, setmTotalQuantity] = useState(0);
-  const [mSellableQuantity, setmSellableQuantity] = useState(0);
-  const [mBrandName, setmBrandName] = useState("");
+  const [mBrandName, setmBrandName] = useState("1101");
   const [mWarranty, setmWarranty] = useState(0);
-  const [productImages, setProductImages] = useState([
-    { imgId: 1, imgBase64: "" },
-    { imgId: 2, imgBase64: "" },
-    { imgId: 3, imgBase64: "" },
-    { imgId: 4, imgBase64: "" },
-    { imgId: 5, imgBase64: "" },
-  ]);
 
   // NETWORK
   const [mTechnology, setmTechnology] = useState("");
@@ -185,6 +174,9 @@ function CreatePhone() {
   const [mSarEu, setmSarEu] = useState("");
   // TESTS
   const [performances, setPerformances] = useState([]);
+  // product All Variants
+  const [productAllVariants, setProductAllVariants] = useState([]);
+
   // Product create confirmation popup viewar
   const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
   // Http Response Msg
@@ -209,6 +201,7 @@ function CreatePhone() {
     setm5GBand(callBackData);
   };
   const mainCamsHandler = (callBackData) => {
+    console.log("Main Camera: ", callBackData);
     setMainCams(callBackData);
   };
   const mainCamFeatureHandler = (callBackData) => {
@@ -236,8 +229,6 @@ function CreatePhone() {
     setPerformances(callBackData);
   };
 
-  const [productAllVariants, setProductAllVariants] = useState([]);
-
   const productVariantsSetter = (response) => {
     console.log("productVariantsSetter/All Variants: ", response);
     setProductAllVariants(response);
@@ -246,9 +237,6 @@ function CreatePhone() {
   const phoneDetails = {
     category: category,
     title: mName,
-    basePrice: mBasePrice,
-    totalStock: mTotalQuantity,
-    sellableStock: mSellableQuantity,
     brand: mBrandName,
     warranty: mWarranty,
     technology: mTechnology,
@@ -293,19 +281,12 @@ function CreatePhone() {
     models: models,
     sarEu: mSarEu,
     sarUs: mSar,
-    images: [
-      productImages[0].imgBase64,
-      productImages[1].imgBase64,
-      productImages[2].imgBase64,
-      productImages[3].imgBase64,
-      productImages[4].imgBase64,
-    ],
     performances: performances,
-    hasWarranty: mWarranty > 0 ? true : false,
     discount: {
       type: mDiscountType,
-      value: mDiscountType !== "" ? mDiscountValue : "",
+      value: mDiscountValue,
     },
+    variants: productAllVariants,
   };
 
   const phoneSaveClick = () => {
@@ -331,149 +312,159 @@ function CreatePhone() {
         });
       }
     }
+    // saveNewPhone(); // remove this after uncommenting above code lines
 
     setShowHttpResponseMsg(false);
     setShowProductCreatePopup(false);
   };
 
   const saveNewPhone = () => {
-    console.log("saveNewPhone/All Variants: ", productAllVariants);
-    // const phoneCreateAPI = "http://localhost:8080/mobiles";
-    // axios
-    //   .post(phoneCreateAPI, phoneDetails, config)
-    //   .then(function (response) {
-    //     setHttpResponseCode(response.status);
-    //     setShowHttpResponseMsg(true);
-    //   })
-    //   .catch(function (error) {
-    //     setHttpResponseCode(error.response.status);
-    //     setShowHttpResponseMsg(true);
-    //   });
+    console.log("saveNewPhone/phoneDetails: ", phoneDetails);
+    const phoneCreateAPI = "http://localhost:8080/mobiles";
+    axios
+      .post(phoneCreateAPI, phoneDetails, config)
+      .then(function (response) {
+        setHttpResponseCode(response.status);
+        setShowHttpResponseMsg(true);
+      })
+      .catch(function (error) {
+        setHttpResponseCode(error.response.status);
+        setShowHttpResponseMsg(true);
+      });
   };
 
   // inputs Reset Handler
   const inputsResetHandler = () => {
-    setCategory("1");
-    // Basic
-    setmName("");
-    setmBasePrice(0);
-    // setmCurrentPrice(response.data.currentPrice);
-    setmDiscountType("");
-    setmDiscountValue(0);
-    setmTotalQuantity(0);
-    setmSellableQuantity(0);
-    setmBrandName("");
-    setmWarranty(0);
-
-    productImages[0].imgBase64 = "";
-    productImages[1].imgBase64 = "";
-    productImages[2].imgBase64 = "";
-    productImages[3].imgBase64 = "";
-    productImages[4].imgBase64 = "";
-
+    // GeneralInfo
+    resetGeneralInfo();
+    // Variants
+    resetVariants();
     // NETWORK
+    resetNetworks();
+    // LAUNCH
+    resetLaunch();
+    // BODY
+    resetBody();
+    // DISPLAY
+    resetDisplay();
+    // PLATFORM
+    resetPlatform();
+    // MEMORY
+    resetMemory();
+    // MAIN CAMERA
+    resetMainCams();
+    // SELFIE CAMERA
+    resetFrontCams();
+    // SOUND
+    resetSound();
+    // COMMS
+    resetComms();
+    // FEATURES
+    resetFeatures();
+    // BATTERY
+    resetBattery();
+    // MISC
+    resetMisc();
+    // TESTS
+    resetTests();
+  };
+
+  const resetGeneralInfo = () => {
+    setCategory("1");
+    setmName("");
+    setmDiscountType("FLAT");
+    setmDiscountValue(0);
+    setmBrandName("1101");
+    setmWarranty(0);
+  };
+
+  const resetVariants = () => {
+    setProductAllVariants([]);
+  };
+
+  const resetNetworks = () => {
     setmTechnology("");
     setm2GBand([]);
     setm3GBand([]);
     setm4GBand([]);
     setm5GBand([]);
     setmSpeed("");
-    // LAUNCH
+  };
+
+  const resetLaunch = () => {
     setmAnnounchDate(new Date());
     setmReleaseDate(new Date());
-    // BODY
+  };
+
+  const resetBody = () => {
     setmDimension("");
     setmWeight("");
     setmBuild("");
     setmSim("");
-    // DISPLAY
+  };
+
+  const resetDisplay = () => {
     setmDisplayType("");
     setmSize("");
     setmResolution("");
     setmProtection("");
-    // PLATFORM
+  };
+
+  const resetPlatform = () => {
     setmOS("");
     setmChipset("");
     setmCPU("");
     setmGPU("");
-    // MEMORY
+  };
+
+  const resetMemory = () => {
     setmCardSlot("");
     setmInternal("");
-    // MAIN CAMERA
+  };
+
+  const resetMainCams = () => {
     setMainCams([]);
     setMainCamFeatures([]);
     setMainCamVideos([]);
-    // SELFIE CAMERA
+  };
+
+  const resetFrontCams = () => {
     setFrontCams([]);
     setFrontCamFeatures([]);
     setFrontCamVideos([]);
-    // SOUND
+  };
+
+  const resetSound = () => {
     setmLoudSpeaker("");
     setmJack("");
-    // COMMS
+  };
+
+  const resetComms = () => {
     setmWlan("");
     setmBlueTooth("");
     setmGPS("");
     setmNFC("");
     setmRadio("");
     setmUSB("");
-    // FEATURES
+  };
+
+  const resetFeatures = () => {
     setSensors([]);
-    // BATTERY
+  };
+
+  const resetBattery = () => {
     setmBatteryType("");
     setmBatteryCharging("");
-    // MISC
+  };
+
+  const resetMisc = () => {
     setModels([]);
     setmSar("");
     setmSarEu("");
-    // TESTS
+  };
+
+  const resetTests = () => {
     setPerformances([]);
-  };
-
-  // Image Handler
-  const handleImageChange = (event, id) => {
-    const file = event.target.files[0];
-    getBase64(file).then((base64) => {
-      localStorage["fileBase64"] = base64;
-      // console.log("handleImageChange/id,e: ", id, base64);
-      let tempArray = [...productImages]; // copying the old datas array
-      // console.log("handleImageChange/tempArray: ", tempArray);
-      tempArray[id - 1].imgBase64 = base64; // replace e.target.value with whatever you want to change it to
-
-      setProductImages(tempArray);
-    });
-  };
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(file);
-    });
-  };
-  const removeSelectedImg = (id) => {
-    let tempArray = [...productImages]; // copying the old datas array
-    // console.log("handleImageChange/tempArray: ", tempArray);
-    tempArray[id - 1].imgBase64 = ""; // replace e.target.value with whatever you want to change it to
-    setProductImages(tempArray);
-  };
-
-  // Preview & Crop Image
-  const previewSelectedImg = (id) => {
-    if (
-      productImages[id - 1].imgBase64 != "" &&
-      productImages[id - 1].imgBase64 != undefined
-    ) {
-      setImgIdToPreview(id);
-      setShouldPreview(true);
-    }
-  };
-  const onCloseImgCropper = (croppedImg, hideImgCropper) => {
-    setShouldPreview(hideImgCropper);
-
-    let tempArray = [...productImages]; // copying the old datas array
-    tempArray[imgIdToPreview - 1].imgBase64 = croppedImg; // replace e.target.value with whatever you want to change it to
-    setProductImages(tempArray);
   };
 
   // Bulk Upload
@@ -606,16 +597,16 @@ function CreatePhone() {
     }
   };
 
-  // Searched Product
+  // Searched Product from SearchToCLone.js
   const getSearchedProduct = (searchedProduct) => {
     setCategory("1");
     // Basic
     setmName(searchedProduct.title);
-    setmBasePrice(searchedProduct.basePrice);
     setmDiscountType(searchedProduct.discount.type);
     setmDiscountValue(searchedProduct.discount.value);
-    setmTotalQuantity(searchedProduct.totalStock);
-    setmSellableQuantity(searchedProduct.sellableStock);
+
+    setProductAllVariants(searchedProduct.variants);
+
     if (searchedProduct.brand === "SAMSUNG") {
       setmBrandName(1101);
     } else if (searchedProduct.brand === "APPLE") {
@@ -678,12 +669,6 @@ function CreatePhone() {
 
     setmWarranty(searchedProduct.warranty);
 
-    productImages[0].imgBase64 = searchedProduct.images[0];
-    productImages[1].imgBase64 = searchedProduct.images[1];
-    productImages[2].imgBase64 = searchedProduct.images[2];
-    productImages[3].imgBase64 = searchedProduct.images[3];
-    productImages[4].imgBase64 = searchedProduct.images[4];
-
     // NETWORK
     setmTechnology(searchedProduct.technology);
     setm2GBand(searchedProduct.m2GBands);
@@ -745,14 +730,8 @@ function CreatePhone() {
 
   return (
     <>
+      {/* Confirmation Modal */}
       <div>
-        {shouldPreview && (
-          <ImgCropper
-            src={productImages[imgIdToPreview - 1].imgBase64}
-            onCloseImgCropper={onCloseImgCropper}
-          />
-        )}
-
         {/* Confirmation Modal */}
         {showProductCreatePopup ? (
           <ProductCreateConfirmation
@@ -766,6 +745,7 @@ function CreatePhone() {
         ) : null}
       </div>
 
+      {/* Bulk Phone Upload  */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
           {/* md={8} */}
@@ -774,7 +754,7 @@ function CreatePhone() {
               {/* <CardIcon color="rose">
                 <LocalOfferIcon />
               </CardIcon> */}
-              <h4 className={classes.cardIconTitle}>Create New Phone</h4>
+              <h4 className={classes.cardIconTitle}>Bulk Upload</h4>
             </CardHeader>
             <CardBody>
               {/* Bulk Phone Upload  */}
@@ -796,13 +776,15 @@ function CreatePhone() {
                 <GridItem xs={12} sm={12} md={6}>
                   <Button
                     color="rose"
+                    style={{ marginTop: "20px" }}
                     className={classes.updateProfileButton}
                     onClick={bulkUploadHandler}
                   >
-                    Upload
+                    Upload CSV
                   </Button>
                 </GridItem>
               </GridContainer>
+
               {fileSize > 0 ? (
                 <GridContainer>
                   <GridItem>
@@ -810,27 +792,52 @@ function CreatePhone() {
                   </GridItem>
                 </GridContainer>
               ) : null}
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <br />
+      <h4 className={classes.cardIconTitle}>Create New Phone</h4>
+      {/* Reset & Search To Clone */}
+      <div style={{ display: "flex" }}>
+        {/* Reset */}
+        <div className="resetIcon-container">
+          <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "}
+          Reset A~Z
+        </div>
 
-              <SearchToClone
-                getSearchedProduct={getSearchedProduct}
-                productType={"mobiles"}
-              />
+        {/* Search To Clone */}
+        <SearchToClone
+          getSearchedProduct={getSearchedProduct}
+          productType={"mobiles"}
+        />
+      </div>
 
-              {/* Reset */}
-              <div className="resetIcon-container">
-                <RefreshIcon
-                  className="reset-input"
-                  onClick={inputsResetHandler}
-                />{" "}
-                Reset
+      {/* [GENERAL INFO] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <AcUnitIcon />
+                  <p className="sectionPara">[GENERAL INFO]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetGeneralInfo}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
-              <div className="sectionDiv">
-                <AcUnitIcon />
-                <p className="sectionPara">[GENERAL INFO]</p>
-              </div>
               {/* Name & Product Type  */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
@@ -904,7 +911,7 @@ function CreatePhone() {
                       }}
                       inputProps={{
                         type: "Number",
-                        value: mDiscountValue || "",
+                        value: mDiscountValue || 0,
 
                         onChange: (event) =>
                           setmDiscountValue(event.target.value),
@@ -974,226 +981,82 @@ function CreatePhone() {
                     }}
                     inputProps={{
                       type: "Number",
-                      value: mWarranty || "",
+                      value: mWarranty || 0,
                       onChange: (event) => setmWarranty(event.target.value),
                       maxLength: "2",
                     }}
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              {/* Product Image Picker */}
-              {/* <div style={{ fontWeight: "bold", color: "red" }}>
-                Image aspect ratio must be 1:1 & Dimension should be 1080px X
-                1080px
-              </div> */}
-              <GridContainer>
-                {/* Image Picker 1 */}
-                {/* <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[0].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 1)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(1)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(1)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[0].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 1</h6>
-                  </div>
-                </GridItem> */}
-
-                {/* Image Picker 2 */}
-                {/* <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[1].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 2)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(2)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(2)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[1].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 2</h6>
-                  </div>
-                </GridItem> */}
-
-                {/* Image Picker 3 */}
-                {/* <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[2].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 3)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(3)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(3)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[2].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 3</h6>
-                  </div>
-                </GridItem> */}
-
-                {/* Image Picker 4 */}
-                {/* <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[3].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 4)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(4)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(4)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[3].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 4</h6>
-                  </div>
-                </GridItem> */}
-
-                {/* Image Picker 5 */}
-                {/* <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[4].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 5)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(5)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(5)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[4].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 5</h6>
-                  </div>
-                </GridItem> */}
-              </GridContainer>
-
-              <br />
-
-              <div className="sectionDiv">
-                <BakeryDiningIcon />
-                <p className="sectionPara">[VARIANTS]</p>
+      {/* [VARIANTS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <BakeryDiningIcon />
+                  <p className="sectionPara">[VARIANTS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetVariants}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <ProductVariants
+                    objectValue={productAllVariants}
                     productVariantsSetter={productVariantsSetter}
                     placeHolder="Outer fields"
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <RssFeedIcon />
-                <p className="sectionPara">[NETWORK]</p>
+      {/* [NETWORK] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <RssFeedIcon />
+                  <p className="sectionPara">[NETWORK]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetNetworks}
+                  />{" "}
+                  Reset
+                </div>
               </div>
+
               {/* Technology & Speed */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
@@ -1233,6 +1096,7 @@ function CreatePhone() {
                 {/* 2G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
+                    objectValue={m2GBand}
                     callBackFun={band2gHandler}
                     placeHolder="2G Bands"
                   />
@@ -1240,6 +1104,7 @@ function CreatePhone() {
                 {/* 3G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
+                    objectValue={m3GBand}
                     callBackFun={band3gHandler}
                     placeHolder="3G Bands"
                   />
@@ -1251,6 +1116,7 @@ function CreatePhone() {
                 {/* 4G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
+                    objectValue={m4GBand}
                     callBackFun={band4gHandler}
                     placeHolder="4G Bands"
                   />
@@ -1258,16 +1124,39 @@ function CreatePhone() {
                 {/* 5G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
+                    objectValue={m5GBand}
                     callBackFun={band5gHandler}
                     placeHolder="5G Bands"
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <LaunchIcon />
-                <p className="sectionPara">[LAUNCH]</p>
+      {/* [LAUNCH] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <LaunchIcon />
+                  <p className="sectionPara">[LAUNCH]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetLaunch} />{" "}
+                  Reset
+                </div>
               </div>
+
               {/* Announce date and Release date  */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={3}>
@@ -1297,13 +1186,33 @@ function CreatePhone() {
                   </MuiPickersUtilsProvider>
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <br />
-
-              <div className="sectionDiv">
-                <PhoneAndroidIcon />
-                <p className="sectionPara">[BODY]</p>
+      {/* [BODY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <PhoneAndroidIcon />
+                  <p className="sectionPara">[BODY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetBody} />{" "}
+                  Reset
+                </div>
               </div>
+
               {/* Dimension & Weight  */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
@@ -1371,10 +1280,31 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <SmartDisplayIcon />
-                <p className="sectionPara">[DISPLAY]</p>
+      {/* [DISPLAY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SmartDisplayIcon />
+                  <p className="sectionPara">[DISPLAY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetDisplay} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* DISPLAY Type & Size  */}
@@ -1444,10 +1374,34 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <HardwareIcon />
-                <p className="sectionPara">[PLATFORM]</p>
+      {/* [PLATFORM] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <HardwareIcon />
+                  <p className="sectionPara">[PLATFORM]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetPlatform}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* OS & Chipset  */}
@@ -1517,10 +1471,31 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <MemoryIcon />
-                <p className="sectionPara">[MEMORY]</p>
+      {/* [MEMORY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <MemoryIcon />
+                  <p className="sectionPara">[MEMORY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetMemory} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Card Slot & Internal  */}
@@ -1556,76 +1531,146 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <CameraRearIcon />
-                <p className="sectionPara">[MAIN CAMERA]</p>
+      {/* [MAIN CAMERA] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <CameraRearIcon />
+                  <p className="sectionPara">[MAIN CAMERA]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetMainCams}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Main Cameras & Feature */}
               <GridContainer>
                 {/* Main Cameras */}
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
+                    objectValue={mainCams}
                     callBackFun={mainCamsHandler}
                     placeHolder="Rare Camera"
                   />
                 </GridItem>
                 {/* Feature */}
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
+                    objectValue={mainCamFeatures}
                     callBackFun={mainCamFeatureHandler}
                     placeHolder="Rare Camera Feature"
                   />
                 </GridItem>
-              </GridContainer>
 
-              {/* Video */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
+                {/* Video */}
+                <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
+                    objectValue={mainCamVideos}
                     callBackFun={mainCamVideosHandler}
                     placeHolder="Rare Camera Video Feature"
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <CameraFrontIcon />
-                <p className="sectionPara">[SELFIE CAMERA]</p>
+      {/* [SELFIE CAMERA] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <CameraFrontIcon />
+                  <p className="sectionPara">[SELFIE CAMERA]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetFrontCams}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* SELFIE Cameras & Feature */}
               <GridContainer>
                 {/* SELFIE Cameras */}
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
+                    objectValue={frontCams}
                     callBackFun={frontCamsHandler}
                     placeHolder="Front Camera"
                   />
                 </GridItem>
                 {/* Feature */}
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
+                    objectValue={frontCamFeatures}
                     callBackFun={frontCamFeatureHandler}
                     placeHolder="Front Camera Feature"
                   />
                 </GridItem>
-              </GridContainer>
-
-              {/* Video */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
+                {/* Video */}
+                <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
+                    objectValue={frontCamVideos}
                     callBackFun={frontCamVideosHandler}
                     placeHolder="Front Camera Video Feature"
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <VolumeUpIcon />
-                <p className="sectionPara">[SOUND]</p>
+      {/* [SOUND] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <VolumeUpIcon />
+                  <p className="sectionPara">[SOUND]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetSound} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Loud Speaker & Jack */}
@@ -1661,10 +1706,31 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <SettingsInputAntennaIcon />
-                <p className="sectionPara">[COMMS]</p>
+      {/* [COMMS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SettingsInputAntennaIcon />
+                  <p className="sectionPara">[COMMS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetComms} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* WLAN & Bluetooth */}
@@ -1768,25 +1834,71 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <FeaturedPlayListIcon />
-                <p className="sectionPara">[FEATURES]</p>
+      {/* [FEATURES] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <FeaturedPlayListIcon />
+                  <p className="sectionPara">[FEATURES]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetFeatures}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Sensors */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
+                    objectValue={sensors}
                     callBackFun={sensorsHandler}
                     placeHolder="Sensor"
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <BatteryCharging50Icon />
-                <p className="sectionPara">[BATTERY]</p>
+      {/* [BATTERY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <BatteryCharging50Icon />
+                  <p className="sectionPara">[BATTERY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetBattery} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Battery Type & Charging */}
@@ -1823,25 +1935,37 @@ function CreatePhone() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <MiscellaneousServicesIcon />
-                <p className="sectionPara">[MISC]</p>
+      {/* [MISC] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <MiscellaneousServicesIcon />
+                  <p className="sectionPara">[MISC]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetMisc} />{" "}
+                  Reset
+                </div>
               </div>
 
-              {/* Models */}
+              {/* SAR & SAR EU & Models */}
               <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <DynamicElementCreator
-                    callBackFun={modelsHandler}
-                    placeHolder="Models"
-                  />
-                </GridItem>
-              </GridContainer>
-
-              {/* SAR & SAR EU */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
+                {/* SAR */}
+                <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="SAR"
                     id="sar"
@@ -1856,7 +1980,9 @@ function CreatePhone() {
                     }}
                   />
                 </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
+
+                {/* SAR EU */}
+                <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="SAR EU"
                     id="sar-eu"
@@ -1871,36 +1997,66 @@ function CreatePhone() {
                     }}
                   />
                 </GridItem>
-              </GridContainer>
 
-              <div className="sectionDiv">
-                <SpeedIcon />
-                <p className="sectionPara">[TESTS]</p>
+                {/* Models */}
+                <GridItem xs={12} sm={12} md={4}>
+                  <DynamicElementCreator
+                    objectValue={models}
+                    callBackFun={modelsHandler}
+                    placeHolder="Models"
+                  />
+                </GridItem>
+              </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+
+      {/* [TESTS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SpeedIcon />
+                  <p className="sectionPara">[TESTS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetTests} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Performances */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
+                    objectValue={performances}
                     callBackFun={performanceHandler}
                     placeHolder="Performances"
                   />
                 </GridItem>
               </GridContainer>
-
-              <Button
-                color="rose"
-                className={classes.updateProfileButton}
-                onClick={phoneSaveClick}
-              >
-                Save
-              </Button>
-
-              <Clearfix />
             </CardBody>
           </Card>
         </GridItem>
       </GridContainer>
+
+      {/* Save Button  */}
+      <Button
+        color="rose"
+        className={classes.updateProfileButton}
+        onClick={phoneSaveClick}
+      >
+        Save
+      </Button>
     </>
   );
 }

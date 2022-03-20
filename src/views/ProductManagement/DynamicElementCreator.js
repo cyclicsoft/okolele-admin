@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // material-ui icons
 import Add from "@material-ui/icons/Add";
@@ -23,8 +23,21 @@ import { red } from "@material-ui/core/colors";
 const useStyles = makeStyles(styles);
 
 const DynamicElementCreator = (props) => {
+  console.log(
+    "DynamicElementCreator/props.objectValue: ",
+    props.objectValue,
+    Object.keys(props.objectValue).length
+  );
   const classes = useStyles();
-  const [inputList, setInputList] = useState([props.placeHolder]);
+  const [inputList, setInputList] = useState([""]);
+
+  useEffect(() => {
+    if (Object.keys(props.objectValue).length > 0) {
+      setInputList(props.objectValue);
+    } else {
+      setInputList([""]);
+    }
+  }, [props.objectValue]);
 
   // handle input change
   const handleInputChange = (e, index) => {
@@ -45,7 +58,7 @@ const DynamicElementCreator = (props) => {
 
   // handle click event of the Add button
   const handleAddClick = () => {
-    setInputList([...inputList, props.placeHolder]);
+    setInputList([...inputList, ""]);
   };
 
   const callBackDataSender = () => {
