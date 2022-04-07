@@ -66,6 +66,7 @@ import ProductStatusUpdateWarning from "views/ConfirmationModals/ProductStatusUp
 import AccessoryDetails from "./Accessory/AccessoryDetails";
 import UpdateAccessory from "./Accessory/UpdateAccessory";
 import UpdateSmartWatch from "./SmartWatch/UpdateSmartWatch";
+import UpdatePhoneCopy from "./Phone/UpdatePhoneCopy";
 
 const useStyles = makeStyles(styles);
 
@@ -217,8 +218,8 @@ export default function UpdateProducts() {
     let productCategory = "";
     if (dropdownValue == "MOBILE") {
       productCategory = "mobiles";
-    } else if (dropdownValue == "TAB") {
-      productCategory = "tabs";
+    } else if (dropdownValue == "TABLET") {
+      productCategory = "tablets";
     } else if (dropdownValue == "SMARTWATCH") {
       productCategory = "smartwatches";
     } else if (dropdownValue == "ACCESSORY") {
@@ -302,8 +303,8 @@ export default function UpdateProducts() {
     let productCategory = "";
     if (dropdownValue == "MOBILE") {
       productCategory = "mobiles";
-    } else if (dropdownValue == "TAB") {
-      productCategory = "tabs";
+    } else if (dropdownValue == "TABLET") {
+      productCategory = "tablets";
     } else if (dropdownValue == "SMARTWATCH") {
       productCategory = "smartwatches";
     } else if (dropdownValue == "ACCESSORY") {
@@ -414,7 +415,7 @@ export default function UpdateProducts() {
                     onChange={dropdownHandler}
                   >
                     <MenuItem value={"MOBILE"}>Search Phone</MenuItem>
-                    <MenuItem value={"TAB"}>Search Tab</MenuItem>
+                    <MenuItem value={"TABLET"}>Search Tab</MenuItem>
                     <MenuItem value={"SMARTWATCH"}>Search Smart Watch</MenuItem>
                     <MenuItem value={"ACCESSORY"}>Search Accessory</MenuItem>
                   </Select>
@@ -635,7 +636,7 @@ export default function UpdateProducts() {
                 {dropdownValue == "MOBILE" ? (
                   <PhoneDetails productDetails={productDetails} />
                 ) : null}
-                {dropdownValue == "TAB" ? (
+                {dropdownValue == "TABLET" ? (
                   <TabDetails productDetails={productDetails} />
                 ) : null}
                 {dropdownValue == "SMARTWATCH" ? (
@@ -663,10 +664,10 @@ export default function UpdateProducts() {
               </CardHeader>
               <CardBody>
                 {dropdownValue == "MOBILE" ? (
-                  <UpdatePhone editProductId={editProductId} />
+                  <UpdatePhoneCopy editProductId={editProductId} />
                 ) : null}
 
-                {dropdownValue == "TAB" ? (
+                {dropdownValue == "TABLET" ? (
                   <UpdateTab editProductId={editProductId} />
                 ) : null}
 

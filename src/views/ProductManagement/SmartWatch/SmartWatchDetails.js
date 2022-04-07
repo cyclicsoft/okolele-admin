@@ -1,623 +1,861 @@
-import React, { useState, useEffect } from "react";
+/*eslint-disable*/
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-// material-ui icons
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
-import Radio from "@material-ui/core/Radio";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
-import RssFeedIcon from "@mui/icons-material/RssFeed";
-import LaunchIcon from "@mui/icons-material/Launch";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
-import HardwareIcon from "@mui/icons-material/Hardware";
-import MemoryIcon from "@mui/icons-material/Memory";
-import CameraRearIcon from "@mui/icons-material/CameraRear";
-import CameraFrontIcon from "@mui/icons-material/CameraFront";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
-import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
-import BatteryCharging50Icon from "@mui/icons-material/BatteryCharging50";
-import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
-import SpeedIcon from "@mui/icons-material/Speed";
-import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from "@mui/icons-material/Close";
+import { useHistory } from "react-router-dom";
+
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-// nodejs library that concatenates classes
-import classNames from "classnames";
-// react component used to create nice image meadia player
-import ImageGallery from "react-image-gallery";
-// Card
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
-import CardHeader from "components/Card/CardHeader.js";
-// Custom Input
-import CustomInput from "components/CustomInput/CustomInput.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
-// Date
-import "date-fns";
-import DateValidate from "views/DatePicker/DateValidate";
-// SCSS File
-// import '../../assets/scss/ghorwali-scss/voucherCard.scss'
-import "assets/scss/ghorwali-scss/voucherCard.scss";
-import "assets/scss/ghorwali-scss/product-details.scss";
-
-import moment from "moment";
-import { title } from "assets/jss/material-dashboard-pro-react";
-import SaveWarning from "views/ConfirmationModals/SaveWarning";
-// Dropdown Select
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { AndroidOutlined } from "@material-ui/icons";
-// Images
-import "assets/img/okolele-img/mobile-dummy-img.jpg";
+// images
 import dummyProfileImg128px from "assets/img/okolele-img/dummy_profile_img_128px.png";
+import phoneDummyImg from "assets/img/okolele-img/mobile-dummy-img.jpg";
+import phoneNetwork from "assets/img/okolele-img/product-details-icons/phone-network.png";
+import launchIcon from "assets/img/okolele-img/product-details-icons/phone-launch.png";
+import phoneBody from "assets/img/okolele-img/product-details-icons/phone-body.png";
+import phoneDisplay from "assets/img/okolele-img/product-details-icons/display.png";
+import phoneOS from "assets/img/okolele-img/product-details-icons/operating-system.png";
+import phoneStorage from "assets/img/okolele-img/product-details-icons/ram.png";
+import backCamera from "assets/img/okolele-img/product-details-icons/back-camera.png";
+import frontCamera from "assets/img/okolele-img/product-details-icons/front-camera.png";
+import soundIcon from "assets/img/okolele-img/product-details-icons/sound-wave.png";
+import commsIcon from "assets/img/okolele-img/product-details-icons/connectivity.png";
+import featureIcon from "assets/img/okolele-img/product-details-icons/feature.png";
+import batteryIcon from "assets/img/okolele-img/product-details-icons/battery.png";
+import miscIcon from "assets/img/okolele-img/product-details-icons/misc.png";
+import testIcon from "assets/img/okolele-img/product-details-icons/test.png";
 // Carousel ImageGallery
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
+//SCSS file
+import "assets/scss/ghorwali-scss/_product-details.scss";
 
 const useStyles = makeStyles(styles);
 
-function SmartWatchDetails(props) {
+export default function SmartWatchDetails(props) {
   const classes = useStyles();
-
+  const history = useHistory();
   // General
-  const [category, setCategory] = useState("N/A");
+  const [category, setCategory] = useState("");
   // Basic
-  const [productName, setProductName] = useState("N/A");
-  const [basePrice, setBasePrice] = useState(0);
-  const [currentPrice, setCurrentPrice] = useState(0);
-  const [discountType, setDiscountType] = useState("N/A");
-  const [discountValue, setDiscountValue] = useState("0");
-  const [totalQuantity, setTotalQuantity] = useState("0");
-  const [sellableQuantity, setSellableQuantity] = useState(0);
-  const [brandName, setBrandName] = useState("N/A");
-  const [warranty, setWarranty] = useState("N/A");
+  const [mName1, setmName1] = useState("");
+  const [mDiscountType, setmDiscountType] = useState("");
+  const [mDiscountValue, setmDiscountValue] = useState(0);
+  const [mBrandName1, setmBrandName1] = useState("");
+  const [mWarranty1, setmWarranty1] = useState("");
   const [userComments, setUserComments] = useState([]);
   const [productImages, setProductImages] = useState([]);
+  //All Variant
+  const [allVariants, setAllVariants] = useState([]);
+  //All the variants for a selected color
+  const [selectedColorVariants, setSelectedColorVariants] = useState([]);
+  // selected color
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedVariantBasePrice, setSelectedVariantBasePrice] = useState(0);
+  const [
+    selectedVariantCurrentPrice,
+    setSelectedVariantCurrentPrice,
+  ] = useState(0);
+  const [selectedVariantTotalStock, setSelectedVariantTotalStock] = useState(0);
+  const [
+    selectedVariantSellableStock,
+    setSelectedVariantSellableStock,
+  ] = useState(0);
+  const [selectedVariantRam, setSelectedVariantRam] = useState(0);
+  const [selectedVariantRom, setSelectedVariantRom] = useState(0);
+  const [selectedVariantRamRom, setSelectedVariantRamRom] = useState("");
   // LAUNCH
-  const [announchDate, setAnnounchDate] = useState("N/A");
-  const [releaseDate, setReleaseDate] = useState("N/A");
+  const [mAnnounchDate1, setmAnnounchDate1] = useState("");
+  const [mReleaseDate1, setmReleaseDate1] = useState("");
   // BODY
-  const [dimension, setDimension] = useState("N/A");
-  const [weight, setWeight] = useState("N/A");
-  const [build, setBuild] = useState("N/A");
+  const [mDimension1, setmDimension1] = useState("");
+  const [mWeight1, setmWeight1] = useState("");
+  const [mBuild1, setmBuild1] = useState("");
   // DISPLAY
-  const [displayType, setDisplayType] = useState("N/A");
-  const [displaySize, setDisplaySize] = useState("N/A");
-  const [displayResolution, setDisplayResolution] = useState("N/A");
-  const [displayProtection, setDisplayProtection] = useState("N/A");
+  const [mDisplayType1, setmDisplayType1] = useState("");
+  const [mDisplaySize1, setmDisplaySize1] = useState("");
+  const [mResolution1, setmResolution1] = useState("");
+  const [mProtection1, setmProtection1] = useState("");
   // PLATFORM
-  const [OS, setOS] = useState("N/A");
-  const [chipset, setChipset] = useState("N/A");
-  const [CPU, setCPU] = useState("N/A");
-  const [GPU, setGPU] = useState("N/A");
+  const [mOS1, setmOS1] = useState("");
+  const [mChipset1, setmChipset1] = useState("");
+  const [mCPU1, setmCPU1] = useState("");
+  const [mGPU, setmGPU] = useState("");
   // MEMORY
-  const [internal, setInternal] = useState("N/A");
+  const [mInternal1, setmInternal1] = useState("");
   // COMMS
-  const [wlan, setWlan] = useState("");
-  const [blueTooth, setBlueTooth] = useState("N/A");
-  const [GPS, setGPS] = useState("N/A");
-  const [NFC, setNFC] = useState("N/A");
-  const [radio, setRadio] = useState("N/A");
-  const [USB, setUSB] = useState("N/A");
+  const [mWlan1, setmWlan1] = useState("");
+  const [mBlueTooth1, setmBlueTooth1] = useState("");
+  const [mGPS1, setmGPS1] = useState("");
+  const [mNFC1, setmNFC1] = useState("");
+  const [mRadio1, setmRadio1] = useState("");
+  const [mUSB1, setmUSB1] = useState("");
   // FEATURES
-  const [sensor1, setSensor1] = useState("N/A");
-  const [sensor2, setSensor2] = useState("N/A");
-  const [sensor3, setSensor3] = useState("N/A");
+  const [mSensor, setmSensor] = useState([]);
   // BATTERY
-  const [batteryType, setBatteryType] = useState("N/A");
-  const [batteryCharging, setBatteryCharging] = useState("N/A");
+  const [mType1, setmType1] = useState("");
+  const [mBatteryCharging1, setmBatteryCharging1] = useState("");
   // MISC
-  const [color1, setColor1] = useState("N/A");
-  const [model1, setModel1] = useState("N/A");
+  const [mModel1, setmModel1] = useState("");
   // TESTS
-  const [performance1, setPerformance1] = useState("N/A");
-  const [performance2, setPerformance2] = useState("N/A");
-  const [performance3, setPerformance3] = useState("N/A");
-  const [ohterInfo, setOhterInfo] = useState("N/A");
+  const [mPerformance, setmPerformance] = useState([]);
 
-  // Product details from props
-  var details = props.productDetails;
-  // Price Range
-  const [priceLowestHight, setPriceLowestHight] = useState([0, 0]);
-  // Related Products
-  const [relatedProducts, setRelatedProducts] = useState([]);
   // Post New Comments
-  // const [userProfileImg, setUserProfileImg] = useState(dummyProfileImg128px);
-  // const [userName, setUserName] = useState("Random User");
-  // const [newComment, setNewComment] = useState("Write some nice stuff...");
+  const [userProfileImg, setUserProfileImg] = useState(dummyProfileImg128px);
+  const [userName, setUserName] = useState("Random User");
+  const [newComment, setNewComment] = useState("");
+
+  // Phone Details from props/API call
+  useEffect(() => {
+    if (props.productDetails != undefined) {
+      productDetailsSetter(props.productDetails);
+    }
+  }, [props.productDetails]);
 
   // product Details Setter
-  useEffect(() => {
-    console.log("Title: ", props.productDetails.title);
-    const timer = setTimeout(() => {
-      setCategory(details.category);
-      // Basic
-      setProductName(details.title);
-      setBasePrice(details.basePrice);
-      setCurrentPrice(details.currentPrice);
-      setDiscountType(details.discount.type);
-      setDiscountValue(details.discount.value);
-      setTotalQuantity(details.totalStock);
-      setSellableQuantity(details.sellableStock);
-      setBrandName(details.brand);
-      setWarranty(details.warranty);
-      setUserComments(details.comments);
-      // First clear the array before assigning new img data
-      setProductImages([]);
-      details.images.map((img) => {
-        if (img !== null) {
-          setProductImages((prevItems) => [
-            ...prevItems,
-            img,
-            // {
-            //   original: img,
-            //   thumbnail: img,
-            // },
-          ]);
-        }
+  const productDetailsSetter = (details) => {
+    setCategory(details.category);
+    // Basic
+    setmName1(details.title);
+    setmDiscountType(details.discount.type);
+    setmDiscountValue(details.discount.value);
+    setmBrandName1(details.brand);
+    setmWarranty1(details.warranty);
+    setUserComments(details.comments);
+    //Variants
+    setAllVariants(details.variants);
+    // set null initially
+    setProductImages([]);
+    // Initial Img Setter
+    if (Object.keys(details.variants[0].images).length !== 0) {
+      details.variants[0].images.map((img) => {
+        setProductImages((prevItems) => [
+          ...prevItems,
+          {
+            original: img,
+            thumbnail: img,
+          },
+        ]);
       });
-      // LAUNCH
-      setAnnounchDate(details.announceDate);
-      setReleaseDate(details.releaseDate);
-      // BODY
-      setDimension(details.dimension);
-      setWeight(details.weight);
-      setBuild(details.build);
-      // DISPLAY
-      setDisplayType(details.displayType);
-      setDisplaySize(details.displaySize);
-      setDisplayResolution(details.displayResolution);
-      setDisplayProtection(details.displayProtection);
-      // PLATFORM
-      setOS(details.os);
-      setChipset(details.chipset);
-      setCPU(details.cpu);
-      setGPU(details.gpu);
-      // MEMORY
-      setInternal(details.internalSlot);
-      // COMMS
-      setWlan(details.wlan);
-      setBlueTooth(details.bluetooth);
-      setGPS(details.gps);
-      setNFC(details.nfc);
-      setRadio(details.radio);
-      setUSB(details.usb);
-      // FEATURES
-      setSensor1(details.sensors[0]);
-      setSensor2(details.sensors[1]);
-      setSensor3(details.sensors[2]);
-      // BATTERY
-      setBatteryType(details.batteryType);
-      setBatteryCharging(details.batteryCharging);
-      // MISC
-      setColor1(details.colors[0]);
-      setModel1(details.models[0]);
-      // Other
-      setOhterInfo(details.others[0]);
-      // TESTS
-      setPerformance1(details.performances[0]);
-      setPerformance2(details.performances[1]);
-      setPerformance3(details.performances[2]);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [details]);
+    } else {
+      setProductImages([{ original: phoneDummyImg, thumbnail: null }]);
+    }
+    // Initial Selected Color setter
+    setSelectedColor(details.variants[0].color);
+    //All the variants for a selected color
+    // Initial value is the first index value
+    if (details.variants.length > 0) {
+      setSelectedColorVariants(details.variants[0].variants);
+    }
+
+    // Set initial value of inner variants object (Capacity)
+    setSelectedVariantBasePrice(details.variants[0].variants[0].basePrice);
+    setSelectedVariantCurrentPrice(
+      details.variants[0].variants[0].currentPrice
+    );
+    setSelectedVariantTotalStock(details.variants[0].variants[0].totalStock);
+    setSelectedVariantSellableStock(
+      details.variants[0].variants[0].sellableStock
+    );
+    setSelectedVariantRam(details.variants[0].variants[0].ram);
+    setSelectedVariantRom(details.variants[0].variants[0].rom);
+    setSelectedVariantRamRom(
+      details.variants[0].variants[0].ram + details.variants[0].variants[0].rom
+    );
+
+    // LAUNCH
+    setmAnnounchDate1(details.announceDate);
+    setmReleaseDate1(details.releaseDate);
+    // BODY
+    setmDimension1(details.dimension);
+    setmWeight1(details.weight);
+    setmBuild1(details.build);
+    // DISPLAY
+    setmDisplayType1(details.displayType);
+    setmDisplaySize1(details.displaySize);
+    setmResolution1(details.displayResolution);
+    setmProtection1(details.displayProtection);
+    // PLATFORM
+    setmOS1(details.os);
+    setmChipset1(details.chipset);
+    setmCPU1(details.cpu);
+    setmGPU(details.gpu);
+    // MEMORY
+    setmInternal1(details.internalSlot);
+    // COMMS
+    setmWlan1(details.wlan);
+    setmBlueTooth1(details.bluetooth);
+    setmGPS1(details.gps);
+    setmNFC1(details.nfc);
+    setmRadio1(details.radio);
+    setmUSB1(details.usb);
+    // FEATURES
+    setmSensor(details.sensors);
+    // BATTERY
+    setmType1(details.batteryType);
+    setmBatteryCharging1(details.batteryCharging);
+    // MISC
+    setmModel1(details.models[0]);
+    // TESTS
+    setmPerformance(details.performances);
+  };
+
+  const productColorClick = (variant, e) => {
+    e.preventDefault();
+
+    setSelectedColor(variant.color);
+    // console.log("variant.images: ...", variant.images);
+    if (Object.keys(variant.images).length !== 0) {
+      setProductImages([]); //First set to empty to clear previous data
+      variant.images.map((img) => {
+        setProductImages((prevItems) => [
+          ...prevItems,
+          {
+            original: img,
+            thumbnail: img,
+          },
+        ]);
+      });
+    } else {
+      setProductImages([{ original: phoneDummyImg, thumbnail: null }]);
+    }
+    setSelectedColorVariants(variant.variants);
+
+    // Once a clolor is selected, select the first capacity automatically
+    setSelectedVariantBasePrice(variant.variants[0].basePrice);
+    setSelectedVariantCurrentPrice(variant.variants[0].currentPrice);
+    setSelectedVariantTotalStock(variant.variants[0].totalStock);
+    setSelectedVariantSellableStock(variant.variants[0].sellableStock);
+    setSelectedVariantRam(variant.variants[0].ram);
+    setSelectedVariantRom(variant.variants[0].rom);
+    setSelectedVariantRamRom(variant.variants[0].ram + variant.variants[0].rom);
+  };
+
+  const productCapacityClick = (variant) => {
+    setSelectedVariantBasePrice(variant.basePrice);
+    setSelectedVariantCurrentPrice(variant.currentPrice);
+    setSelectedVariantTotalStock(variant.totalStock);
+    setSelectedVariantSellableStock(variant.sellableStock);
+    setSelectedVariantRam(variant.ram);
+    setSelectedVariantRom(variant.rom);
+    setSelectedVariantRamRom(variant.ram + variant.rom);
+  };
+
+  // Post new comment
+  const userNewComment = {
+    msg: newComment,
+    userName: userName,
+    userImage: userProfileImg,
+  };
+  const postNewComment = () => {
+    let newCommentAPI = rootPath[0] + "/mobiles/addComment/" + productId;
+    axios
+      .post(newCommentAPI, userNewComment)
+      .then(function (response) {})
+      .catch(function (error) {
+        console.log("error: ", error);
+      });
+  };
 
   return (
-    <>
-      <div className={classes.productPage}>
-        <div className={classNames(classes.section, classes.sectionGray)}>
-          <div className={classes.container} style={{ maxWidth: "96.6vw" }}>
-            <div className={classNames(classes.main, classes.mainRaised)}>
+    <div>
+      <div className={classes.main + "" + classes.mainRaised}>
+        <div className="sec-container">
+          <div style={{ marginTop: "10px" }}>
+            {/* Product Basic Info */}
+            {/* Color & capacity selector */}
+            <div className="sec-basic-grid-cont">
+              {/* Products Basic Section */}
+              <div className="product-details-label1">{mName1}</div>
+              {/* ImageGallery, color selector and capacity selector */}
               <GridContainer>
                 {/* ImageGallery */}
-                <GridItem md={4} sm={4} style={{ maxWidth: "25vw" }}>
-                  <Carousel>
+                <GridItem xs={12} sm={3} md={6}>
+                  <Carousel className="carousel-root">
                     {productImages.map((productImages) => (
                       <div key={productImages.id}>
-                        <img src={productImages} />
-                        <p className="legend">{productName}</p>
+                        <img src={productImages.original} />
+                        {/* <p className="legend">{productName}</p> */}
                       </div>
                     ))}
                   </Carousel>
-                </GridItem>
 
-                {/* Product Basic Info */}
-                <GridItem md={8} sm={8}>
-                  {/* Product Name  */}
-                  <h2 className={classes.title}>{productName}</h2>
-
-                  {/* Brand Name  */}
-                  <div style={{ display: "flex" }}>
-                    <h5>Brand:</h5>
-                    <h5 className="color2196F3">{" " + brandName}</h5>
-                  </div>
-
-                  {/* Price and Discount Percentage */}
-                  <div style={{ width: "48vw" }}>
+                  {/* Price & Discount */}
+                  <div className="price-discount-sec">
+                    {/* Price */}
                     <div>
-                      <div className="flexDisplay">
-                        <h5>Base Price:</h5>
-                        <h5 style={{ textDecoration: "line-through" }}>
-                          ৳{basePrice}
-                        </h5>
-                      </div>
-                      <div className="flexDisplay">
-                        <h5>Current Price:</h5>
-                        <h5
-                          className="color2196F3"
-                          style={{ color: "#FF2400", fontWeight: "bold" }}
+                      {selectedVariantBasePrice ===
+                      selectedVariantCurrentPrice ? (
+                        //If current price & base price is same
+                        <span
+                          className="currten-price"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
                         >
-                          ৳{currentPrice}
-                        </h5>
-                      </div>
+                          Price: {selectedVariantBasePrice}৳
+                        </span>
+                      ) : (
+                        //If current price & base price is not same
+                        <div
+                          className={classes.priceContainer}
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          Price:
+                          <span className="old-price">
+                            <p>{selectedVariantBasePrice}৳</p>
+                          </span>
+                          <span className="currten-price">
+                            {selectedVariantCurrentPrice}৳
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Discount Percentage  */}
-                    {discountType === "PERCENT" && discountValue > 0 ? (
-                      <div className="flexDisplay">
-                        <h5>Discount Percentage:</h5>
-                        <div className="discountPercent-section">
-                          -{discountValue}%
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-
-                  {/* Dotted Underline */}
-                  <div
-                    style={{
-                      borderBottom: "1px dotted #000",
-                      marginBottom: "1vh",
-                      width: "48vw",
-                    }}
-                  />
-
-                  {/* Availability, Warranty */}
-                  <div className="flexDisplay" style={{ width: "48vw" }}>
-                    <div>
-                      {/* Availability */}
-                      <div className="flexDisplay">
-                        <h5>Status:</h5>
-                        {sellableQuantity > 0 ? (
-                          <h5 className="color2196F3">Available</h5>
+                    {/* Discount */}
+                    {mDiscountValue > 0 && selectedVariantCurrentPrice > 0 && (
+                      <div style={{ marginLeft: "3vw" }}>
+                        {mDiscountType === "PERCENTAGE" &&
+                        mDiscountValue > 0 ? (
+                          <div className="discount-percentage">
+                            -{mDiscountValue}%
+                          </div>
                         ) : (
-                          <h5 className="colorFF2400">Out of Stock</h5>
+                          <div>
+                            {mDiscountType === "FLAT" && mDiscountValue > 0 ? (
+                              <div className="discount-percentage">
+                                -{mDiscountValue}৳
+                              </div>
+                            ) : null}
+                          </div>
                         )}
                       </div>
-                      {/* Warranty */}
-                      <div className="flexDisplay">
-                        <h5>Warranty:</h5>
-                        <h5 className="color2196F3">{warranty} Month(s)</h5>
+                    )}
+                  </div>
+                  {/* Brand */}
+                  {mBrandName1.length > 0 && (
+                    <div
+                      className="product-details-label6"
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      Brand: {mBrandName1}
+                    </div>
+                  )}
+                  {/* Selected Variant Ram & Rom */}
+                  {selectedVariantRam > 0 && (
+                    <div
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      <div className="product-details-label6">
+                        RAM: {selectedVariantRam} GB /
+                      </div>
+
+                      <div className="product-details-label6">
+                        ROM: {selectedVariantRom} GB
                       </div>
                     </div>
+                  )}
+                  {/* Selected Variant Color */}
+                  {selectedColor.length > 0 && (
+                    <div
+                      className="product-details-label6"
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      Color: {selectedColor}
+                    </div>
+                  )}
+                </GridItem>
+
+                <GridItem xs={12} sm={3} md={6}>
+                  <div className="product-details-label2">
+                    Choose your color:
                   </div>
-
-                  <GridContainer style={{ width: "48vw" }}>
-                    {/* LAUNCH */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="2" className="gridItem-firstcolumn">
-                              LAUNCH
-                            </th>
-                            <th className="gridItem-secondcolumn">Announced</th>
-                            <td>{announchDate}</td>
-                          </tr>
-                          <tr>
-                            <th>Release Date</th>
-                            <td>{releaseDate}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* BODY */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="3" className="gridItem-firstcolumn">
-                              BODY
-                            </th>
-                            <th className="gridItem-secondcolumn">
-                              Dimensions
-                            </th>
-                            <td>{dimension}</td>
-                          </tr>
-                          <tr>
-                            <th>Weight</th>
-                            <td>{weight}</td>
-                          </tr>
-                          <tr>
-                            <th>Build</th>
-                            <td>{build}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* DISPLAY */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="4" className="gridItem-firstcolumn">
-                              DISPLAY
-                            </th>
-                            <th className="gridItem-secondcolumn">Type</th>
-                            <td>{displayType}</td>
-                          </tr>
-                          <tr>
-                            <th>Size</th>
-                            <td>{displaySize}</td>
-                          </tr>
-                          <tr>
-                            <th>Resolution</th>
-                            <td>{displayResolution}</td>
-                          </tr>
-                          <tr>
-                            <th>Protection</th>
-                            <td>{displayProtection}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* PLATFORM */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="4" className="gridItem-firstcolumn">
-                              PLATFORM
-                            </th>
-                            <th className="gridItem-secondcolumn">OS</th>
-                            <td>{OS}</td>
-                          </tr>
-                          <tr>
-                            <th>Chipset</th>
-                            <td>{chipset}</td>
-                          </tr>
-                          <tr>
-                            <th>CPU</th>
-                            <td>{CPU}</td>
-                          </tr>
-                          <tr>
-                            <th>GPU</th>
-                            <td>{GPU}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* MEMORY */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th className="gridItem-firstcolumn">MEMORY</th>
-                            <th className="gridItem-secondcolumn">Internal</th>
-                            <td>{internal}</td>
-                          </tr>
-                          {/* <tr>
-                            <th>Internal</th>
-                            <td>{internal}</td>
-                          </tr> */}
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* COMMS */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="6" className="gridItem-firstcolumn">
-                              COMMS
-                            </th>
-                            <th className="gridItem-secondcolumn">WLAN</th>
-                            <td>{wlan}</td>
-                          </tr>
-                          <tr>
-                            <th>Bluetooth</th>
-                            <td>{blueTooth}</td>
-                          </tr>
-                          <tr>
-                            <th>GPS</th>
-                            <td>{GPS}</td>
-                          </tr>
-                          <tr>
-                            <th>NFC</th>
-                            <td>{NFC}</td>
-                          </tr>
-                          <tr>
-                            <th>Radio</th>
-                            <td>{radio}</td>
-                          </tr>
-                          <tr>
-                            <th>USB</th>
-                            <td>{USB}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* FEATURES */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="3" className="gridItem-firstcolumn">
-                              FEATURES
-                            </th>
-                            <th rowSpan="3" className="gridItem-secondcolumn">
-                              Sensors
-                            </th>
-                            <td>{sensor1}</td>
-                          </tr>
-                          <tr>
-                            <td>{sensor2}</td>
-                          </tr>
-                          <tr>
-                            <td>{sensor3}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* BATTERY */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="3" className="gridItem-firstcolumn">
-                              BATTERY
-                            </th>
-                            <th className="gridItem-secondcolumn">Type</th>
-                            <td>{batteryType}</td>
-                          </tr>
-                          <tr>
-                            <th>Charging</th>
-                            <td>{batteryCharging}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* MISC */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="2" className="gridItem-firstcolumn">
-                              MISC
-                            </th>
-                            <th className="gridItem-secondcolumn">Colors</th>
-                            <td>{color1}</td>
-                          </tr>
-                          <tr>
-                            <th>Models</th>
-                            <td>{model1}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* Details Section */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="1" className="gridItem-firstcolumn">
-                              Other Info
-                            </th>
-                            <th className="gridItem-secondcolumn">
-                              Other Info
-                            </th>
-                            <td>
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: ohterInfo,
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* TESTS */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="3" className="gridItem-firstcolumn">
-                              TESTS
-                            </th>
-                            <th rowSpan="3" className="gridItem-secondcolumn">
-                              Performance
-                            </th>
-                            <td>{performance1}</td>
-                          </tr>
-                          <tr>
-                            <td>{performance2}</td>
-                          </tr>
-                          <tr>
-                            <td>{performance3}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    <br />
-                    <br />
+                  <br />
+                  {/* Choose your color: */}
+                  <GridContainer>
+                    {allVariants.map((productVariants) => (
+                      <GridItem
+                        xs={6}
+                        sm={6}
+                        md={6}
+                        onClick={() =>
+                          productColorClick(productVariants, event)
+                        }
+                        key={productVariants.id}
+                      >
+                        <div
+                          className="product-details-color-sec"
+                          style={{
+                            borderColor:
+                              productVariants.color === selectedColor
+                                ? "#0E86D4"
+                                : "#d3d3d3",
+                          }}
+                        >
+                          <div
+                            className="product-details-color-color"
+                            style={{ background: productVariants.colorCode }}
+                          />
+                          <div
+                            className="product-details-label4"
+                            style={{ marginTop: "7px" }}
+                          >
+                            {productVariants.color}
+                          </div>
+                        </div>
+                      </GridItem>
+                    ))}
                   </GridContainer>
+
+                  <div className="product-details-label2">
+                    Choose your capacity:
+                  </div>
+                  <br />
+
+                  {/* Choose your capacity: */}
+                  <GridContainer>
+                    {console.log(
+                      "selectedColorVariants:",
+                      selectedColorVariants
+                    )}
+                    {selectedColorVariants.map((selectedVrnt) => (
+                      <GridItem
+                        xs={6}
+                        sm={6}
+                        md={6}
+                        onClick={() => productCapacityClick(selectedVrnt)}
+                        key={selectedVrnt.id}
+                      >
+                        <div
+                          className="product-details-capacity-sec"
+                          style={{
+                            borderColor:
+                              selectedVrnt.ram + selectedVrnt.rom ===
+                              selectedVariantRamRom
+                                ? "#0E86D4"
+                                : "#d3d3d3",
+                          }}
+                        >
+                          {/* Ram / Rom */}
+                          <div className="ram-rom-div-cont">
+                            <div className="product-details-label3">
+                              {selectedVrnt.ram}GB /
+                            </div>
+                            <div className="product-details-label6">
+                              {selectedVrnt.rom}GB
+                            </div>
+                          </div>
+                          <div
+                            className="product-details-label4"
+                            style={{ marginTop: "7px" }}
+                          >
+                            {selectedVrnt.currentPrice}৳
+                          </div>
+                        </div>
+                      </GridItem>
+                    ))}
+                  </GridContainer>
+                </GridItem>
+              </GridContainer>
+            </div>
+
+            {/* Product Detail Info */}
+            <div
+              className="product-details-label3"
+              style={{
+                marginTop: "10vh",
+                justifyContent: "center",
+                display: "flex",
+              }}
+            >
+              Detail Specifications
+            </div>
+            <div style={{ margin: "50px 50px" }}>
+              <GridContainer>
+                {/* DISPLAY */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={phoneDisplay} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    DISPLAY
+                  </div>
+                  {/* Display Type */}
+                  {mDisplayType1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">
+                        Display Type
+                      </div>
+                      <div className="product-details-label4">
+                        {mDisplayType1}
+                      </div>
+                    </div>
+                  )}
+                  {/* Display Size */}
+                  {mDisplaySize1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">
+                        Display Size
+                      </div>
+                      <div className="product-details-label4">
+                        {mDisplaySize1}
+                      </div>
+                    </div>
+                  )}
+                  {/* Resolution */}
+                  {mResolution1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Resolution</div>
+                      <div className="product-details-label4">
+                        {mResolution1}
+                      </div>
+                    </div>
+                  )}
+                  {/* Protection */}
+                  {mProtection1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Protection</div>
+                      <div className="product-details-label4">
+                        {mProtection1}
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* BODY */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={phoneBody} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    BODY
+                  </div>
+                  {/* Dimensions */}
+                  {mDimension1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Dimensions</div>
+                      <div className="product-details-label4">
+                        {mDimension1}
+                      </div>
+                    </div>
+                  )}
+                  {/* Weight */}
+                  {mWeight1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Weight</div>
+                      <div className="product-details-label4">{mWeight1}</div>
+                    </div>
+                  )}
+                  {/* Build */}
+                  {mBuild1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Build</div>
+                      <div className="product-details-label4">{mBuild1}</div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* LAUNCH */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={launchIcon} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    LAUNCH
+                  </div>
+                  {/* Announced */}
+                  {mAnnounchDate1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Announced</div>
+                      <div className="product-details-label4">
+                        {mAnnounchDate1}
+                      </div>
+                    </div>
+                  )}
+                  {/* Released */}
+                  {mReleaseDate1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Released</div>
+                      <div className="product-details-label4">
+                        {mReleaseDate1}
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* MEMORY */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={phoneStorage} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    MEMORY
+                  </div>
+                  {/* Internal Storage */}
+                  {mInternal1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">
+                        Internal Storage
+                      </div>
+                      <div className="product-details-label4">{mInternal1}</div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* BATTERY */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={batteryIcon} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    BATTERY
+                  </div>
+                  {/* Battery Type */}
+                  {mType1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">
+                        Battery Type
+                      </div>
+                      <div className="product-details-label4">{mType1}</div>
+                    </div>
+                  )}
+                  {/* Charging Type */}
+                  {mBatteryCharging1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">
+                        Charging Type
+                      </div>
+                      <div className="product-details-label4">
+                        {mBatteryCharging1}
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* PLATFORM */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={phoneOS} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    PLATFORM
+                  </div>
+                  {/* OS */}
+                  {mOS1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">OS</div>
+                      <div className="product-details-label4">{mOS1}</div>
+                    </div>
+                  )}
+                  {/* Chipset */}
+                  {mChipset1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Chipset</div>
+                      <div className="product-details-label4">{mChipset1}</div>
+                    </div>
+                  )}
+                  {/* CPU */}
+                  {mCPU1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">CPU</div>
+                      <div className="product-details-label4">{mCPU1}</div>
+                    </div>
+                  )}
+                  {/* GPU */}
+                  {mGPU !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">GPU</div>
+                      <div className="product-details-label4">{mGPU}</div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* FEATURES */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={featureIcon} alt="Netword" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    FEATURES
+                  </div>
+                  {/* Sensors */}
+                  {Object.keys(mSensor).length !== 0 && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Sensors</div>
+                      <div
+                        className="product-details-label4"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        {mSensor.map((mSensor) => (
+                          <div key={mSensor.id}>{mSensor}</div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* MISC */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={miscIcon} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    MISC
+                  </div>
+                  {/* Models */}
+                  {mModel1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Model(s)</div>
+                      <div className="product-details-label4">{mModel1}</div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* COMMS */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={commsIcon} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    COMMS
+                  </div>
+                  {/* WLAN */}
+                  {mWlan1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">WLAN</div>
+                      <div className="product-details-label4">{mWlan1}</div>
+                    </div>
+                  )}
+                  {/* Bluetooth */}
+                  {mBlueTooth1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Bluetooth</div>
+                      <div className="product-details-label4">
+                        {mBlueTooth1}
+                      </div>
+                    </div>
+                  )}
+                  {/* GPS */}
+                  {mGPS1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">GPS</div>
+                      <div className="product-details-label4">{mGPS1}</div>
+                    </div>
+                  )}
+                  {/* NFC */}
+                  {mNFC1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">NFC</div>
+                      <div className="product-details-label4">{mNFC1}</div>
+                    </div>
+                  )}
+                  {/* Radio */}
+                  {mRadio1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Radio</div>
+                      <div className="product-details-label4">{mRadio1}</div>
+                    </div>
+                  )}
+                  {/* USB */}
+                  {mUSB1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">USB</div>
+                      <div className="product-details-label4">{mUSB1}</div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* TESTS */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={testIcon} alt="Netword" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    TESTS
+                  </div>
+                  {/* Performance */}
+                  {Object.keys(mPerformance).length !== 0 && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Performance</div>
+                      <div
+                        className="product-details-label4"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        {mPerformance.map((mPerformance) => (
+                          <div key={mPerformance.id}>{mPerformance}</div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </GridItem>
               </GridContainer>
 
               {/* User Opinions & Reviews */}
               <GridContainer>
-                <h3 className={classNames(classes.title, classes.textCenter)}>
-                  {productName} - User Opinions & Reviews
+                <h3 className={classes.title + "" + classes.textCenter}>
+                  {mName1} - User Opinions & Reviews
                 </h3>
                 <GridItem xs={12} sm={12} md={12} className={classes.mrAuto}>
                   <div>
@@ -656,8 +894,6 @@ function SmartWatchDetails(props) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
-
-export default SmartWatchDetails;

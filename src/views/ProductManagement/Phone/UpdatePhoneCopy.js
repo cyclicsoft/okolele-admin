@@ -61,13 +61,14 @@ import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 import SearchToClone from "../CloneProducts/SearchToClone";
 import DynamicElementCreator from "../DynamicElementCreator";
 import ProductVariants from "../ProductVariants";
+import ProductUpdateWarning from "views/ConfirmationModals/ProductUpdateWarning";
 // toast-configuration method,
 // it is compulsory method.
 toast.configure();
 
 const useStyles = makeStyles(styles);
 
-function CreateTab() {
+function UpdatePhoneCopy(props) {
   const classes = useStyles();
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
@@ -85,19 +86,15 @@ function CreateTab() {
     },
   };
   // Product Info
-  // Bulk Upload
-  const [csvFile, setCsvFile] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const [fileSize, setFileSize] = useState(0);
-  // const [fileUpdateDate, setFileUpdateDate] = useState([]);
   // Basic
-  const [category, setCategory] = useState("2"); //category 2 is fixed for tab
+  const [category, setCategory] = useState("1"); //category 1 is fixed for phone
   const [mName, setmName] = useState("");
   const [mDiscountType, setmDiscountType] = useState("FLAT");
   const [mDiscountValue, setmDiscountValue] = useState(0);
   const [mBrandName, setmBrandName] = useState("1101");
   const [mWarranty, setmWarranty] = useState(0);
-
+  const [userComments, setUserComments] = useState([]);
+  const [isPublished, setPsPublished] = useState(false);
   // NETWORK
   const [mTechnology, setmTechnology] = useState("");
   const [m2GBand, setm2GBand] = useState([]);
@@ -158,11 +155,165 @@ function CreateTab() {
   // product All Variants
   const [productAllVariants, setProductAllVariants] = useState([]);
 
-  // Product create confirmation popup viewar
-  const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
+  // Data loader flag
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  // Product update confirmation popup viewar
+  const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false); // Http Response Msg
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
+  // Preview and Crop Img
+  const [shouldPreview, setShouldPreview] = useState(false);
+  const [imgIdToPreview, setImgIdToPreview] = useState("");
+
+  useEffect(() => {
+    const mobileDetailsAPI =
+      "http://localhost:8080/mobiles/" + props.editProductId;
+
+    axios
+      .get(mobileDetailsAPI)
+      .then(function (response) {
+        console.log("axios / Product Details: ", response);
+        setIsDataLoaded(false);
+
+        setCategory(response.data.content.category);
+        // Basic
+        setmName(response.data.content.title);
+        setmDiscountType(response.data.content.discount.type);
+        setmDiscountValue(response.data.content.discount.value);
+        if (response.data.content.brand === "SAMSUNG") {
+          setmBrandName(1101);
+        } else if (response.data.content.brand === "APPLE") {
+          setmBrandName(1102);
+        } else if (response.data.content.brand === "XIAOMI") {
+          setmBrandName(1103);
+        } else if (response.data.content.brand === "REALME") {
+          setmBrandName(1104);
+        } else if (response.data.content.brand === "ONEPLUS") {
+          setmBrandName(1105);
+        } else if (response.data.content.brand === "WALTON") {
+          setmBrandName(1106);
+        } else if (response.data.content.brand === "SYMPHONY") {
+          setmBrandName(1107);
+        } else if (response.data.content.brand === "OPPO") {
+          setmBrandName(1108);
+        } else if (response.data.content.brand === "NOKIA") {
+          setmBrandName(1109);
+        } else if (response.data.content.brand === "VIVO") {
+          setmBrandName(1110);
+        } else if (response.data.content.brand === "HUAWEI") {
+          setmBrandName(1111);
+        } else if (response.data.content.brand === "TECNO") {
+          setmBrandName(1112);
+        } else if (response.data.content.brand === "INFINIX") {
+          setmBrandName(1113);
+        } else if (response.data.content.brand === "GOOGLE") {
+          setmBrandName(1114);
+        } else if (response.data.content.brand === "HONOR") {
+          setmBrandName(1115);
+        } else if (response.data.content.brand === "SONY") {
+          setmBrandName(1116);
+        } else if (response.data.content.brand === "ASUS") {
+          setmBrandName(1117);
+        } else if (response.data.content.brand === "UMIDIGI") {
+          setmBrandName(1118);
+        } else if (response.data.content.brand === "MICROMAX") {
+          setmBrandName(1119);
+        } else if (response.data.content.brand === "MAXIMUS") {
+          setmBrandName(1120);
+        } else if (response.data.content.brand === "LG") {
+          setmBrandName(1121);
+        } else if (response.data.content.brand === "HTC") {
+          setmBrandName(1122);
+        } else if (response.data.content.brand === "LAVA") {
+          setmBrandName(1123);
+        } else if (response.data.content.brand === "HELIO") {
+          setmBrandName(1124);
+        } else if (response.data.content.brand === "ALCATEL") {
+          setmBrandName(1125);
+        } else if (response.data.content.brand === "LENOVO") {
+          setmBrandName(1126);
+        } else if (response.data.content.brand === "OKAPIA") {
+          setmBrandName(1127);
+        } else if (response.data.content.brand === "MYCELL") {
+          setmBrandName(1128);
+        } else if (response.data.content.brand === "ITEL") {
+          setmBrandName(1129);
+        }
+
+        setmWarranty(response.data.content.warranty);
+        setUserComments(response.data.content.comments);
+
+        setPsPublished(response.data.content.published);
+
+        // NETWORK
+        setmTechnology(response.data.content.technology);
+        setm2GBand(response.data.content.m2GBands);
+        setm3GBand(response.data.content.m3GBands);
+        setm4GBand(response.data.content.m4GBands);
+        setm5GBand(response.data.content.m5GBands);
+        setmSpeed(response.data.content.speed);
+        // LAUNCH
+        setmAnnounchDate(response.data.content.announceDate);
+        setmReleaseDate(response.data.content.releaseDate);
+        // BODY
+        setmDimension(response.data.content.dimension);
+        setmWeight(response.data.content.weight);
+        setmBuild(response.data.content.build);
+        setmSim(response.data.content.sim);
+        // DISPLAY
+        setmDisplayType(response.data.content.displayType);
+        setmSize(response.data.content.displaySize);
+        setmResolution(response.data.content.displayResolution);
+        setmProtection(response.data.content.displayProtection);
+        // PLATFORM
+        setmOS(response.data.content.os);
+        setmChipset(response.data.content.chipset);
+        setmCPU(response.data.content.cpu);
+        setmGPU(response.data.content.gpu);
+        // MEMORY
+        setmCardSlot(response.data.content.cardSlot);
+        setmInternal(response.data.content.internalSlot);
+        // MAIN CAMERA
+        setMainCams(response.data.content.mainCamera);
+        setMainCamFeatures(response.data.content.mainCameraFeatures);
+        setMainCamVideos(response.data.content.mainCameraVideo);
+        // SELFIE CAMERA
+        setFrontCams(response.data.content.frontCamera);
+        setFrontCamFeatures(response.data.content.frontCameraFeatures);
+        setFrontCamVideos(response.data.content.frontCameraVideo);
+        // SOUND
+        setmLoudSpeaker(response.data.content.loudspeaker);
+        setmJack(response.data.content.jack);
+        // COMMS
+        setmWlan(response.data.content.wlan);
+        setmBlueTooth(response.data.content.bluetooth);
+        setmGPS(response.data.content.gps);
+        setmNFC(response.data.content.nfc);
+        setmRadio(response.data.content.radio);
+        setmUSB(response.data.content.usb);
+        // FEATURES
+        setSensors(response.data.content.sensors);
+        // BATTERY
+        setmBatteryType(response.data.content.batteryType);
+        setmBatteryCharging(response.data.content.batteryCharging);
+        // MISC
+        setModels(response.data.content.models);
+        setmSar(response.data.content.sarUs);
+        setmSarEu(response.data.content.sarEu);
+        // TESTS
+        setPerformances(response.data.content.performances);
+
+        // Variants
+        setProductAllVariants(response.data.content.variants);
+
+        setIsDataLoaded(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setIsDataLoaded(true);
+      });
+  }, [props.editProductId]);
 
   // Dynamic Elements Handler
   const band2gHandler = (callBackData) => {
@@ -211,7 +362,7 @@ function CreateTab() {
     setProductAllVariants(response);
   };
 
-  const tabDetails = {
+  const phoneDetails = {
     category: category,
     title: mName,
     brand: mBrandName,
@@ -266,40 +417,42 @@ function CreateTab() {
     variants: productAllVariants,
   };
 
-  const tabSaveClick = () => {
-    setShowProductCreatePopup(true);
+  // phone update Handler
+  const phoneUpdateClick = () => {
+    setShowProductUpdatePopup(true);
   };
-  // Product Create Flag From Modal
-  const productCreateFlagFromModal = (isConfirmed) => {
+
+  // Product Update Flag From Modal
+  const productUpdateFlagFromModal = (isConfirmed) => {
     if (isConfirmed === true) {
       var currentLocalDateTime = new Date();
       if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        // console.log(
-        //   "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        // );
-        saveNewTab();
+        console.log(
+          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
+        );
+        phoneUpdate();
       } else {
-        // console.log(
-        //   "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        // );
+        console.log(
+          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
+        );
         // If access token validity expires, call refresh token api
         refreshTokenHandler((isRefreshed) => {
-          // console.log("isRefreshed: ", isRefreshed);
-          saveNewTab();
+          console.log("isRefreshed: ", isRefreshed);
+          phoneUpdate();
         });
       }
     }
-
-    setShowHttpResponseMsg(false);
-    setShowProductCreatePopup(false);
+    setShowProductUpdatePopup(false);
   };
+  const phoneUpdate = () => {
+    const phoneUpdateAPI =
+      "http://localhost:8080/mobiles/" + props.editProductId;
 
-  const saveNewTab = () => {
-    console.log("saveNewTab/tabDetails: ", tabDetails);
-    const tabCreateAPI = "http://localhost:8080/tablets";
     axios
-      .post(tabCreateAPI, tabDetails, config)
+      .put(phoneUpdateAPI, phoneDetails, config)
       .then(function (response) {
+        // console.log("update response: ", response);
+        // console.log("response code: ", response.status);
         setHttpResponseCode(response.status);
         setShowHttpResponseMsg(true);
       })
@@ -346,7 +499,7 @@ function CreateTab() {
   };
 
   const resetGeneralInfo = () => {
-    setCategory("2");
+    setCategory("1");
     setmName("");
     setmDiscountType("FLAT");
     setmDiscountValue(0);
@@ -443,81 +596,24 @@ function CreateTab() {
     setPerformances([]);
   };
 
-  // Bulk Upload
-  const setFile = (event) => {
-    setCsvFile(event.target.files[0]);
-
-    var files = event.target.files;
-    var filesArray = [].slice.call(files);
-    filesArray.forEach((event) => {
-      setFileName(event.name);
-      setFileSize(Math.round(event.size / 1024));
-      // console.log(event.type);
-      // console.log(event.length);
-      // setFileUpdateDate(event.lastModifiedDate);
-    });
+  // remove Comment from front end ( remove from userComments variable)
+  const deleteComment = (msg) => {
+    console.log("userComments: ", userComments);
+    setUserComments(userComments.filter((item) => item.msg !== msg));
   };
-  const bulkUploadHandler = () => {
-    // console.log("CSV: ", csvFile);
-
-    //Get file extension from file name
-    const split_name = csvFile.name.split(".");
-    const type = split_name[split_name.length - 1];
-
-    //create a blob from file calling mime type injection function
-    const blob = new Blob([csvFile], { type: mimeType(type) });
-
-    //Here you can use the file as you wish
-    const new_file = blobToFile(blob, "csv");
-    // console.log(new_file);
-
-    const data = new FormData();
-    data.append("file", new_file);
-    data.append("productType", "TABLET");
-
-    const csvConfig = {
-      headers: {
-        "content-type": `multipart/form-data; boundary=${data._boundary}`,
-        Authorization: "Bearer " + userToken.token,
-      },
-    };
-
-    const bulkUploadAPI = "http://localhost:8080/products/bulkdata";
+  // Update Comment in DB after removing comments from userComments variable
+  const commentsUpdateHandler = () => {
+    const commentsUpdateAPI =
+      "http://localhost:8080/mobiles/deleteComment/" + props.editProductId;
 
     axios
-      .post(bulkUploadAPI, data, csvConfig)
+      .post(commentsUpdateAPI, userComments)
       .then(function (response) {
-        // console.log("update response: ", response);
+        console.log("commentsUpdateAPI response: ", response);
       })
       .catch(function (error) {
-        // console.log("error: ", error);
-        // if (error.response) {
-        //   console.log(error.response.data);
-        //   console.log(error.response.status);
-        //   console.log(error.response.headers);
-        // }
+        console.log(error);
       });
-  };
-
-  //Inject mimeType By extension - Excel files check only
-  const mimeType = (extension) => {
-    switch (extension) {
-      case "xlsx":
-        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-      case "xls":
-        return "application/vnd.ms-excel";
-
-      default:
-        return "text/csv";
-    }
-  };
-  //Convert Blob to File
-  const blobToFile = (theBlob, fileName) => {
-    theBlob.lastModifiedDate = new Date();
-    theBlob.name = fileName;
-
-    return theBlob;
   };
 
   const refreshTokenHandler = () => {
@@ -574,207 +670,23 @@ function CreateTab() {
     }
   };
 
-  // Searched Product from SearchToCLone.js
-  const getSearchedProduct = (searchedProduct) => {
-    setCategory("2");
-    // Basic
-    setmName(searchedProduct.title);
-    setmDiscountType(searchedProduct.discount.type);
-    setmDiscountValue(searchedProduct.discount.value);
-
-    setProductAllVariants(searchedProduct.variants);
-
-    if (searchedProduct.brand === "SAMSUNG") {
-      setmBrandName(1101);
-    } else if (searchedProduct.brand === "APPLE") {
-      setmBrandName(1102);
-    } else if (searchedProduct.brand === "XIAOMI") {
-      setmBrandName(1103);
-    } else if (searchedProduct.brand === "REALME") {
-      setmBrandName(1104);
-    } else if (searchedProduct.brand === "ONEPLUS") {
-      setmBrandName(1105);
-    } else if (searchedProduct.brand === "WALTON") {
-      setmBrandName(1106);
-    } else if (searchedProduct.brand === "SYMPHONY") {
-      setmBrandName(1107);
-    } else if (searchedProduct.brand === "OPPO") {
-      setmBrandName(1108);
-    } else if (searchedProduct.brand === "NOKIA") {
-      setmBrandName(1109);
-    } else if (searchedProduct.brand === "VIVO") {
-      setmBrandName(1110);
-    } else if (searchedProduct.brand === "HUAWEI") {
-      setmBrandName(1111);
-    } else if (searchedProduct.brand === "TECNO") {
-      setmBrandName(1112);
-    } else if (searchedProduct.brand === "INFINIX") {
-      setmBrandName(1113);
-    } else if (searchedProduct.brand === "GOOGLE") {
-      setmBrandName(1114);
-    } else if (searchedProduct.brand === "HONOR") {
-      setmBrandName(1115);
-    } else if (searchedProduct.brand === "SONY") {
-      setmBrandName(1116);
-    } else if (searchedProduct.brand === "ASUS") {
-      setmBrandName(1117);
-    } else if (searchedProduct.brand === "UMIDIGI") {
-      setmBrandName(1118);
-    } else if (searchedProduct.brand === "MICROMAX") {
-      setmBrandName(1119);
-    } else if (searchedProduct.brand === "MAXIMUS") {
-      setmBrandName(1120);
-    } else if (searchedProduct.brand === "LG") {
-      setmBrandName(1121);
-    } else if (searchedProduct.brand === "HTC") {
-      setmBrandName(1122);
-    } else if (searchedProduct.brand === "LAVA") {
-      setmBrandName(1123);
-    } else if (searchedProduct.brand === "HELIO") {
-      setmBrandName(1124);
-    } else if (searchedProduct.brand === "ALCATEL") {
-      setmBrandName(1125);
-    } else if (searchedProduct.brand === "LENOVO") {
-      setmBrandName(1126);
-    } else if (searchedProduct.brand === "OKAPIA") {
-      setmBrandName(1127);
-    } else if (searchedProduct.brand === "MYCELL") {
-      setmBrandName(1128);
-    } else if (searchedProduct.brand === "ITEL") {
-      setmBrandName(1129);
-    }
-
-    setmWarranty(searchedProduct.warranty);
-
-    // NETWORK
-    setmTechnology(searchedProduct.technology);
-    setm2GBand(searchedProduct.m2GBands);
-    setm3GBand(searchedProduct.m3GBands);
-    setm4GBand(searchedProduct.m4GBands);
-    setm5GBand(searchedProduct.m5GBands);
-    setmSpeed(searchedProduct.speed);
-    // LAUNCH
-    setmAnnounchDate(searchedProduct.announceDate);
-    setmReleaseDate(searchedProduct.releaseDate);
-    // BODY
-    setmDimension(searchedProduct.dimension);
-    setmWeight(searchedProduct.weight);
-    setmBuild(searchedProduct.build);
-    setmSim(searchedProduct.sim);
-    // DISPLAY
-    setmDisplayType(searchedProduct.displayType);
-    setmSize(searchedProduct.displaySize);
-    setmResolution(searchedProduct.displayResolution);
-    setmProtection(searchedProduct.displayProtection);
-    // PLATFORM
-    setmOS(searchedProduct.os);
-    setmChipset(searchedProduct.chipset);
-    setmCPU(searchedProduct.cpu);
-    setmGPU(searchedProduct.gpu);
-    // MEMORY
-    setmCardSlot(searchedProduct.cardSlot);
-    setmInternal(searchedProduct.internalSlot);
-    // MAIN CAMERA
-    setMainCams(searchedProduct.mainCamera);
-    setMainCamFeatures(searchedProduct.mainCameraFeatures);
-    setMainCamVideos(searchedProduct.mainCameraVideo);
-    // SELFIE CAMERA
-    setFrontCams(searchedProduct.frontCamera);
-    setFrontCamFeatures(searchedProduct.frontCameraFeatures);
-    setFrontCamVideos(searchedProduct.frontCameraVideo);
-    // SOUND
-    setmLoudSpeaker(searchedProduct.loudspeaker);
-    setmJack(searchedProduct.jack);
-    // COMMS
-    setmWlan(searchedProduct.wlan);
-    setmBlueTooth(searchedProduct.bluetooth);
-    setmGPS(searchedProduct.gps);
-    setmNFC(searchedProduct.nfc);
-    setmRadio(searchedProduct.radio);
-    setmUSB(searchedProduct.usb);
-    // FEATURES
-    setSensors(searchedProduct.sensors);
-    // BATTERY
-    setmBatteryType(searchedProduct.batteryType);
-    setmBatteryCharging(searchedProduct.batteryCharging);
-    // MISC
-    setModels(searchedProduct.models);
-    setmSar(searchedProduct.sarUs);
-    setmSarEu(searchedProduct.sarEu);
-    // TESTS
-    setPerformances(searchedProduct.performances);
-  };
-
   return (
     <>
       {/* Confirmation Modal */}
       <div>
-        {/* Confirmation Modal */}
-        {showProductCreatePopup ? (
-          <ProductCreateConfirmation
-            productCreateFlagFromModal={productCreateFlagFromModal}
+        {/* Confirmation Modal */}={" "}
+        {showProductUpdatePopup ? (
+          <ProductUpdateWarning
+            productUpdateFlagFromModal={productUpdateFlagFromModal}
           />
         ) : null}
-
         {/* Show HTTP response code  */}
         {showHttpResponseMsg === true ? (
           <HttpStatusCode responseCode={httpResponseCode} />
         ) : null}
       </div>
 
-      {/* Bulk Phone Upload  */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card>
-            <CardHeader color="rose" icon>
-              {/* <CardIcon color="rose">
-                <LocalOfferIcon />
-              </CardIcon> */}
-              <h4 className={classes.cardIconTitle}>Bulk Upload</h4>
-            </CardHeader>
-            <CardBody>
-              {/* Bulk Phone Upload  */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Select CSV"
-                    id="select-csv"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "file",
-                      onChange: (event) => setFile(event),
-                    }}
-                  />
-                </GridItem>
-                {/* Upload button */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <Button
-                    color="rose"
-                    style={{ marginTop: "20px" }}
-                    className={classes.updateProfileButton}
-                    onClick={bulkUploadHandler}
-                  >
-                    Upload CSV
-                  </Button>
-                </GridItem>
-              </GridContainer>
-
-              {fileSize > 0 ? (
-                <GridContainer>
-                  <GridItem>
-                    <div>File Size: {fileSize} KB</div>
-                  </GridItem>
-                </GridContainer>
-              ) : null}
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
-      <h4 className={classes.cardIconTitle}>Create New Tab</h4>
+      <h4 className={classes.cardIconTitle}>Create New Phone</h4>
       {/* Reset & Search To Clone */}
       <div style={{ display: "flex" }}>
         {/* Reset */}
@@ -782,12 +694,6 @@ function CreateTab() {
           <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "}
           Reset A~Z
         </div>
-
-        {/* Search To Clone */}
-        <SearchToClone
-          getSearchedProduct={getSearchedProduct}
-          productType={"tablets"}
-        />
       </div>
 
       {/* [GENERAL INFO] */}
@@ -834,7 +740,7 @@ function CreateTab() {
                   />
                 </GridItem>
 
-                {/* Category 2 is fixed for tab type */}
+                {/* Category 1 is fixed for Phone type */}
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     labelText="Product Category "
@@ -2038,12 +1944,12 @@ function CreateTab() {
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={tabSaveClick}
+        onClick={phoneUpdateClick}
       >
-        Save
+        Save & Update
       </Button>
     </>
   );
 }
 
-export default CreateTab;
+export default UpdatePhoneCopy;

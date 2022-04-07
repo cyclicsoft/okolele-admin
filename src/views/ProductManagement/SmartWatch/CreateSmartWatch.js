@@ -1,14 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
 import { store, useGlobalState } from "state-pool";
 
 // material-ui icons
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
-import Radio from "@material-ui/core/Radio";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import RssFeedIcon from "@mui/icons-material/RssFeed";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -24,11 +19,8 @@ import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
 import BatteryCharging50Icon from "@mui/icons-material/BatteryCharging50";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import SpeedIcon from "@mui/icons-material/Speed";
-import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import DetailsIcon from "@mui/icons-material/Details";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -40,29 +32,24 @@ import DateFnsUtils from "@date-io/date-fns";
 // Card
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 // Custom Input
 import CustomInput from "components/CustomInput/CustomInput.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
 // Date
-import "date-fns";
-import DateValidate from "views/DatePicker/DateValidate";
+// import "date-fns";
+// import DateValidate from "views/DatePicker/DateValidate";
 // SCSS File
 // import '../../assets/scss/ghorwali-scss/voucherCard.scss'
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
-
+// Data formatter
 import moment from "moment";
-import { title } from "assets/jss/material-dashboard-pro-react";
-import SaveWarning from "views/ConfirmationModals/SaveWarning";
+
 // Dropdown Select
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-// Rich Text Editor
-import JoditEditor from "jodit-react";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
 
 // Importing toastify module
@@ -71,21 +58,12 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 
-import ImgCropper from "views/OkoleleImageCropper/ImgCropper";
 import SearchToClone from "../CloneProducts/SearchToClone";
+import DynamicElementCreator from "../DynamicElementCreator";
+import ProductVariants from "../ProductVariants";
 // toast-configuration method,
 // it is compulsory method.
 toast.configure();
-
-// import {
-//   MuiPickersUtilsProvider,
-//   KeyboardTimePicker,
-//   KeyboardDatePicker,
-// } from "@material-ui/pickers";
-// import Grid from "@material-ui/core/Grid";
-// import DateFnsUtils from "@date-io/date-fns";
-// import "date-fns";
-// var moment = require('moment');
 
 const useStyles = makeStyles(styles);
 
@@ -107,97 +85,87 @@ function CreateSmartWatch() {
     },
   };
   // Product Info
-  // General
-  const [category, setCategory] = useState("3");
-  // prefix m denotes mobile product
   // Bulk Upload
   const [csvFile, setCsvFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [fileSize, setFileSize] = useState(0);
+  // const [fileUpdateDate, setFileUpdateDate] = useState([]);
   // Basic
-  const [mName, setmName] = useState("N/A");
-  const [basePrice, setBasePrice] = useState(0);
-  const [currentPrice, setCurrentPrice] = useState(0);
-  const [mDiscountType, setmDiscountType] = useState("N/A");
-  const [mDiscountValue, setmDiscountValue] = useState("0");
-  const [mTotalQuantity, setmTotalQuantity] = useState("0");
-  const [mSellableQuantity, setmSellableQuantity] = useState("0");
-  const [mBrandName, setmBrandName] = useState("N/A");
-  const [mWarranty, setmWarranty] = useState("0");
-  const [productImages, setProductImages] = useState([
-    { imgId: 1, imgBase64: "" },
-    { imgId: 2, imgBase64: "" },
-    { imgId: 3, imgBase64: "" },
-    { imgId: 4, imgBase64: "" },
-    { imgId: 5, imgBase64: "" },
-  ]);
+  const [category, setCategory] = useState("3"); //category 3 is fixed for SW
+  const [mName, setmName] = useState("");
+  const [mDiscountType, setmDiscountType] = useState("FLAT");
+  const [mDiscountValue, setmDiscountValue] = useState(0);
+  const [mBrandName, setmBrandName] = useState("1101");
+  const [mWarranty, setmWarranty] = useState(0);
+
   // LAUNCH
   const [mAnnounchDate, setmAnnounchDate] = useState(new Date());
   const [mReleaseDate, setmReleaseDate] = useState(new Date());
   // BODY
-  const [mDimension, setmDimension] = useState("N/A");
-  const [mWeight, setmWeight] = useState("N/A");
-  const [mBuild, setmBuild] = useState("N/A");
+  const [mDimension, setmDimension] = useState("");
+  const [mWeight, setmWeight] = useState("");
+  const [mBuild, setmBuild] = useState("");
   // DISPLAY
-  const [mDisplayType, setmDisplayType] = useState("N/A");
-  const [mSize, setmSize] = useState("N/A");
-  const [mResolution, setmResolution] = useState("N/A");
-  const [mProtection, setmProtection] = useState("N/A");
+  const [mDisplayType, setmDisplayType] = useState("");
+  const [mSize, setmSize] = useState("");
+  const [mResolution, setmResolution] = useState("");
+  const [mProtection, setmProtection] = useState("");
   // PLATFORM
-  const [mOS, setmOS] = useState("N/A");
-  const [mChipset, setmChipset] = useState("N/A");
-  const [mCPU, setmCPU] = useState("N/A");
-  const [mGPU, setmGPU] = useState("N/A");
+  const [mOS, setmOS] = useState("");
+  const [mChipset, setmChipset] = useState("");
+  const [mCPU, setmCPU] = useState("");
+  const [mGPU, setmGPU] = useState("");
   // MEMORY
-  const [mInternal, setmInternal] = useState("N/A");
-  // SOUND
-  const [mLoudSpeaker, setmLoudSpeaker] = useState("N/A");
-  const [mJack, setmJack] = useState("N/A");
+  const [mInternal, setmInternal] = useState("");
   // COMMS
   const [mWlan, setmWlan] = useState("");
-  const [mBlueTooth, setmBlueTooth] = useState("N/A");
-  const [mGPS, setmGPS] = useState("N/A");
-  const [mNFC, setmNFC] = useState("N/A");
-  const [mRadio, setmRadio] = useState("N/A");
-  const [mUSB, setmUSB] = useState("N/A");
+  const [mBlueTooth, setmBlueTooth] = useState("");
+  const [mGPS, setmGPS] = useState("");
+  const [mNFC, setmNFC] = useState("");
+  const [mRadio, setmRadio] = useState("");
+  const [mUSB, setmUSB] = useState("");
   // FEATURES
-  const [mSensor1, setmSensor1] = useState("N/A");
-  const [mSensor2, setmSensor2] = useState("N/A");
-  const [mSensor3, setmSensor3] = useState("N/A");
+  const [sensors, setSensors] = useState([]);
   // BATTERY
-  const [mBatteryType, setmBatteryType] = useState("N/A");
-  const [mBatteryCharging, setmBatteryCharging] = useState("N/A");
+  const [mBatteryType, setmBatteryType] = useState("");
+  const [mBatteryCharging, setmBatteryCharging] = useState("");
   // MISC
-  const [mColor, setmColor] = useState("N/A");
-  const [mModel, setmModel] = useState("N/A");
-  // Detail Info
-  const [swOtherInfo, setSwOtherInfo] = useState("");
-  const editor = useRef(null);
+  const [models, setModels] = useState([]);
   // TESTS
-  const [performance1, setPerformance1] = useState("N/A");
-  const [performance2, setPerformance2] = useState("N/A");
-  const [performance3, setPerformance3] = useState("N/A");
+  const [performances, setPerformances] = useState([]);
+  // product All Variants
+  const [productAllVariants, setProductAllVariants] = useState([]);
+  // other Details
+  const [otherDetails, setOtherDetails] = useState([]);
+
   // Product create confirmation popup viewar
   const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
-  // Preview and Crop Img
-  const [shouldPreview, setShouldPreview] = useState(false);
-  const [imgIdToPreview, setImgIdToPreview] = useState("");
 
-  // For rich text editor
-  const joditConfig = {
-    readonly: false, // all options from https://xdsoft.net/jodit/doc/
+  // Dynamic Elements Handler
+  const sensorsHandler = (callBackData) => {
+    setSensors(callBackData);
+  };
+  const modelsHandler = (callBackData) => {
+    setModels(callBackData);
+  };
+  const performanceHandler = (callBackData) => {
+    setPerformances(callBackData);
+  };
+  const otherDetailHandler = (callBackData) => {
+    setOtherDetails(callBackData);
   };
 
-  // Smart Watch create data
+  const productVariantsSetter = (response) => {
+    // console.log("productVariantsSetter/All Variants: ", response);
+    setProductAllVariants(response);
+  };
+
   const swDetails = {
     category: category,
     title: mName,
-    basePrice: basePrice,
-    totalStock: mTotalQuantity,
-    sellableStock: mSellableQuantity,
     brand: mBrandName,
     warranty: mWarranty,
     dimension: mDimension,
@@ -220,27 +188,19 @@ function CreateSmartWatch() {
     nfc: mNFC,
     radio: mRadio,
     usb: mUSB,
-    sensors: [mSensor1, mSensor2, mSensor3],
+    sensors: sensors,
     batteryType: mBatteryType,
     batteryCharging: mBatteryCharging,
-    colors: [mColor],
-    models: [mModel],
-    images: [
-      productImages[0].imgBase64,
-      productImages[1].imgBase64,
-      productImages[2].imgBase64,
-      productImages[3].imgBase64,
-      productImages[4].imgBase64,
-    ],
-    performances: [performance1, performance2, performance3],
-    hasWarranty: mWarranty > 0 ? true : false,
+    models: models,
+    performances: performances,
     discount: {
       type: mDiscountType,
-      value: mDiscountType !== "" ? mDiscountValue : "",
+      value: mDiscountValue,
     },
-    others: [swOtherInfo],
+    variants: productAllVariants,
+    others: otherDetails,
   };
-  // Create Smart Watch
+
   const swSaveClick = () => {
     setShowProductCreatePopup(true);
   };
@@ -249,17 +209,17 @@ function CreateSmartWatch() {
     if (isConfirmed === true) {
       var currentLocalDateTime = new Date();
       if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        console.log(
-          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        );
+        // console.log(
+        //   "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
+        // );
         saveNewSW();
       } else {
-        console.log(
-          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        );
+        // console.log(
+        //   "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
+        // );
         // If access token validity expires, call refresh token api
         refreshTokenHandler((isRefreshed) => {
-          console.log("isRefreshed: ", isRefreshed);
+          // console.log("isRefreshed: ", isRefreshed);
           saveNewSW();
         });
       }
@@ -270,6 +230,7 @@ function CreateSmartWatch() {
   };
 
   const saveNewSW = () => {
+    // console.log("saveNewSW/swDetails: ", swDetails);
     const swCreateAPI = "http://localhost:8080/smartwatches";
     axios
       .post(swCreateAPI, swDetails, config)
@@ -285,113 +246,104 @@ function CreateSmartWatch() {
 
   // inputs Reset Handler
   const inputsResetHandler = () => {
-    setCategory("3");
-    // Basic
-    setmName("N/A");
-    setBasePrice("0");
-    // setmCurrentPrice(response.data.currentPrice);
-    setmDiscountType("");
-    setmDiscountValue("0");
-    setmTotalQuantity("0");
-    setmSellableQuantity("0");
-    setmBrandName("N/A");
-    setmWarranty("0");
-
-    productImages[0].imgBase64 = "";
-    productImages[1].imgBase64 = "";
-    productImages[2].imgBase64 = "";
-    productImages[3].imgBase64 = "";
-    productImages[4].imgBase64 = "";
+    // GeneralInfo
+    resetGeneralInfo();
+    // Variants
+    resetVariants();
     // LAUNCH
+    resetLaunch();
+    // BODY
+    resetBody();
+    // DISPLAY
+    resetDisplay();
+    // PLATFORM
+    resetPlatform();
+    // MEMORY
+    resetMemory();
+    // COMMS
+    resetComms();
+    // FEATURES
+    resetFeatures();
+    // BATTERY
+    resetBattery();
+    // MISC
+    resetMisc();
+    // TESTS
+    resetTests();
+    // Other Details
+    resetOtherDetails();
+  };
+
+  const resetGeneralInfo = () => {
+    setCategory("3");
+    setmName("");
+    setmDiscountType("FLAT");
+    setmDiscountValue(0);
+    setmBrandName("1101");
+    setmWarranty(0);
+  };
+
+  const resetVariants = () => {
+    setProductAllVariants([]);
+  };
+
+  const resetLaunch = () => {
     setmAnnounchDate(new Date());
     setmReleaseDate(new Date());
-    // BODY
-    setmDimension("N/A");
-    setmWeight("N/A");
-    setmBuild("N/A");
-    // DISPLAY
-    setmDisplayType("N/A");
-    setmSize("N/A");
-    setmResolution("N/A");
-    setmProtection("N/A");
-    // PLATFORM
-    setmOS("N/A");
-    setmChipset("N/A");
-    setmCPU("N/A");
-    setmGPU("N/A");
-    // MEMORY
-    setmInternal("N/A");
-    // SOUND
-    setmLoudSpeaker("N/A");
-    setmJack("N/A");
-    // COMMS
-    setmWlan("N/A");
-    setmBlueTooth("N/A");
-    setmGPS("N/A");
-    setmNFC("N/A");
-    setmRadio("N/A");
-    setmUSB("N/A");
-    // FEATURES
-    setmSensor1("N/A");
-    setmSensor2("N/A");
-    setmSensor3("N/A");
-    // BATTERY
-    setmBatteryType("N/A");
-    setmBatteryCharging("N/A");
-    // MISC
-    setmColor("N/A");
-    setmModel("N/A");
-    // TESTS
-    setPerformance1("N/A");
-    setPerformance2("N/A");
-    setPerformance3("N/A");
   };
 
-  // Images handler
-  const handleImageChange = (event, id) => {
-    const file = event.target.files[0];
-    getBase64(file).then((base64) => {
-      localStorage["fileBase64"] = base64;
-      // console.log("handleImageChange/id,e: ", id, base64);
-      let tempArray = [...productImages]; // copying the old datas array
-      // console.log("handleImageChange/tempArray: ", tempArray);
-      tempArray[id - 1].imgBase64 = base64; // replace e.target.value with whatever you want to change it to
-
-      setProductImages(tempArray);
-    });
-  };
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-      reader.readAsDataURL(file);
-    });
-  };
-  const removeSelectedImg = (id) => {
-    let tempArray = [...productImages]; // copying the old datas array
-    // console.log("handleImageChange/tempArray: ", tempArray);
-    tempArray[id - 1].imgBase64 = ""; // replace e.target.value with whatever you want to change it to
-
-    setProductImages(tempArray);
+  const resetBody = () => {
+    setmDimension("");
+    setmWeight("");
+    setmBuild("");
   };
 
-  // Preview & Crop Image
-  const previewSelectedImg = (id) => {
-    if (
-      productImages[id - 1].imgBase64 != "" &&
-      productImages[id - 1].imgBase64 != undefined
-    ) {
-      setImgIdToPreview(id);
-      setShouldPreview(true);
-    }
+  const resetDisplay = () => {
+    setmDisplayType("");
+    setmSize("");
+    setmResolution("");
+    setmProtection("");
   };
-  const onCloseImgCropper = (croppedImg, hideImgCropper) => {
-    setShouldPreview(hideImgCropper);
 
-    let tempArray = [...productImages]; // copying the old datas array
-    tempArray[imgIdToPreview - 1].imgBase64 = croppedImg; // replace e.target.value with whatever you want to change it to
-    setProductImages(tempArray);
+  const resetPlatform = () => {
+    setmOS("");
+    setmChipset("");
+    setmCPU("");
+    setmGPU("");
+  };
+
+  const resetMemory = () => {
+    setmInternal("");
+  };
+
+  const resetComms = () => {
+    setmWlan("");
+    setmBlueTooth("");
+    setmGPS("");
+    setmNFC("");
+    setmRadio("");
+    setmUSB("");
+  };
+
+  const resetFeatures = () => {
+    setSensors([]);
+  };
+
+  const resetBattery = () => {
+    setmBatteryType("");
+    setmBatteryCharging("");
+  };
+
+  const resetMisc = () => {
+    setModels([]);
+  };
+
+  const resetTests = () => {
+    setPerformances([]);
+  };
+
+  const resetOtherDetails = () => {
+    setOtherDetails([]);
   };
 
   // Bulk Upload
@@ -403,13 +355,13 @@ function CreateSmartWatch() {
     filesArray.forEach((event) => {
       setFileName(event.name);
       setFileSize(Math.round(event.size / 1024));
-      console.log(event.type);
-      console.log(event.length);
+      // console.log(event.type);
+      // console.log(event.length);
       // setFileUpdateDate(event.lastModifiedDate);
     });
   };
   const bulkUploadHandler = () => {
-    console.log("CSV: ", csvFile);
+    // console.log("CSV: ", csvFile);
 
     //Get file extension from file name
     const split_name = csvFile.name.split(".");
@@ -420,27 +372,28 @@ function CreateSmartWatch() {
 
     //Here you can use the file as you wish
     const new_file = blobToFile(blob, "csv");
-    console.log(new_file);
+    // console.log(new_file);
 
     const data = new FormData();
     data.append("file", new_file);
-    data.append("productType", "SMARTWATCH");
+    data.append("productType", "SMARTWATCHE");
 
-    // CSV Config for bulk upload
     const csvConfig = {
       headers: {
         "content-type": `multipart/form-data; boundary=${data._boundary}`,
+        Authorization: "Bearer " + userToken.token,
       },
     };
 
     const bulkUploadAPI = "http://localhost:8080/products/bulkdata";
+
     axios
       .post(bulkUploadAPI, data, csvConfig)
       .then(function (response) {
-        console.log("update response: ", response);
+        // console.log("update response: ", response);
       })
       .catch(function (error) {
-        console.log("error: ", error);
+        // console.log("error: ", error);
         // if (error.response) {
         //   console.log(error.response.data);
         //   console.log(error.response.status);
@@ -473,16 +426,16 @@ function CreateSmartWatch() {
     var currentLocalDateTime = new Date();
 
     if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      console.log(
-        "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      );
+      // console.log(
+      //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
+      // );
       const refreshTokenAPI = "http://localhost:8080/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)
         .then(function (response) {
-          console.log("Refresh token response: ", response);
-          console.log("Status Code: ", response.status);
+          // console.log("Refresh token response: ", response);
+          // console.log("Status Code: ", response.status);
 
           if (response.data.code == 403) {
             alert(response.data.message);
@@ -506,13 +459,13 @@ function CreateSmartWatch() {
           }
         })
         .catch(function (error) {
-          console.log("Status Code: ", error.response.status);
+          // console.log("Status Code: ", error.response.status);
           console.log(error);
         });
     } else {
-      console.log(
-        "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      );
+      // console.log(
+      //   "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
+      // );
       // Logout forcefully from here
       try {
         localStorage.clear();
@@ -523,17 +476,16 @@ function CreateSmartWatch() {
     }
   };
 
-  // Searched Product
+  // Searched Product from SearchToCLone.js
   const getSearchedProduct = (searchedProduct) => {
-    setCategory(searchedProduct.category);
+    setCategory("3");
     // Basic
     setmName(searchedProduct.title);
-    setBasePrice(searchedProduct.oldPrice);
-    setCurrentPrice(searchedProduct.currentPrice);
     setmDiscountType(searchedProduct.discount.type);
     setmDiscountValue(searchedProduct.discount.value);
-    setmTotalQuantity(searchedProduct.totalStock);
-    setmSellableQuantity(searchedProduct.sellableStock);
+
+    setProductAllVariants(searchedProduct.variants);
+
     if (searchedProduct.brand === "SAMSUNG") {
       setmBrandName(1101);
     } else if (searchedProduct.brand === "APPLE") {
@@ -596,12 +548,6 @@ function CreateSmartWatch() {
 
     setmWarranty(searchedProduct.warranty);
 
-    productImages[0].imgBase64 = searchedProduct.images[0];
-    productImages[1].imgBase64 = searchedProduct.images[1];
-    productImages[2].imgBase64 = searchedProduct.images[2];
-    productImages[3].imgBase64 = searchedProduct.images[3];
-    productImages[4].imgBase64 = searchedProduct.images[4];
-
     // LAUNCH
     setmAnnounchDate(searchedProduct.announceDate);
     setmReleaseDate(searchedProduct.releaseDate);
@@ -629,51 +575,35 @@ function CreateSmartWatch() {
     setmRadio(searchedProduct.radio);
     setmUSB(searchedProduct.usb);
     // FEATURES
-    setmSensor1(searchedProduct.sensors[0]);
-    setmSensor2(searchedProduct.sensors[1]);
-    setmSensor3(searchedProduct.sensors[2]);
+    setSensors(searchedProduct.sensors);
     // BATTERY
     setmBatteryType(searchedProduct.batteryType);
     setmBatteryCharging(searchedProduct.batteryCharging);
     // MISC
-    setmColor(searchedProduct.colors[0]);
-    setmModel(searchedProduct.models[0]);
+    setModels(searchedProduct.models);
     // TESTS
-    setPerformance1(searchedProduct.performances[0]);
-    setPerformance2(searchedProduct.performances[1]);
-    setPerformance3(searchedProduct.performances[2]);
-    // Others
-    setSwOtherInfo(getRichText(searchedProduct.others));
-  };
-
-  // Rich Text to Plain Text
-  const getRichText = (richText) => {
-    var divContainer = document.createElement("div");
-    divContainer.innerHTML = richText;
-    return divContainer.textContent || divContainer.innerText || "";
+    setPerformances(searchedProduct.performances);
+    setOtherDetails(searchedProduct.others);
   };
 
   return (
     <>
-      {shouldPreview && (
-        <ImgCropper
-          src={productImages[imgIdToPreview - 1].imgBase64}
-          onCloseImgCropper={onCloseImgCropper}
-        />
-      )}
-
       {/* Confirmation Modal */}
-      {showProductCreatePopup ? (
-        <ProductCreateConfirmation
-          productCreateFlagFromModal={productCreateFlagFromModal}
-        />
-      ) : null}
+      <div>
+        {/* Confirmation Modal */}
+        {showProductCreatePopup ? (
+          <ProductCreateConfirmation
+            productCreateFlagFromModal={productCreateFlagFromModal}
+          />
+        ) : null}
 
-      {/* Show HTTP response code  */}
-      {showHttpResponseMsg === true ? (
-        <HttpStatusCode responseCode={httpResponseCode} />
-      ) : null}
+        {/* Show HTTP response code  */}
+        {showHttpResponseMsg === true ? (
+          <HttpStatusCode responseCode={httpResponseCode} />
+        ) : null}
+      </div>
 
+      {/* Bulk SW Upload  */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
           {/* md={8} */}
@@ -682,10 +612,10 @@ function CreateSmartWatch() {
               {/* <CardIcon color="rose">
                 <LocalOfferIcon />
               </CardIcon> */}
-              <h4 className={classes.cardIconTitle}>Create New Smart Watch</h4>
+              <h4 className={classes.cardIconTitle}>Bulk Upload</h4>
             </CardHeader>
             <CardBody>
-              {/* Bulk Smart Watch Upload  */}
+              {/* Bulk Phone Upload  */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
@@ -704,13 +634,15 @@ function CreateSmartWatch() {
                 <GridItem xs={12} sm={12} md={6}>
                   <Button
                     color="rose"
+                    style={{ marginTop: "20px" }}
                     className={classes.updateProfileButton}
                     onClick={bulkUploadHandler}
                   >
-                    Upload
+                    Upload CSV
                   </Button>
                 </GridItem>
               </GridContainer>
+
               {fileSize > 0 ? (
                 <GridContainer>
                   <GridItem>
@@ -718,26 +650,50 @@ function CreateSmartWatch() {
                   </GridItem>
                 </GridContainer>
               ) : null}
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <br />
+      <h4 className={classes.cardIconTitle}>Create New Smart Watch</h4>
+      {/* Reset & Search To Clone */}
+      <div style={{ display: "flex" }}>
+        {/* Reset */}
+        <div className="resetIcon-container">
+          <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "}
+          Reset A~Z
+        </div>
 
-              <SearchToClone
-                getSearchedProduct={getSearchedProduct}
-                productType={"mobiles"}
-              />
+        {/* Search To Clone */}
+        <SearchToClone
+          getSearchedProduct={getSearchedProduct}
+          productType={"smartwatches"}
+        />
+      </div>
 
-              {/* Reset */}
-              <div className="resetIcon-container">
-                <RefreshIcon
-                  className="reset-input"
-                  onClick={inputsResetHandler}
-                />{" "}
-                Reset
-              </div>
-
-              <div className="sectionDiv">
-                <AcUnitIcon />
-                <p className="sectionPara">[GENERAL INFO]</p>
+      {/* [GENERAL INFO] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <AcUnitIcon />
+                  <p className="sectionPara">[GENERAL INFO]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetGeneralInfo}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Name & Product Type  */}
@@ -760,7 +716,7 @@ function CreateSmartWatch() {
                 </GridItem>
 
                 {/* Category 1 is fixed for Phone type */}
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     labelText="Product Category "
                     id="product-category"
@@ -778,49 +734,37 @@ function CreateSmartWatch() {
                 </GridItem>
               </GridContainer>
 
-              {/* Old & New Price  */}
+              {/* Discount Type, Discount Value, Warranty & Brand  */}
               <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Base Price"
-                    id="base-price"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "Number",
-                      value: basePrice || "",
-                      onChange: (event) => setBasePrice(event.target.value),
-                      maxLength: "6",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              {/* Discount Type & Value  */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6} style={{ marginTop: "12px" }}>
+                {/* Discount Type */}
+                <GridItem xs={12} sm={12} md={3} style={{ marginTop: "12px" }}>
                   <FormControl variant="standard" sx={{ width: "100%" }}>
-                    <InputLabel id="demo-simple-select-standard-label">
+                    <InputLabel
+                      id="demo-simple-select-standard-label"
+                      style={{ fontSize: "14px" }}
+                    >
                       Discount Type
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-standard-label"
                       id="demo-simple-select-standard"
+                      style={{ fontSize: "14px" }}
                       value={mDiscountType || " "}
                       onChange={(event) => setmDiscountType(event.target.value)}
                       label="Brand Name"
                     >
-                      <MenuItem value="">
+                      {/* <MenuItem value="">
                         <em>None</em>
-                      </MenuItem>
+                      </MenuItem> */}
                       <MenuItem value={"FLAT"}>Flat (৳)</MenuItem>
                       <MenuItem value={"PERCENTAGE"}>Percentage (%)</MenuItem>
                     </Select>
                   </FormControl>
                 </GridItem>
+
+                {/* Discount Value */}
                 {mDiscountType !== "" ? (
-                  <GridItem xs={12} sm={12} md={6}>
+                  <GridItem xs={12} sm={12} md={3}>
                     <CustomInput
                       labelText="Discount Value"
                       id="discount-value"
@@ -829,7 +773,7 @@ function CreateSmartWatch() {
                       }}
                       inputProps={{
                         type: "Number",
-                        value: mDiscountValue || "",
+                        value: mDiscountValue || 0,
 
                         onChange: (event) =>
                           setmDiscountValue(event.target.value),
@@ -838,54 +782,20 @@ function CreateSmartWatch() {
                     />
                   </GridItem>
                 ) : null}
-              </GridContainer>
 
-              {/* Total Quantity & Sellable Quantity */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Total Quantity"
-                    id="total-quantity"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "Number",
-                      value: mTotalQuantity || "",
-                      onChange: (event) =>
-                        setmTotalQuantity(event.target.value),
-                      maxLength: "6",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Sellable Quantity"
-                    id="sellable-quantity"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "Number",
-                      value: mSellableQuantity || "",
-                      onChange: (event) =>
-                        setmSellableQuantity(event.target.value),
-                      maxLength: "6",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              {/* Warranty & Brand*/}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6} style={{ marginTop: "12px" }}>
+                {/* Brand*/}
+                <GridItem xs={12} sm={12} md={3} style={{ marginTop: "12px" }}>
                   <FormControl variant="standard" sx={{ width: "100%" }}>
-                    <InputLabel id="demo-simple-select-standard-label">
+                    <InputLabel
+                      id="demo-simple-select-standard-label"
+                      style={{ fontSize: "14px" }}
+                    >
                       Brand Name
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-standard-label"
                       id="demo-simple-select-standard"
+                      style={{ fontSize: "14px" }}
                       value={mBrandName || " "}
                       onChange={(event) => setmBrandName(event.target.value)}
                       label="Brand Name"
@@ -926,7 +836,9 @@ function CreateSmartWatch() {
                     </Select>
                   </FormControl>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
+
+                {/* Warranty */}
+                <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     labelText="Warranty (In Month)"
                     id="warranty"
@@ -935,215 +847,82 @@ function CreateSmartWatch() {
                     }}
                     inputProps={{
                       type: "Number",
-                      value: mWarranty || "",
+                      value: mWarranty || 0,
                       onChange: (event) => setmWarranty(event.target.value),
                       maxLength: "2",
                     }}
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              {/* Product Image Picker */}
-              <div style={{ fontWeight: "bold", color: "red" }}>
-                Image aspect ratio must be 1:1 & Dimension should be 1080px X
-                1080px
+      {/* [VARIANTS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <BakeryDiningIcon />
+                  <p className="sectionPara">[VARIANTS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetVariants}
+                  />{" "}
+                  Reset
+                </div>
               </div>
+
               <GridContainer>
-                {/* Image Picker 1 */}
-                <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[0].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 1)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(1)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(1)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[0].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 1</h6>
-                  </div>
-                </GridItem>
-
-                {/* Image Picker 2 */}
-                <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[1].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 2)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(2)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(2)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[1].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 2</h6>
-                  </div>
-                </GridItem>
-
-                {/* Image Picker 3 */}
-                <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[2].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 3)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(3)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(3)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[2].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 3</h6>
-                  </div>
-                </GridItem>
-
-                {/* Image Picker 4 */}
-                <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[3].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 4)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(4)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(4)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[3].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 4</h6>
-                  </div>
-                </GridItem>
-
-                {/* Image Picker 5 */}
-                <GridItem>
-                  <div className="picture-container">
-                    <div
-                      className="picture"
-                      style={{ borderRadius: "0", backgroundColor: "#ededed " }}
-                    >
-                      {productImages[4].imgBase64 === "" ? (
-                        <div>
-                          <AddToPhotosIcon className="imgAddIcon" />
-                          <input
-                            type="file"
-                            onChange={(e) => handleImageChange(e, 5)}
-                          />
-                        </div>
-                      ) : (
-                        <div>
-                          <DeleteIcon
-                            className="removeSelectedImg"
-                            onClick={() => removeSelectedImg(5)}
-                          />
-                          <VisibilityIcon
-                            className="previewSelectedImg"
-                            onClick={() => previewSelectedImg(5)}
-                          />
-                          <img
-                            className="imgPickerImg"
-                            src={productImages[4].imgBase64}
-                            alt="ProductImg"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <h6 className="description">Image 5</h6>
-                  </div>
+                <GridItem xs={12} sm={12} md={12}>
+                  <ProductVariants
+                    objectValue={productAllVariants}
+                    productVariantsSetter={productVariantsSetter}
+                    placeHolder="Outer fields"
+                  />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <br />
-              <div className="sectionDiv">
-                <LaunchIcon />
-                <p className="sectionPara">[LAUNCH]</p>
+      {/* [LAUNCH] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <LaunchIcon />
+                  <p className="sectionPara">[LAUNCH]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetLaunch} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Announce date and Release date  */}
               <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={3}>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <DatePicker
                       disableFuture
@@ -1156,7 +935,7 @@ function CreateSmartWatch() {
                     />
                   </MuiPickersUtilsProvider>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
+                <GridItem xs={12} sm={12} md={3}>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <DatePicker
                       disableFuture
@@ -1170,13 +949,33 @@ function CreateSmartWatch() {
                   </MuiPickersUtilsProvider>
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <br />
-
-              <div className="sectionDiv">
-                <PhoneAndroidIcon />
-                <p className="sectionPara">[BODY]</p>
+      {/* [BODY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <PhoneAndroidIcon />
+                  <p className="sectionPara">[BODY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetBody} />{" "}
+                  Reset
+                </div>
               </div>
+
               {/* Dimension & Weight  */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
@@ -1211,7 +1010,7 @@ function CreateSmartWatch() {
                 </GridItem>
               </GridContainer>
 
-              {/* Build */}
+              {/* Build & Sim  */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
@@ -1229,10 +1028,31 @@ function CreateSmartWatch() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <SmartDisplayIcon />
-                <p className="sectionPara">[DISPLAY]</p>
+      {/* [DISPLAY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SmartDisplayIcon />
+                  <p className="sectionPara">[DISPLAY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetDisplay} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* DISPLAY Type & Size  */}
@@ -1302,10 +1122,34 @@ function CreateSmartWatch() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <HardwareIcon />
-                <p className="sectionPara">[PLATFORM]</p>
+      {/* [PLATFORM] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <HardwareIcon />
+                  <p className="sectionPara">[PLATFORM]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetPlatform}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* OS & Chipset  */}
@@ -1375,10 +1219,31 @@ function CreateSmartWatch() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <MemoryIcon />
-                <p className="sectionPara">[MEMORY]</p>
+      {/* [MEMORY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <MemoryIcon />
+                  <p className="sectionPara">[MEMORY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetMemory} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Card Slot & Internal  */}
@@ -1399,49 +1264,31 @@ function CreateSmartWatch() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <VolumeUpIcon />
-                <p className="sectionPara">[SOUND]</p>
-              </div>
-
-              {/* Loud Speaker & Jack */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Loud Speaker"
-                    id="loud-speaker"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mLoudSpeaker || "",
-                      onChange: (event) => setmLoudSpeaker(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Jack"
-                    id="jack"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mJack || "",
-                      onChange: (event) => setmJack(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              <div className="sectionDiv">
-                <SettingsInputAntennaIcon />
-                <p className="sectionPara">[COMMS]</p>
+      {/* [COMMS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SettingsInputAntennaIcon />
+                  <p className="sectionPara">[COMMS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetComms} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* WLAN & Bluetooth */}
@@ -1545,68 +1392,71 @@ function CreateSmartWatch() {
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              <div className="sectionDiv">
-                <FeaturedPlayListIcon />
-                <p className="sectionPara">[FEATURES]</p>
+      {/* [FEATURES] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <FeaturedPlayListIcon />
+                  <p className="sectionPara">[FEATURES]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetFeatures}
+                  />{" "}
+                  Reset
+                </div>
               </div>
 
-              {/* Sensor 1 & Sensor 2 */}
+              {/* Sensors */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Sensor 1"
-                    id="sensor1"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSensor1 || "",
-                      onChange: (event) => setmSensor1(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Sensor 2"
-                    id="sensor2"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSensor2 || "",
-                      onChange: (event) => setmSensor2(event.target.value),
-                      maxLength: "100",
-                    }}
+                  <DynamicElementCreator
+                    objectValue={sensors}
+                    callBackFun={sensorsHandler}
+                    placeHolder="Sensor"
                   />
                 </GridItem>
               </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
 
-              {/* Sensor 3 */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Sensor 3"
-                    id="sensor3"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSensor3 || "",
-                      onChange: (event) => setmSensor3(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              <div className="sectionDiv">
-                <BatteryCharging50Icon />
-                <p className="sectionPara">[BATTERY]</p>
+      {/* [BATTERY] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <BatteryCharging50Icon />
+                  <p className="sectionPara">[BATTERY]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetBattery} />{" "}
+                  Reset
+                </div>
               </div>
 
               {/* Battery Type & Charging */}
@@ -1643,139 +1493,134 @@ function CreateSmartWatch() {
                   />
                 </GridItem>
               </GridContainer>
-
-              <div className="sectionDiv">
-                <MiscellaneousServicesIcon />
-                <p className="sectionPara">[MISC]</p>
-              </div>
-
-              {/* Colors & Models */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Colors"
-                    id="colors"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mColor || "",
-                      onChange: (event) => setmColor(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Models"
-                    id="models"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mModel || "",
-                      onChange: (event) => setmModel(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              <br />
-
-              <div className="sectionDiv">
-                <DetailsIcon />
-                <p className="sectionPara">[Details INFO]</p>
-              </div>
-              {/* Details Info  */}
-              <GridContainer>
-                <GridItem xs={12} sm={4} md={8}>
-                  <JoditEditor
-                    ref={editor}
-                    value={swOtherInfo}
-                    config={joditConfig}
-                    tabIndex={1} // tabIndex of textarea
-                    onBlur={(newContent) => setSwOtherInfo(newContent)} // preferred to use only this option to update the content for performance reasons
-                    onChange={(newContent) => {}}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              <br />
-
-              <div className="sectionDiv">
-                <SpeedIcon />
-                <p className="sectionPara">[TESTS]</p>
-              </div>
-
-              {/* Performance 1 & Performance 2 */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Performance 1"
-                    id="performance1"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: performance1 || "",
-                      onChange: (event) => setPerformance1(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Performance 2"
-                    id="performance2"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: performance2 || "",
-                      onChange: (event) => setPerformance2(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              {/* Performance 3 */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Performance 3"
-                    id="performance3"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: performance3 || "",
-                      onChange: (event) => setPerformance3(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-              {/* Save Button */}
-              <Button
-                color="rose"
-                className={classes.updateProfileButton}
-                onClick={swSaveClick}
-              >
-                Save
-              </Button>
-
-              <Clearfix />
             </CardBody>
           </Card>
         </GridItem>
       </GridContainer>
+
+      {/* [MISC] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <MiscellaneousServicesIcon />
+                  <p className="sectionPara">[MISC]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetMisc} />{" "}
+                  Reset
+                </div>
+              </div>
+
+              {/* SAR & SAR EU & Models */}
+              <GridContainer>
+                {/* Models */}
+                <GridItem xs={12} sm={12} md={4}>
+                  <DynamicElementCreator
+                    objectValue={models}
+                    callBackFun={modelsHandler}
+                    placeHolder="Models"
+                  />
+                </GridItem>
+              </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+
+      {/* [TESTS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SpeedIcon />
+                  <p className="sectionPara">[TESTS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon className="reset-input" onClick={resetTests} />{" "}
+                  Reset
+                </div>
+              </div>
+
+              {/* Performances */}
+              <GridContainer>
+                <GridItem xs={12} sm={12} md={6}>
+                  <DynamicElementCreator
+                    objectValue={performances}
+                    callBackFun={performanceHandler}
+                    placeHolder="Performances"
+                  />
+                </GridItem>
+              </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+
+      {/* [OTHER DETAILS] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <SpeedIcon />
+                  <p className="sectionPara">[OTHER DETAILS]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetOtherDetails}
+                  />{" "}
+                  Reset
+                </div>
+              </div>
+
+              {/* Performances */}
+              <GridContainer>
+                <GridItem xs={12} sm={12} md={6}>
+                  <DynamicElementCreator
+                    objectValue={otherDetails}
+                    callBackFun={otherDetailHandler}
+                    placeHolder="Other Details"
+                  />
+                </GridItem>
+              </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+
+      {/* Save Button  */}
+      <Button
+        color="rose"
+        className={classes.updateProfileButton}
+        onClick={swSaveClick}
+      >
+        Save
+      </Button>
     </>
   );
 }

@@ -20,8 +20,11 @@ const DynamicImgElmntCreator = (props) => {
   const [productImages, setProductImages] = useState([{}]);
 
   useEffect(() => {
-    // console.log("props.images.length: ", props.images.length);
-    setProductImages(props.images);
+    if (Object.keys(props.images).length > 0) {
+      setProductImages(props.images);
+    } else {
+      setProductImages([{}]);
+    }
   }, [props.images]);
 
   // Preview and Crop Img

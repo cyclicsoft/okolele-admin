@@ -1,296 +1,464 @@
-import React, { useState, useEffect } from "react";
+/*eslint-disable*/
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-// material-ui icons
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
-import Radio from "@material-ui/core/Radio";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
-import RssFeedIcon from "@mui/icons-material/RssFeed";
-import LaunchIcon from "@mui/icons-material/Launch";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
-import HardwareIcon from "@mui/icons-material/Hardware";
-import MemoryIcon from "@mui/icons-material/Memory";
-import CameraRearIcon from "@mui/icons-material/CameraRear";
-import CameraFrontIcon from "@mui/icons-material/CameraFront";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
-import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
-import BatteryCharging50Icon from "@mui/icons-material/BatteryCharging50";
-import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
-import SpeedIcon from "@mui/icons-material/Speed";
-import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
-import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from "@mui/icons-material/Close";
+import { useHistory } from "react-router-dom";
+
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
-// nodejs library that concatenates classes
-import classNames from "classnames";
-// react component used to create nice image meadia player
-import ImageGallery from "react-image-gallery";
-// Card
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
-import CardHeader from "components/Card/CardHeader.js";
-// Custom Input
-import CustomInput from "components/CustomInput/CustomInput.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
-// Date
-import "date-fns";
-import DateValidate from "views/DatePicker/DateValidate";
-// SCSS File
-// import '../../assets/scss/ghorwali-scss/voucherCard.scss'
-import "assets/scss/ghorwali-scss/voucherCard.scss";
-import "assets/scss/ghorwali-scss/product-details.scss";
-
-import moment from "moment";
-import { title } from "assets/jss/material-dashboard-pro-react";
-import SaveWarning from "views/ConfirmationModals/SaveWarning";
-// Dropdown Select
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { AndroidOutlined } from "@material-ui/icons";
-// Images
-import "assets/img/okolele-img/mobile-dummy-img.jpg";
+// images
 import dummyProfileImg128px from "assets/img/okolele-img/dummy_profile_img_128px.png";
+import phoneDummyImg from "assets/img/okolele-img/mobile-dummy-img.jpg";
+import phoneNetwork from "assets/img/okolele-img/product-details-icons/phone-network.png";
+import launchIcon from "assets/img/okolele-img/product-details-icons/phone-launch.png";
+import phoneBody from "assets/img/okolele-img/product-details-icons/phone-body.png";
+import phoneDisplay from "assets/img/okolele-img/product-details-icons/display.png";
+import phoneOS from "assets/img/okolele-img/product-details-icons/operating-system.png";
+import phoneStorage from "assets/img/okolele-img/product-details-icons/ram.png";
+import backCamera from "assets/img/okolele-img/product-details-icons/back-camera.png";
+import frontCamera from "assets/img/okolele-img/product-details-icons/front-camera.png";
+import soundIcon from "assets/img/okolele-img/product-details-icons/sound-wave.png";
+import commsIcon from "assets/img/okolele-img/product-details-icons/connectivity.png";
+import featureIcon from "assets/img/okolele-img/product-details-icons/feature.png";
+import batteryIcon from "assets/img/okolele-img/product-details-icons/battery.png";
+import miscIcon from "assets/img/okolele-img/product-details-icons/misc.png";
+import testIcon from "assets/img/okolele-img/product-details-icons/test.png";
 // Carousel ImageGallery
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
+//SCSS file
+import "assets/scss/ghorwali-scss/_product-details.scss";
 
 const useStyles = makeStyles(styles);
 
-function AccessoryDetails(props) {
+export default function AccessoryDetails(props) {
   const classes = useStyles();
-
+  const history = useHistory();
   // General
-  const [category, setCategory] = useState("N/A");
+  const [category, setCategory] = useState("");
   // Basic
-  const [productName, setProductName] = useState("N/A");
-  const [basePrice, setBasePrice] = useState(0);
-  const [currentPrice, setCurrentPrice] = useState(0);
-  const [discountType, setDiscountType] = useState("N/A");
-  const [discountValue, setDiscountValue] = useState("0");
-  const [totalQuantity, setTotalQuantity] = useState("0");
-  const [sellableQuantity, setSellableQuantity] = useState(0);
-  const [brandName, setBrandName] = useState("N/A");
-  const [warranty, setWarranty] = useState("N/A");
+  const [mName1, setmName1] = useState("");
+  const [mDiscountType, setmDiscountType] = useState("");
+  const [mDiscountValue, setmDiscountValue] = useState(0);
+  const [mBrandName1, setmBrandName1] = useState("");
+  const [mWarranty1, setmWarranty1] = useState("");
   const [userComments, setUserComments] = useState([]);
   const [productImages, setProductImages] = useState([]);
+  //All Variant
+  const [allVariants, setAllVariants] = useState([]);
+  //All the variants for a selected color
+  const [selectedColorVariants, setSelectedColorVariants] = useState([]);
+  // selected color
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedVariantBasePrice, setSelectedVariantBasePrice] = useState(0);
+  const [
+    selectedVariantCurrentPrice,
+    setSelectedVariantCurrentPrice,
+  ] = useState(0);
+  const [selectedVariantTotalStock, setSelectedVariantTotalStock] = useState(0);
+  const [
+    selectedVariantSellableStock,
+    setSelectedVariantSellableStock,
+  ] = useState(0);
+  const [selectedVariantRam, setSelectedVariantRam] = useState(0);
+  const [selectedVariantRom, setSelectedVariantRom] = useState(0);
+  const [selectedVariantRamRom, setSelectedVariantRamRom] = useState("");
   // LAUNCH
-  const [announchDate, setAnnounchDate] = useState("N/A");
-  const [releaseDate, setReleaseDate] = useState("N/A");
-  // accessory Details
-  const [accessoryDetails, setAccessoryDetails] = useState("");
-  // Product details from props
-  var details = props.productDetails;
-  // Price Range
-  // Related Products
+  const [mAnnounchDate1, setmAnnounchDate1] = useState("");
+  const [mReleaseDate1, setmReleaseDate1] = useState("");
+
   // Post New Comments
-  // const [userProfileImg, setUserProfileImg] = useState(dummyProfileImg128px);
-  // const [userName, setUserName] = useState("Random User");
-  // const [newComment, setNewComment] = useState("Write some nice stuff...");
+  const [userProfileImg, setUserProfileImg] = useState(dummyProfileImg128px);
+  const [userName, setUserName] = useState("Random User");
+  const [newComment, setNewComment] = useState("");
+
+  // Phone Details from props/API call
+  useEffect(() => {
+    if (props.productDetails != undefined) {
+      productDetailsSetter(props.productDetails);
+    }
+  }, [props.productDetails]);
 
   // product Details Setter
-  useEffect(() => {
-    // console.log("Title: ", props.productDetails.title);
-    const timer = setTimeout(() => {
-      setCategory(details.category);
-      // Basic
-      setProductName(details.title);
-      setBasePrice(details.basePrice);
-      setCurrentPrice(details.currentPrice);
-      setDiscountType(details.discount.type);
-      setDiscountValue(details.discount.value);
-      setTotalQuantity(details.totalStock);
-      setSellableQuantity(details.sellableStock);
-      setBrandName(details.brand);
-      setWarranty(details.warranty);
-      setUserComments(details.comments);
-
-      // First clear the array before assigning new img data
-      setProductImages([]);
-      details.images.map((img) => {
-        if (img !== null) {
-          setProductImages((prevItems) => [
-            ...prevItems,
-            img,
-            // {
-            //   original: img,
-            //   thumbnail: img,
-            // },
-          ]);
-        }
+  const productDetailsSetter = (details) => {
+    setCategory(details.category);
+    // Basic
+    setmName1(details.title);
+    setmDiscountType(details.discount.type);
+    setmDiscountValue(details.discount.value);
+    setmBrandName1(details.brand);
+    setmWarranty1(details.warranty);
+    setUserComments(details.comments);
+    //Variants
+    setAllVariants(details.variants);
+    // set null initially
+    setProductImages([]);
+    // Initial Img Setter
+    if (Object.keys(details.variants[0].images).length !== 0) {
+      details.variants[0].images.map((img) => {
+        setProductImages((prevItems) => [
+          ...prevItems,
+          {
+            original: img,
+            thumbnail: img,
+          },
+        ]);
       });
-      // LAUNCH
-      setAnnounchDate(details.announceDate);
-      setReleaseDate(details.releaseDate);
-      setAccessoryDetails(details.details);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [details]);
+    } else {
+      setProductImages([{ original: phoneDummyImg, thumbnail: null }]);
+    }
+    // Initial Selected Color setter
+    setSelectedColor(details.variants[0].color);
+    //All the variants for a selected color
+    // Initial value is the first index value
+    if (details.variants.length > 0) {
+      setSelectedColorVariants(details.variants[0].variants);
+    }
+
+    // Set initial value of inner variants object (Capacity)
+    setSelectedVariantBasePrice(details.variants[0].variants[0].basePrice);
+    setSelectedVariantCurrentPrice(
+      details.variants[0].variants[0].currentPrice
+    );
+    setSelectedVariantTotalStock(details.variants[0].variants[0].totalStock);
+    setSelectedVariantSellableStock(
+      details.variants[0].variants[0].sellableStock
+    );
+    setSelectedVariantRam(details.variants[0].variants[0].ram);
+    setSelectedVariantRom(details.variants[0].variants[0].rom);
+    setSelectedVariantRamRom(
+      details.variants[0].variants[0].ram + details.variants[0].variants[0].rom
+    );
+
+    // LAUNCH
+    setmAnnounchDate1(details.announceDate);
+    setmReleaseDate1(details.releaseDate);
+  };
+
+  const productColorClick = (variant, e) => {
+    e.preventDefault();
+
+    setSelectedColor(variant.color);
+    // console.log("variant.images: ...", variant.images);
+    if (Object.keys(variant.images).length !== 0) {
+      setProductImages([]); //First set to empty to clear previous data
+      variant.images.map((img) => {
+        setProductImages((prevItems) => [
+          ...prevItems,
+          {
+            original: img,
+            thumbnail: img,
+          },
+        ]);
+      });
+    } else {
+      setProductImages([{ original: phoneDummyImg, thumbnail: null }]);
+    }
+    setSelectedColorVariants(variant.variants);
+
+    // Once a clolor is selected, select the first capacity automatically
+    setSelectedVariantBasePrice(variant.variants[0].basePrice);
+    setSelectedVariantCurrentPrice(variant.variants[0].currentPrice);
+    setSelectedVariantTotalStock(variant.variants[0].totalStock);
+    setSelectedVariantSellableStock(variant.variants[0].sellableStock);
+    setSelectedVariantRam(variant.variants[0].ram);
+    setSelectedVariantRom(variant.variants[0].rom);
+    setSelectedVariantRamRom(variant.variants[0].ram + variant.variants[0].rom);
+  };
+
+  const productCapacityClick = (variant) => {
+    setSelectedVariantBasePrice(variant.basePrice);
+    setSelectedVariantCurrentPrice(variant.currentPrice);
+    setSelectedVariantTotalStock(variant.totalStock);
+    setSelectedVariantSellableStock(variant.sellableStock);
+    setSelectedVariantRam(variant.ram);
+    setSelectedVariantRom(variant.rom);
+    setSelectedVariantRamRom(variant.ram + variant.rom);
+  };
+
+  // Post new comment
+  const userNewComment = {
+    msg: newComment,
+    userName: userName,
+    userImage: userProfileImg,
+  };
+  const postNewComment = () => {
+    let newCommentAPI = rootPath[0] + "/mobiles/addComment/" + productId;
+    axios
+      .post(newCommentAPI, userNewComment)
+      .then(function (response) {})
+      .catch(function (error) {
+        console.log("error: ", error);
+      });
+  };
 
   return (
-    <>
-      <div className={classes.productPage}>
-        <div className={classNames(classes.section, classes.sectionGray)}>
-          <div className={classes.container} style={{ maxWidth: "96.6vw" }}>
-            <div className={classNames(classes.main, classes.mainRaised)}>
+    <div>
+      <div className={classes.main + "" + classes.mainRaised}>
+        <div className="sec-container">
+          <div style={{ marginTop: "10px" }}>
+            {/* Product Basic Info */}
+            {/* Color & capacity selector */}
+            <div className="sec-basic-grid-cont">
+              {/* Products Basic Section */}
+              <div className="product-details-label1">{mName1}</div>
+              {/* ImageGallery, color selector and capacity selector */}
               <GridContainer>
                 {/* ImageGallery */}
-                <GridItem md={4} sm={4} style={{ maxWidth: "25vw" }}>
-                  <Carousel>
+                <GridItem xs={12} sm={3} md={6}>
+                  <Carousel className="carousel-root">
                     {productImages.map((productImages) => (
                       <div key={productImages.id}>
-                        <img src={productImages} />
-                        <p className="legend">{productName}</p>
+                        <img src={productImages.original} />
+                        {/* <p className="legend">{productName}</p> */}
                       </div>
                     ))}
                   </Carousel>
-                </GridItem>
 
-                {/* Product Basic Info */}
-                <GridItem md={8} sm={8}>
-                  {/* Product Name  */}
-                  <h2 className={classes.title}>{productName}</h2>
-
-                  {/* Brand Name  */}
-                  <div style={{ display: "flex" }}>
-                    <h5>Brand:</h5>
-                    <h5 className="color2196F3">{" " + brandName}</h5>
-                  </div>
-
-                  {/* Price and Discount Percentage */}
-                  <div style={{ width: "48vw" }}>
+                  {/* Price & Discount */}
+                  <div className="price-discount-sec">
+                    {/* Price */}
                     <div>
-                      <div className="flexDisplay">
-                        <h5>Base Price:</h5>
-                        <h5 style={{ textDecoration: "line-through" }}>
-                          ৳{basePrice}
-                        </h5>
-                      </div>
-                      <div className="flexDisplay">
-                        <h5>Current Price:</h5>
-                        <h5
-                          className="color2196F3"
-                          style={{ color: "#FF2400", fontWeight: "bold" }}
+                      {selectedVariantBasePrice ===
+                      selectedVariantCurrentPrice ? (
+                        //If current price & base price is same
+                        <span
+                          className="currten-price"
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
                         >
-                          ৳{currentPrice}
-                        </h5>
-                      </div>
+                          Price: {selectedVariantBasePrice}৳
+                        </span>
+                      ) : (
+                        //If current price & base price is not same
+                        <div
+                          className={classes.priceContainer}
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          Price:
+                          <span className="old-price">
+                            <p>{selectedVariantBasePrice}৳</p>
+                          </span>
+                          <span className="currten-price">
+                            {selectedVariantCurrentPrice}৳
+                          </span>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Discount Percentage  */}
-                    {discountType === "PERCENTAGE" && discountValue > 0 ? (
-                      <div className="flexDisplay">
-                        <h5>Discount Percentage:</h5>
-                        <div className="discountPercent-section">
-                          -{discountValue}%
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-
-                  {/* Dotted Underline */}
-                  <div
-                    style={{
-                      borderBottom: "1px dotted #000",
-                      marginBottom: "1vh",
-                      width: "48vw",
-                    }}
-                  />
-
-                  {/* Availability, Warranty */}
-                  <div className="flexDisplay" style={{ width: "48vw" }}>
-                    <div>
-                      {/* Availability */}
-                      <div className="flexDisplay">
-                        <h5>Status:</h5>
-                        {sellableQuantity > 0 ? (
-                          <h5 className="color2196F3">Available</h5>
+                    {/* Discount */}
+                    {mDiscountValue > 0 && selectedVariantCurrentPrice > 0 && (
+                      <div style={{ marginLeft: "3vw" }}>
+                        {mDiscountType === "PERCENTAGE" &&
+                        mDiscountValue > 0 ? (
+                          <div className="discount-percentage">
+                            -{mDiscountValue}%
+                          </div>
                         ) : (
-                          <h5 className="colorFF2400">Out of Stock</h5>
+                          <div>
+                            {mDiscountType === "FLAT" && mDiscountValue > 0 ? (
+                              <div className="discount-percentage">
+                                -{mDiscountValue}৳
+                              </div>
+                            ) : null}
+                          </div>
                         )}
                       </div>
-                      {/* Warranty */}
-                      <div className="flexDisplay">
-                        <h5>Warranty:</h5>
-                        <h5 className="color2196F3">{warranty} Month(s)</h5>
+                    )}
+                  </div>
+                  {/* Brand */}
+                  {mBrandName1.length > 0 && (
+                    <div
+                      className="product-details-label6"
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      Brand: {mBrandName1}
+                    </div>
+                  )}
+                  {/* Selected Variant Ram & Rom */}
+                  {selectedVariantRam > 0 && (
+                    <div
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      <div className="product-details-label6">
+                        RAM: {selectedVariantRam} GB /
+                      </div>
+
+                      <div className="product-details-label6">
+                        ROM: {selectedVariantRom} GB
                       </div>
                     </div>
+                  )}
+                  {/* Selected Variant Color */}
+                  {selectedColor.length > 0 && (
+                    <div
+                      className="product-details-label6"
+                      style={{
+                        justifyContent: "center",
+                        display: "flex",
+                      }}
+                    >
+                      Color: {selectedColor}
+                    </div>
+                  )}
+                </GridItem>
+
+                <GridItem xs={12} sm={3} md={6}>
+                  <div className="product-details-label2">
+                    Choose your color:
                   </div>
-
-                  <GridContainer style={{ width: "48vw" }}>
-                    {/* LAUNCH */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="2" className="gridItem-firstcolumn">
-                              LAUNCH
-                            </th>
-                            <th className="gridItem-secondcolumn">Announced</th>
-                            <td>{announchDate}</td>
-                          </tr>
-                          <tr>
-                            <th>Release Date</th>
-                            <td>{releaseDate}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    {/* Details Section */}
-                    <GridItem
-                      xs={12}
-                      sm={12}
-                      className="productDetails-gridItem"
-                    >
-                      <table>
-                        <tbody>
-                          <tr>
-                            <th rowSpan="1" className="gridItem-firstcolumn">
-                              Details
-                            </th>
-                            <th className="gridItem-secondcolumn">
-                              Detail Info
-                            </th>
-                            <td>
-                              <div
-                                dangerouslySetInnerHTML={{
-                                  __html: accessoryDetails,
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </GridItem>
-
-                    <br />
-                    <br />
+                  <br />
+                  {/* Choose your color: */}
+                  <GridContainer>
+                    {allVariants.map((productVariants) => (
+                      <GridItem
+                        xs={6}
+                        sm={6}
+                        md={6}
+                        onClick={() =>
+                          productColorClick(productVariants, event)
+                        }
+                        key={productVariants.id}
+                      >
+                        <div
+                          className="product-details-color-sec"
+                          style={{
+                            borderColor:
+                              productVariants.color === selectedColor
+                                ? "#0E86D4"
+                                : "#d3d3d3",
+                          }}
+                        >
+                          <div
+                            className="product-details-color-color"
+                            style={{ background: productVariants.colorCode }}
+                          />
+                          <div
+                            className="product-details-label4"
+                            style={{ marginTop: "7px" }}
+                          >
+                            {productVariants.color}
+                          </div>
+                        </div>
+                      </GridItem>
+                    ))}
                   </GridContainer>
+
+                  <div className="product-details-label2">
+                    Choose your capacity:
+                  </div>
+                  <br />
+
+                  {/* Choose your capacity: */}
+                  <GridContainer>
+                    {console.log(
+                      "selectedColorVariants:",
+                      selectedColorVariants
+                    )}
+                    {selectedColorVariants.map((selectedVrnt) => (
+                      <GridItem
+                        xs={6}
+                        sm={6}
+                        md={6}
+                        onClick={() => productCapacityClick(selectedVrnt)}
+                        key={selectedVrnt.id}
+                      >
+                        <div
+                          className="product-details-capacity-sec"
+                          style={{
+                            borderColor:
+                              selectedVrnt.ram + selectedVrnt.rom ===
+                              selectedVariantRamRom
+                                ? "#0E86D4"
+                                : "#d3d3d3",
+                          }}
+                        >
+                          {/* Ram / Rom */}
+                          <div className="ram-rom-div-cont">
+                            <div className="product-details-label3">
+                              {selectedVrnt.ram}GB /
+                            </div>
+                            <div className="product-details-label6">
+                              {selectedVrnt.rom}GB
+                            </div>
+                          </div>
+                          <div
+                            className="product-details-label4"
+                            style={{ marginTop: "7px" }}
+                          >
+                            {selectedVrnt.currentPrice}৳
+                          </div>
+                        </div>
+                      </GridItem>
+                    ))}
+                  </GridContainer>
+                </GridItem>
+              </GridContainer>
+            </div>
+
+            {/* Product Detail Info */}
+            <div
+              className="product-details-label3"
+              style={{
+                marginTop: "10vh",
+                justifyContent: "center",
+                display: "flex",
+              }}
+            >
+              Detail Specifications
+            </div>
+            <div style={{ margin: "50px 50px" }}>
+              <GridContainer>
+                {/* LAUNCH */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={4}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img src={launchIcon} alt="Launch" className="img-icon" />
+                  <div className="product-details-label2 details-sec-header">
+                    LAUNCH
+                  </div>
+                  {/* Announced */}
+                  {mAnnounchDate1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Announced</div>
+                      <div className="product-details-label4">
+                        {mAnnounchDate1}
+                      </div>
+                    </div>
+                  )}
+                  {/* Released */}
+                  {mReleaseDate1 !== undefined && (
+                    <div style={{ alignItems: "center" }}>
+                      <div className="product-details-label5 ">Released</div>
+                      <div className="product-details-label4">
+                        {mReleaseDate1}
+                      </div>
+                    </div>
+                  )}
                 </GridItem>
               </GridContainer>
 
               {/* User Opinions & Reviews */}
               <GridContainer>
-                <h3 className={classNames(classes.title, classes.textCenter)}>
-                  {productName} - User Opinions & Reviews
+                <h3 className={classes.title + "" + classes.textCenter}>
+                  {mName1} - User Opinions & Reviews
                 </h3>
                 <GridItem xs={12} sm={12} md={12} className={classes.mrAuto}>
                   <div>
@@ -329,8 +497,6 @@ function AccessoryDetails(props) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
-
-export default AccessoryDetails;

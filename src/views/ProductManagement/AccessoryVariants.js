@@ -31,14 +31,14 @@ import DynamicImgElmntCreator from "./DynamicImgElmntCreator";
 
 const useStyles = makeStyles(styles);
 
-const ProductVariants = (props) => {
+const AccessoryVariants = (props) => {
   const classes = useStyles();
   const [productVariants, setProductVariants] = useState([
     {
       color: "",
       colorCode: "",
+      basePrice: "",
       images: [{}],
-      variants: [{}],
     },
   ]);
 
@@ -50,8 +50,8 @@ const ProductVariants = (props) => {
         {
           color: "",
           colorCode: "",
+          basePrice: "",
           images: [{}],
-          variants: [{}],
         },
       ]);
     }
@@ -83,8 +83,8 @@ const ProductVariants = (props) => {
       {
         color: "",
         colorCode: "",
+        basePrice: "",
         images: [{}],
-        variants: [{}],
       },
     ]);
   };
@@ -141,24 +141,26 @@ const ProductVariants = (props) => {
                   onChange={(e) => handleInputChange(e, i, false, null)}
                 />
               </GridItem>
-            </GridContainer>
-
-            {/* Stock Info & Base Price */}
-            <GridContainer>
-              {/* Inner Obj: Ram, Rom, Base Price */}
-              <GridItem xs={12} sm={12} md={12} key={i}>
-                <VariantInnerObj
-                  variantIndex={i}
-                  innerObjCallbackFun={innerObjCallbackFun}
-                  variants={productVariants[i].variants}
+              {/* Base Price */}
+              <GridItem xs={12} sm={12} md={3}>
+                <input
+                  name="basePrice"
+                  placeholder="Base Price"
+                  className="input-field"
+                  style={{ marginRight: "10px" }}
+                  value={x.basePrice}
+                  onChange={(e) => handleInputChange(e, i, false, null)}
                 />
               </GridItem>
             </GridContainer>
 
             {/* Img Picker */}
             <GridContainer>
-              <div style={{ color: "red", marginLeft: "15px" }}>
-                Aspect Ratio 1:1 & Dimension 1080px X 1080px
+              <div
+                style={{ fontWeight: "bold", color: "red", marginLeft: "15px" }}
+              >
+                Image aspect ratio must be 1:1 & Dimension should be 1080px X
+                1080px
               </div>
               <GridItem xs={12} sm={12} md={12} key={i}>
                 <DynamicImgElmntCreator
@@ -206,4 +208,4 @@ const ProductVariants = (props) => {
   );
 };
 
-export default ProductVariants;
+export default AccessoryVariants;

@@ -185,7 +185,6 @@ function UpdatePhone(props) {
   const [mBatteryType, setmBatteryType] = useState("N/A");
   const [mBatteryCharging, setmBatteryCharging] = useState("N/A");
   // MISC
-  const [mColor, setmColor] = useState("N/A");
   const [mModel, setmModel] = useState("N/A");
   const [mSar, setmSar] = useState("N/A");
   const [mSarEu, setmSarEu] = useState("N/A");
@@ -197,8 +196,8 @@ function UpdatePhone(props) {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   // Product status change flag
   // const [updateProductId, setUpdateProductId] = useState("");
-  // const [statusToBeChanged, setStatusToBeChanged] = useState(false);
-  const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);
+const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);  // const [statusToBeChanged, setStatusToBeChanged] = useState(false);
+  
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
@@ -355,7 +354,6 @@ function UpdatePhone(props) {
         setmBatteryType(response.data.content.batteryType);
         setmBatteryCharging(response.data.content.batteryCharging);
         // MISC
-        setmColor(response.data.content.colors[0]);
         setmModel(response.data.content.models[0]);
         setmSar(response.data.content.sarUs);
         setmSarEu(response.data.content.sarEu);
@@ -522,7 +520,6 @@ function UpdatePhone(props) {
         setmBatteryType(response.data.content.batteryType);
         setmBatteryCharging(response.data.content.batteryCharging);
         // MISC
-        setmColor(response.data.content.colors[0]);
         setmModel(response.data.content.models[0]);
         setmSar(response.data.content.sarUs);
         setmSarEu(response.data.content.sarEu);
@@ -588,7 +585,6 @@ function UpdatePhone(props) {
     sensors: [mSensor1, mSensor2, mSensor3],
     batteryType: mBatteryType,
     batteryCharging: mBatteryCharging,
-    colors: [mColor],
     models: [mModel],
     sarEu: mSarEu,
     sarUs: mSar,
@@ -2152,23 +2148,8 @@ function UpdatePhone(props) {
                   <p className="sectionPara">[MISC]</p>
                 </div>
 
-                {/* Colors & Models */}
+                {/* Models */}
                 <GridContainer>
-                  <GridItem xs={12} sm={12} md={6}>
-                    <CustomInput
-                      labelText="Colors"
-                      id="colors"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        type: "String",
-                        value: mColor || "",
-                        onChange: (event) => setmColor(event.target.value),
-                        maxLength: "100",
-                      }}
-                    />
-                  </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
                       labelText="Models"

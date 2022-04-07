@@ -4,11 +4,6 @@ import axios from "axios";
 import { store, useGlobalState } from "state-pool";
 
 // material-ui icons
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
-import Radio from "@material-ui/core/Radio";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import RssFeedIcon from "@mui/icons-material/RssFeed";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -24,16 +19,7 @@ import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
 import BatteryCharging50Icon from "@mui/icons-material/BatteryCharging50";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import SpeedIcon from "@mui/icons-material/Speed";
-import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
-import DeleteIcon from "@mui/icons-material/Delete";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import Add from "@material-ui/icons/Add";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import IconButton from "@mui/material/IconButton";
-import Input from "@mui/material/Input";
-import InputAdornment from "@mui/material/InputAdornment";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -46,11 +32,9 @@ import DateFnsUtils from "@date-io/date-fns";
 // Card
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
-import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
 // Custom Input
 import CustomInput from "components/CustomInput/CustomInput.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
 // Date
 // import "date-fns";
 // import DateValidate from "views/DatePicker/DateValidate";
@@ -61,8 +45,6 @@ import "assets/scss/ghorwali-scss/create-products.scss";
 // Data formatter
 import moment from "moment";
 
-import { title } from "assets/jss/material-dashboard-pro-react";
-import SaveWarning from "views/ConfirmationModals/SaveWarning";
 // Dropdown Select
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -76,7 +58,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 
-import ImgCropper from "views/OkoleleImageCropper/ImgCropper";
 import SearchToClone from "../CloneProducts/SearchToClone";
 import DynamicElementCreator from "../DynamicElementCreator";
 import ProductVariants from "../ProductVariants";
@@ -182,10 +163,6 @@ function CreatePhone() {
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
-
-  // Preview and Crop Img
-  const [shouldPreview, setShouldPreview] = useState(false);
-  const [imgIdToPreview, setImgIdToPreview] = useState("");
 
   // Dynamic Elements Handler
   const band2gHandler = (callBackData) => {
@@ -881,12 +858,16 @@ function CreatePhone() {
                 {/* Discount Type */}
                 <GridItem xs={12} sm={12} md={3} style={{ marginTop: "12px" }}>
                   <FormControl variant="standard" sx={{ width: "100%" }}>
-                    <InputLabel id="demo-simple-select-standard-label">
+                    <InputLabel
+                      id="demo-simple-select-standard-label"
+                      style={{ fontSize: "14px" }}
+                    >
                       Discount Type
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-standard-label"
                       id="demo-simple-select-standard"
+                      style={{ fontSize: "14px" }}
                       value={mDiscountType || " "}
                       onChange={(event) => setmDiscountType(event.target.value)}
                       label="Brand Name"
@@ -924,12 +905,16 @@ function CreatePhone() {
                 {/* Brand*/}
                 <GridItem xs={12} sm={12} md={3} style={{ marginTop: "12px" }}>
                   <FormControl variant="standard" sx={{ width: "100%" }}>
-                    <InputLabel id="demo-simple-select-standard-label">
+                    <InputLabel
+                      id="demo-simple-select-standard-label"
+                      style={{ fontSize: "14px" }}
+                    >
                       Brand Name
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-standard-label"
                       id="demo-simple-select-standard"
+                      style={{ fontSize: "14px" }}
                       value={mBrandName || " "}
                       onChange={(event) => setmBrandName(event.target.value)}
                       label="Brand Name"
