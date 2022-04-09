@@ -25,6 +25,7 @@ import featureIcon from "assets/img/okolele-img/product-details-icons/feature.pn
 import batteryIcon from "assets/img/okolele-img/product-details-icons/battery.png";
 import miscIcon from "assets/img/okolele-img/product-details-icons/misc.png";
 import testIcon from "assets/img/okolele-img/product-details-icons/test.png";
+import OtherDetails from "assets/img/okolele-img/product-details-icons/other-details.png";
 // Carousel ImageGallery
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
@@ -68,7 +69,8 @@ export default function AccessoryDetails(props) {
   // LAUNCH
   const [mAnnounchDate1, setmAnnounchDate1] = useState("");
   const [mReleaseDate1, setmReleaseDate1] = useState("");
-
+  // Other Details
+  const [otherDetails, setOtherDetails] = useState([]);
   // Post New Comments
   const [userProfileImg, setUserProfileImg] = useState(dummyProfileImg128px);
   const [userName, setUserName] = useState("Random User");
@@ -118,26 +120,23 @@ export default function AccessoryDetails(props) {
     }
 
     // Set initial value of inner variants object (Capacity)
-    setSelectedVariantBasePrice(details.variants[0].variants[0].basePrice);
-    setSelectedVariantCurrentPrice(
-      details.variants[0].variants[0].currentPrice
-    );
-    setSelectedVariantTotalStock(details.variants[0].variants[0].totalStock);
-    setSelectedVariantSellableStock(
-      details.variants[0].variants[0].sellableStock
-    );
-    setSelectedVariantRam(details.variants[0].variants[0].ram);
-    setSelectedVariantRom(details.variants[0].variants[0].rom);
-    setSelectedVariantRamRom(
-      details.variants[0].variants[0].ram + details.variants[0].variants[0].rom
-    );
+    setSelectedVariantBasePrice(details.variants[0].basePrice);
+    setSelectedVariantCurrentPrice(details.variants[0].currentPrice);
+    setSelectedVariantTotalStock(details.variants[0].totalStock);
+    setSelectedVariantSellableStock(details.variants[0].sellableStock);
+    // setSelectedVariantRam(details.variants[0].ram);
+    // setSelectedVariantRom(details.variants[0].rom);
+    // setSelectedVariantRamRom(details.variants[0].ram + details.variants[0].rom);
 
     // LAUNCH
     setmAnnounchDate1(details.announceDate);
     setmReleaseDate1(details.releaseDate);
+    // Other Details
+    setOtherDetails(details.details);
   };
 
   const productColorClick = (variant, e) => {
+    console.log("productColorClick/variant: ", variant);
     e.preventDefault();
 
     setSelectedColor(variant.color);
@@ -156,26 +155,13 @@ export default function AccessoryDetails(props) {
     } else {
       setProductImages([{ original: phoneDummyImg, thumbnail: null }]);
     }
-    setSelectedColorVariants(variant.variants);
+    // setSelectedColorVariants(variant.variants);
 
     // Once a clolor is selected, select the first capacity automatically
-    setSelectedVariantBasePrice(variant.variants[0].basePrice);
-    setSelectedVariantCurrentPrice(variant.variants[0].currentPrice);
-    setSelectedVariantTotalStock(variant.variants[0].totalStock);
-    setSelectedVariantSellableStock(variant.variants[0].sellableStock);
-    setSelectedVariantRam(variant.variants[0].ram);
-    setSelectedVariantRom(variant.variants[0].rom);
-    setSelectedVariantRamRom(variant.variants[0].ram + variant.variants[0].rom);
-  };
-
-  const productCapacityClick = (variant) => {
     setSelectedVariantBasePrice(variant.basePrice);
     setSelectedVariantCurrentPrice(variant.currentPrice);
     setSelectedVariantTotalStock(variant.totalStock);
     setSelectedVariantSellableStock(variant.sellableStock);
-    setSelectedVariantRam(variant.ram);
-    setSelectedVariantRom(variant.rom);
-    setSelectedVariantRamRom(variant.ram + variant.rom);
   };
 
   // Post new comment
@@ -285,23 +271,6 @@ export default function AccessoryDetails(props) {
                       Brand: {mBrandName1}
                     </div>
                   )}
-                  {/* Selected Variant Ram & Rom */}
-                  {selectedVariantRam > 0 && (
-                    <div
-                      style={{
-                        justifyContent: "center",
-                        display: "flex",
-                      }}
-                    >
-                      <div className="product-details-label6">
-                        RAM: {selectedVariantRam} GB /
-                      </div>
-
-                      <div className="product-details-label6">
-                        ROM: {selectedVariantRom} GB
-                      </div>
-                    </div>
-                  )}
                   {/* Selected Variant Color */}
                   {selectedColor.length > 0 && (
                     <div
@@ -356,55 +325,6 @@ export default function AccessoryDetails(props) {
                       </GridItem>
                     ))}
                   </GridContainer>
-
-                  <div className="product-details-label2">
-                    Choose your capacity:
-                  </div>
-                  <br />
-
-                  {/* Choose your capacity: */}
-                  <GridContainer>
-                    {console.log(
-                      "selectedColorVariants:",
-                      selectedColorVariants
-                    )}
-                    {selectedColorVariants.map((selectedVrnt) => (
-                      <GridItem
-                        xs={6}
-                        sm={6}
-                        md={6}
-                        onClick={() => productCapacityClick(selectedVrnt)}
-                        key={selectedVrnt.id}
-                      >
-                        <div
-                          className="product-details-capacity-sec"
-                          style={{
-                            borderColor:
-                              selectedVrnt.ram + selectedVrnt.rom ===
-                              selectedVariantRamRom
-                                ? "#0E86D4"
-                                : "#d3d3d3",
-                          }}
-                        >
-                          {/* Ram / Rom */}
-                          <div className="ram-rom-div-cont">
-                            <div className="product-details-label3">
-                              {selectedVrnt.ram}GB /
-                            </div>
-                            <div className="product-details-label6">
-                              {selectedVrnt.rom}GB
-                            </div>
-                          </div>
-                          <div
-                            className="product-details-label4"
-                            style={{ marginTop: "7px" }}
-                          >
-                            {selectedVrnt.currentPrice}৳
-                          </div>
-                        </div>
-                      </GridItem>
-                    ))}
-                  </GridContainer>
                 </GridItem>
               </GridContainer>
             </div>
@@ -449,6 +369,40 @@ export default function AccessoryDetails(props) {
                       <div className="product-details-label5 ">Released</div>
                       <div className="product-details-label4">
                         {mReleaseDate1}
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* Other Details */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={8}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img
+                    src={OtherDetails}
+                    alt="Other Details"
+                    className="img-icon"
+                  />
+                  <div className="product-details-label2 details-sec-header">
+                    Other Details
+                  </div>
+                  {Object.keys(otherDetails).length !== 0 && (
+                    <div style={{ alignItems: "center" }}>
+                      <div
+                        className="product-details-label4"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        {otherDetails.map((otherDetails) => (
+                          <div key={otherDetails.id}>{otherDetails}</div>
+                        ))}
                       </div>
                     </div>
                   )}

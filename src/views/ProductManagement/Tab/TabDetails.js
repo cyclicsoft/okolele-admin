@@ -63,7 +63,9 @@ export default function TabDetails(props) {
     setSelectedVariantSellableStock,
   ] = useState(0);
   const [selectedVariantRam, setSelectedVariantRam] = useState(0);
+  const [selectedVariantRamUnit, setSelectedVariantRamUnit] = useState("");
   const [selectedVariantRom, setSelectedVariantRom] = useState(0);
+  const [selectedVariantRomUnit, setSelectedVariantRomUnit] = useState("");
   const [selectedVariantRamRom, setSelectedVariantRamRom] = useState("");
 
   // NETWORK
@@ -183,9 +185,14 @@ export default function TabDetails(props) {
       details.variants[0].variants[0].sellableStock
     );
     setSelectedVariantRam(details.variants[0].variants[0].ram);
+    setSelectedVariantRamUnit(details.variants[0].variants[0].ramUnit);
     setSelectedVariantRom(details.variants[0].variants[0].rom);
+    setSelectedVariantRomUnit(details.variants[0].variants[0].romUnit);
     setSelectedVariantRamRom(
-      details.variants[0].variants[0].ram + details.variants[0].variants[0].rom
+      details.variants[0].variants[0].ram +
+        details.variants[0].variants[0].ramUnit +
+        details.variants[0].variants[0].rom +
+        details.variants[0].variants[0].romUnit
     );
 
     // NETWORK
@@ -248,10 +255,11 @@ export default function TabDetails(props) {
   };
 
   const productColorClick = (variant, e) => {
+    console.log("productColorClick/variant: ...", variant);
     e.preventDefault();
 
     setSelectedColor(variant.color);
-    // console.log("variant.images: ...", variant.images);
+
     if (Object.keys(variant.images).length !== 0) {
       setProductImages([]); //First set to empty to clear previous data
       variant.images.map((img) => {
@@ -274,8 +282,15 @@ export default function TabDetails(props) {
     setSelectedVariantTotalStock(variant.variants[0].totalStock);
     setSelectedVariantSellableStock(variant.variants[0].sellableStock);
     setSelectedVariantRam(variant.variants[0].ram);
+    setSelectedVariantRamUnit(variant.variants[0].ramUnit);
     setSelectedVariantRom(variant.variants[0].rom);
-    setSelectedVariantRamRom(variant.variants[0].ram + variant.variants[0].rom);
+    setSelectedVariantRomUnit(variant.variants[0].romUnit);
+    setSelectedVariantRamRom(
+      variant.variants[0].ram +
+        variant.variants[0].ramUnit +
+        variant.variants[0].rom +
+        variant.variants[0].romUnit
+    );
   };
 
   const productCapacityClick = (variant) => {
@@ -284,8 +299,12 @@ export default function TabDetails(props) {
     setSelectedVariantTotalStock(variant.totalStock);
     setSelectedVariantSellableStock(variant.sellableStock);
     setSelectedVariantRam(variant.ram);
+    setSelectedVariantRamUnit(variant.ramUnit);
     setSelectedVariantRom(variant.rom);
-    setSelectedVariantRamRom(variant.ram + variant.rom);
+    setSelectedVariantRomUnit(variant.romUnit);
+    setSelectedVariantRamRom(
+      variant.ram + variant.ramUnit + variant.rom + variant.romUnit
+    );
   };
 
   // Post new comment
@@ -404,11 +423,11 @@ export default function TabDetails(props) {
                       }}
                     >
                       <div className="product-details-label6">
-                        RAM: {selectedVariantRam} GB /
+                        RAM: {selectedVariantRam} {selectedVariantRamUnit} /
                       </div>
 
                       <div className="product-details-label6">
-                        ROM: {selectedVariantRom} GB
+                        ROM: {selectedVariantRom} {selectedVariantRomUnit}
                       </div>
                     </div>
                   )}
@@ -490,7 +509,10 @@ export default function TabDetails(props) {
                           className="product-details-capacity-sec"
                           style={{
                             borderColor:
-                              selectedVrnt.ram + selectedVrnt.rom ===
+                              selectedVrnt.ram +
+                                selectedVrnt.ramUnit +
+                                selectedVrnt.rom +
+                                selectedVrnt.romUnit ===
                               selectedVariantRamRom
                                 ? "#0E86D4"
                                 : "#d3d3d3",
@@ -499,10 +521,12 @@ export default function TabDetails(props) {
                           {/* Ram / Rom */}
                           <div className="ram-rom-div-cont">
                             <div className="product-details-label3">
-                              {selectedVrnt.ram}GB /
+                              {selectedVrnt.ram}
+                              {selectedVrnt.ramUnit} /
                             </div>
                             <div className="product-details-label6">
-                              {selectedVrnt.rom}GB
+                              {selectedVrnt.rom}
+                              {selectedVrnt.romUnit}
                             </div>
                           </div>
                           <div

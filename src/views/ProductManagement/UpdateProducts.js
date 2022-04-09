@@ -66,7 +66,6 @@ import ProductStatusUpdateWarning from "views/ConfirmationModals/ProductStatusUp
 import AccessoryDetails from "./Accessory/AccessoryDetails";
 import UpdateAccessory from "./Accessory/UpdateAccessory";
 import UpdateSmartWatch from "./SmartWatch/UpdateSmartWatch";
-import UpdatePhoneCopy from "./Phone/UpdatePhoneCopy";
 
 const useStyles = makeStyles(styles);
 
@@ -664,7 +663,7 @@ export default function UpdateProducts() {
               </CardHeader>
               <CardBody>
                 {dropdownValue == "MOBILE" ? (
-                  <UpdatePhoneCopy editProductId={editProductId} />
+                  <UpdatePhone editProductId={editProductId} />
                 ) : null}
 
                 {dropdownValue == "TABLET" ? (

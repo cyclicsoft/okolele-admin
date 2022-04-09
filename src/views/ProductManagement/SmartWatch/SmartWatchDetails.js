@@ -25,6 +25,7 @@ import featureIcon from "assets/img/okolele-img/product-details-icons/feature.pn
 import batteryIcon from "assets/img/okolele-img/product-details-icons/battery.png";
 import miscIcon from "assets/img/okolele-img/product-details-icons/misc.png";
 import testIcon from "assets/img/okolele-img/product-details-icons/test.png";
+import OtherDetails from "assets/img/okolele-img/product-details-icons/other-details.png";
 // Carousel ImageGallery
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
@@ -63,8 +64,11 @@ export default function SmartWatchDetails(props) {
     setSelectedVariantSellableStock,
   ] = useState(0);
   const [selectedVariantRam, setSelectedVariantRam] = useState(0);
+  const [selectedVariantRamUnit, setSelectedVariantRamUnit] = useState("");
   const [selectedVariantRom, setSelectedVariantRom] = useState(0);
+  const [selectedVariantRomUnit, setSelectedVariantRomUnit] = useState("");
   const [selectedVariantRamRom, setSelectedVariantRamRom] = useState("");
+
   // LAUNCH
   const [mAnnounchDate1, setmAnnounchDate1] = useState("");
   const [mReleaseDate1, setmReleaseDate1] = useState("");
@@ -100,7 +104,8 @@ export default function SmartWatchDetails(props) {
   const [mModel1, setmModel1] = useState("");
   // TESTS
   const [mPerformance, setmPerformance] = useState([]);
-
+  // Other Details
+  const [otherDetails, setOtherDetails] = useState([]);
   // Post New Comments
   const [userProfileImg, setUserProfileImg] = useState(dummyProfileImg128px);
   const [userName, setUserName] = useState("Random User");
@@ -159,9 +164,14 @@ export default function SmartWatchDetails(props) {
       details.variants[0].variants[0].sellableStock
     );
     setSelectedVariantRam(details.variants[0].variants[0].ram);
+    setSelectedVariantRamUnit(details.variants[0].variants[0].ramUnit);
     setSelectedVariantRom(details.variants[0].variants[0].rom);
+    setSelectedVariantRomUnit(details.variants[0].variants[0].romUnit);
     setSelectedVariantRamRom(
-      details.variants[0].variants[0].ram + details.variants[0].variants[0].rom
+      details.variants[0].variants[0].ram +
+        details.variants[0].variants[0].ramUnit +
+        details.variants[0].variants[0].rom +
+        details.variants[0].variants[0].romUnit
     );
 
     // LAUNCH
@@ -199,6 +209,8 @@ export default function SmartWatchDetails(props) {
     setmModel1(details.models[0]);
     // TESTS
     setmPerformance(details.performances);
+    // Other Details
+    setOtherDetails(details.others);
   };
 
   const productColorClick = (variant, e) => {
@@ -228,8 +240,15 @@ export default function SmartWatchDetails(props) {
     setSelectedVariantTotalStock(variant.variants[0].totalStock);
     setSelectedVariantSellableStock(variant.variants[0].sellableStock);
     setSelectedVariantRam(variant.variants[0].ram);
+    setSelectedVariantRamUnit(variant.variants[0].ramUnit);
     setSelectedVariantRom(variant.variants[0].rom);
-    setSelectedVariantRamRom(variant.variants[0].ram + variant.variants[0].rom);
+    setSelectedVariantRomUnit(variant.variants[0].romUnit);
+    setSelectedVariantRamRom(
+      variant.variants[0].ram +
+        variant.variants[0].ramUnit +
+        variant.variants[0].rom +
+        variant.variants[0].romUnit
+    );
   };
 
   const productCapacityClick = (variant) => {
@@ -238,8 +257,12 @@ export default function SmartWatchDetails(props) {
     setSelectedVariantTotalStock(variant.totalStock);
     setSelectedVariantSellableStock(variant.sellableStock);
     setSelectedVariantRam(variant.ram);
+    setSelectedVariantRamUnit(variant.ramUnit);
     setSelectedVariantRom(variant.rom);
-    setSelectedVariantRamRom(variant.ram + variant.rom);
+    setSelectedVariantRomUnit(variant.romUnit);
+    setSelectedVariantRamRom(
+      variant.ram + variant.ramUnit + variant.rom + variant.romUnit
+    );
   };
 
   // Post new comment
@@ -249,7 +272,7 @@ export default function SmartWatchDetails(props) {
     userImage: userProfileImg,
   };
   const postNewComment = () => {
-    let newCommentAPI = rootPath[0] + "/mobiles/addComment/" + productId;
+    let newCommentAPI = rootPath[0] + "/smartwatches/addComment/" + productId;
     axios
       .post(newCommentAPI, userNewComment)
       .then(function (response) {})
@@ -358,11 +381,11 @@ export default function SmartWatchDetails(props) {
                       }}
                     >
                       <div className="product-details-label6">
-                        RAM: {selectedVariantRam} GB /
+                        RAM: {selectedVariantRam} {selectedVariantRamUnit} /
                       </div>
 
                       <div className="product-details-label6">
-                        ROM: {selectedVariantRom} GB
+                        ROM: {selectedVariantRom} {selectedVariantRomUnit}
                       </div>
                     </div>
                   )}
@@ -444,7 +467,10 @@ export default function SmartWatchDetails(props) {
                           className="product-details-capacity-sec"
                           style={{
                             borderColor:
-                              selectedVrnt.ram + selectedVrnt.rom ===
+                              selectedVrnt.ram +
+                                selectedVrnt.ramUnit +
+                                selectedVrnt.rom +
+                                selectedVrnt.romUnit ===
                               selectedVariantRamRom
                                 ? "#0E86D4"
                                 : "#d3d3d3",
@@ -453,12 +479,15 @@ export default function SmartWatchDetails(props) {
                           {/* Ram / Rom */}
                           <div className="ram-rom-div-cont">
                             <div className="product-details-label3">
-                              {selectedVrnt.ram}GB /
+                              {selectedVrnt.ram}
+                              {selectedVrnt.ramUnit} /
                             </div>
                             <div className="product-details-label6">
-                              {selectedVrnt.rom}GB
+                              {selectedVrnt.rom}
+                              {selectedVrnt.romUnit}
                             </div>
                           </div>
+
                           <div
                             className="product-details-label4"
                             style={{ marginTop: "7px" }}
@@ -845,6 +874,40 @@ export default function SmartWatchDetails(props) {
                       >
                         {mPerformance.map((mPerformance) => (
                           <div key={mPerformance.id}>{mPerformance}</div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </GridItem>
+
+                {/* Other Details */}
+                <GridItem
+                  xs={6}
+                  sm={3}
+                  md={8}
+                  className="productDetails-grid-item"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <img
+                    src={OtherDetails}
+                    alt="Other Details"
+                    className="img-icon"
+                  />
+                  <div className="product-details-label2 details-sec-header">
+                    Other Details
+                  </div>
+                  {Object.keys(otherDetails).length !== 0 && (
+                    <div style={{ alignItems: "center" }}>
+                      <div
+                        className="product-details-label4"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        {otherDetails.map((otherDetails) => (
+                          <div key={otherDetails.id}>{otherDetails}</div>
                         ))}
                       </div>
                     </div>

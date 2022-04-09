@@ -21,6 +21,7 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import SpeedIcon from "@mui/icons-material/Speed";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import DetailsIcon from '@mui/icons-material/Details';
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -1582,7 +1583,7 @@ function CreateSmartWatch() {
               {/* Section Ttitle and Reset button */}
               <div style={{ display: "flex" }}>
                 <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <SpeedIcon />
+                  <DetailsIcon />
                   <p className="sectionPara">[OTHER DETAILS]</p>
                   {/* Reset */}
                 </div>
