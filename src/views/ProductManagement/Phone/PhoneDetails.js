@@ -254,6 +254,7 @@ export default function PhoneDetails(props) {
     setmPerformance(details.performances);
   };
 
+  // Color Click
   const productColorClick = (variant, e) => {
     console.log("productColorClick/variant: ...", variant);
     e.preventDefault();

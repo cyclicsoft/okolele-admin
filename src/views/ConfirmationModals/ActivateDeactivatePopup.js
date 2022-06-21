@@ -1,6 +1,5 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 // react component used to create sweet alerts
 import SweetAlert from "react-bootstrap-sweetalert";
 
@@ -11,7 +10,7 @@ import styles from "assets/jss/material-dashboard-pro-react/views/sweetAlertStyl
 
 const useStyles = makeStyles(styles);
 
-export default function ActivationWarning(props) {
+export default function ActivateDeactivatePopup(props) {
   const classes = useStyles();
   const [alert, setAlert] = React.useState(null);
 
@@ -24,7 +23,7 @@ export default function ActivationWarning(props) {
       <SweetAlert
         warning
         style={{ display: "block", marginTop: "-100px" }}
-        title="Are you sure?"
+        title="Change Status?"
         onConfirm={() => successUpdate()}
         onCancel={() => hideAlert()}
         confirmBtnCssClass={classes.button + " " + classes.success}
@@ -33,56 +32,36 @@ export default function ActivationWarning(props) {
         cancelBtnText="Cancel"
         showCancel
       >
-        You can change status any time!
+        You can change again any time!
       </SweetAlert>
     );
   };
-
 
   const successUpdate = () => {
     setAlert(
       <SweetAlert
         success
         style={{ display: "block", marginTop: "-100px" }}
-        title="Updated!"
+        title="Updating..."
         onConfirm={() => confirmAlert()}
         onCancel={() => hideAlert()}
         confirmBtnCssClass={classes.button + " " + classes.success}
       >
-        Status has been updated.
-        
+        Status update in-progress!
       </SweetAlert>
     );
-    
   };
 
   const confirmAlert = () => {
-    // Record delete handler
-    axios.put(props.updateUrl)
-        .then(function (response) {
-          console.log(response);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-    props.onStatusUpdateChangeFlag(false);
+    props.statusChangeFlag(true);
 
     setAlert(null);
-    
   };
 
   const hideAlert = () => {
-    props.onStatusUpdateChangeFlag(false);
+    props.statusChangeFlag(false);
     setAlert(null);
   };
 
-
-  return (
-    <div>
-      {alert}
-    </div>
-  );
-
-
+  return <div>{alert}</div>;
 }

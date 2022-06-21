@@ -88,10 +88,11 @@ export default function AdminLogin(props) {
       axios
         .post(loginAPI, userData)
         .then(function (response) {
+          console.log("Accress Token Info: ", response.data.content);
           // var date = new Date(response.data.content.tokenValidity);
           // console.log("response: ", date.toString());
-          console.log("response code: ", response.status);
-          console.log("Access token api response: ", response.data.content);
+          // console.log("response code: ", response.status);
+          // console.log("Access token api response: ", response.data.content);
           if (response.status == 200) {
             toast.success(
               "Login Successful!",

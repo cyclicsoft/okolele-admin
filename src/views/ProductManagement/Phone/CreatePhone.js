@@ -289,7 +289,6 @@ function CreatePhone() {
         });
       }
     }
-    // saveNewPhone(); // remove this after uncommenting above code lines
 
     setShowHttpResponseMsg(false);
     setShowProductCreatePopup(false);
@@ -520,60 +519,6 @@ function CreatePhone() {
     return theBlob;
   };
 
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      // console.log(
-      //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
-
-      axios
-        .post(refreshTokenAPI, refreshTkn)
-        .then(function (response) {
-          // console.log("Refresh token response: ", response);
-          // console.log("Status Code: ", response.status);
-
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-            try {
-              localStorage.clear();
-              window.location.href = "/";
-            } catch (e) {
-              console.log(e.message);
-            }
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
-          }
-        })
-        .catch(function (error) {
-          // console.log("Status Code: ", error.response.status);
-          console.log(error);
-        });
-    } else {
-      // console.log(
-      //   "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      // );
-      // Logout forcefully from here
-      try {
-        localStorage.clear();
-        window.location.href = "/";
-      } catch (e) {
-        console.log(e.message);
-      }
-    }
-  };
-
   // Searched Product from SearchToCLone.js
   const getSearchedProduct = (searchedProduct) => {
     setCategory("1");
@@ -703,6 +648,60 @@ function CreatePhone() {
     setmSarEu(searchedProduct.sarEu);
     // TESTS
     setPerformances(searchedProduct.performances);
+  };
+
+  const refreshTokenHandler = () => {
+    var currentLocalDateTime = new Date();
+
+    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
+      // console.log(
+      //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
+      // );
+      const refreshTokenAPI = "http://localhost:8080/auth/token";
+
+      axios
+        .post(refreshTokenAPI, refreshTkn)
+        .then(function (response) {
+          // console.log("Refresh token response: ", response);
+          // console.log("Status Code: ", response.status);
+
+          if (response.data.code == 403) {
+            alert(response.data.message);
+            return false;
+            // Logout forcefully from here
+            // try {
+            //   localStorage.clear();
+            //   window.location.href = "/";
+            // } catch (e) {
+            //   console.log(e.message);
+            // }
+          } else {
+            updateUserToken(function (accessToken) {
+              accessToken.token = response.data.token;
+              accessToken.tokenValidity = response.data.tokenValidity;
+              accessToken.refreshToken = response.data.refreshToken;
+              accessToken.refreshTokenValidity =
+                response.data.refreshTokenValidity;
+            });
+            return true;
+          }
+        })
+        .catch(function (error) {
+          // console.log("Status Code: ", error.response.status);
+          console.log(error);
+        });
+    } else {
+      // console.log(
+      //   "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
+      // );
+      // Logout forcefully from here
+      try {
+        localStorage.clear();
+        window.location.href = "/";
+      } catch (e) {
+        console.log(e.message);
+      }
+    }
   };
 
   return (

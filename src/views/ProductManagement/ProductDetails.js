@@ -18,28 +18,27 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 
 import styles from "assets/jss/material-dashboard-pro-react/views/userProfileStyles.js";
-
-// Loader
-import FillingBottle from "react-cssfx-loading/lib/FillingBottle";
-
 // SCSS
 // import "../../assets/scss/ghorwali-scss/search-dropdown.scss";
 import "assets/scss/ghorwali-scss/update-product.scss";
 import "../../assets/scss/ghorwali-scss/create-admin.scss";
 
-import UpdatePhone from "./Phone/UpdatePhone";
-import UpdateTab from "./Tab/UpdateTab";
+import PhoneDetails from "./Phone/PhoneDetails";
+import TabDetails from "./Tab/TabDetails";
+import SmartWatchDetails from "./SmartWatch/SmartWatchDetails";
 // Warning Popup
-import UpdateSmartWatch from "./SmartWatch/UpdateSmartWatch";
-import UpdateAccessory from "./Accessory/UpdateAccessory";
+import AccessoryDetails from "./Accessory/AccessoryDetails";
 
 const useStyles = makeStyles(styles);
 
-export default function UpdateProducts(props) {
+export default function ProductDetails(props) {
   const classes = useStyles();
 
   // Products Info
-  const [editProductId, setEditProductId] = useState(props.location.productId);
+  const [productDetails, setProductDetails] = useState(
+    props.location.productDetailsInfo
+  );
+
   // Search
   const [dropdownValue, setDropdownValue] = useState(
     props.location.productType
@@ -48,27 +47,29 @@ export default function UpdateProducts(props) {
   return (
     <>
       <GridContainer>
-        {/* Update Product */}
+        {/* Product Details */}
         <GridItem xs={12} sm={12}>
-          {/* md={8} */}
+          {console.log("productDetails: ", productDetails)}
           <Card>
+            <CardHeader icon>
+              {/* <CardIcon color="info">
+              <Edit />
+            </CardIcon> */}
+              <h4 className={classes.cardIconTitle}>Product Details</h4>
+            </CardHeader>
             <CardBody>
               {dropdownValue == "MOBILE" ? (
-                <UpdatePhone editProductId={editProductId} />
+                <PhoneDetails productDetails={productDetails} />
               ) : null}
-
               {dropdownValue == "TABLET" ? (
-                <UpdateTab editProductId={editProductId} />
+                <TabDetails productDetails={productDetails} />
               ) : null}
-
               {dropdownValue == "SMARTWATCH" ? (
-                <UpdateSmartWatch editProductId={editProductId} />
+                <SmartWatchDetails productDetails={productDetails} />
               ) : null}
-
               {dropdownValue == "ACCESSORY" ? (
-                <UpdateAccessory editProductId={editProductId} />
+                <AccessoryDetails productDetails={productDetails} />
               ) : null}
-
               <Clearfix />
             </CardBody>
           </Card>

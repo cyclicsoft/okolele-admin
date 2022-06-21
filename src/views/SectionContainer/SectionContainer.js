@@ -1,6 +1,5 @@
 //index->App->Admin
 
-
 import React from "react";
 import cx from "classnames";
 import { Switch, Route, Redirect } from "react-router-dom";
@@ -37,7 +36,13 @@ export default function SectionContainer(props) {
   const [bgColor, setBgColor] = React.useState("black");
   // const [hasImage, setHasImage] = React.useState(true);
   const [fixedClasses, setFixedClasses] = React.useState("dropdown");
-  const [logo, setLogo] = React.useState(require("assets/img/logo-white.svg"));
+  // const [logo, setLogo] = React.useState(require("assets/img/logo-white.svg"));
+  // const [logo, setLogo] = React.useState(
+  //   require("assets/img/Okolele-Logo.svg")
+  // );
+  const [logo, setLogo] = React.useState(
+    require("assets/img/Okolele-Logo2.png")
+  );
   // styles
   const classes = useStyles();
   const mainPanelClasses =
@@ -46,7 +51,7 @@ export default function SectionContainer(props) {
     cx({
       [classes.mainPanelSidebarMini]: miniActive,
       [classes.mainPanelWithPerfectScrollbar]:
-        navigator.platform.indexOf("Win") > -1
+        navigator.platform.indexOf("Win") > -1,
     });
   // ref for main panel div
   const mainPanel = React.createRef();
@@ -55,7 +60,7 @@ export default function SectionContainer(props) {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current, {
         suppressScrollX: true,
-        suppressScrollY: false
+        suppressScrollY: false,
       });
       document.body.style.overflow = "hidden";
     }
@@ -70,14 +75,14 @@ export default function SectionContainer(props) {
     };
   });
   // functions for changeing the states from components
-  const handleImageClick = image => {
+  const handleImageClick = (image) => {
     setImage(image);
   };
-  const handleColorClick = color => {
+  const handleColorClick = (color) => {
     setColor(color);
   };
-//   Side bar logo 
-  const handleBgColorClick = bgColor => {
+  //   Side bar logo
+  const handleBgColorClick = (bgColor) => {
     switch (bgColor) {
       case "white":
         setLogo(require("assets/img/logo.svg"));
@@ -101,7 +106,7 @@ export default function SectionContainer(props) {
   const getRoute = () => {
     return window.location.pathname !== "/admin/full-screen-maps";
   };
-  const getActiveRoute = routes => {
+  const getActiveRoute = (routes) => {
     let activeRoute = "Default Brand Text";
     for (let i = 0; i < routes.length; i++) {
       if (routes[i].collapse) {
@@ -119,7 +124,7 @@ export default function SectionContainer(props) {
     }
     return activeRoute;
   };
-  const getRoutes = routes => {
+  const getRoutes = (routes) => {
     return routes.map((prop, key) => {
       if (prop.collapse) {
         return getRoutes(prop.views);
@@ -148,7 +153,6 @@ export default function SectionContainer(props) {
 
   return (
     <div className={classes.wrapper}>
-
       {/* ################ Left Nav Bar ################ */}
       <Sidebar
         routes={routes}
@@ -163,8 +167,6 @@ export default function SectionContainer(props) {
         {...rest}
       />
       <div className={mainPanelClasses} ref={mainPanel}>
-
-
         {/* ################ Top Menu Bar ################ */}
         <AdminNavbar
           sidebarMinimize={sidebarMinimize.bind(this)}
@@ -173,8 +175,6 @@ export default function SectionContainer(props) {
           handleDrawerToggle={handleDrawerToggle}
           {...rest}
         />
-
-
 
         {/* On the /maps/full-screen-maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
         {/* ################ Content Body ################ */}
@@ -198,7 +198,6 @@ export default function SectionContainer(props) {
 
         {/* ################Footer################ */}
         {/* {getRoute() ? <Footer fluid /> : null} */}
-
 
         {/* ################ Right Theme color changer ################ */}
         <FixedPlugin

@@ -29,6 +29,8 @@ import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
 import CardFooter from "components/Card/CardFooter.js";
 
+import { RefreshTokenGenerator } from "../ReusableFunctions/RefreshTokenGenerator.js";
+
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import "../../assets/scss/ghorwali-scss/create-admin.scss";
@@ -41,8 +43,8 @@ export default function AdminManagement() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
+
+  console.log("userToken: ", userToken);
 
   // register form
   const [registerPhone, setregisterPhone] = React.useState("");
@@ -60,26 +62,7 @@ export default function AdminManagement() {
   ] = React.useState("");
   //   Empty field check
   const [isEmptyCheck, setIsEmptyCheck] = useState(false);
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
 
-  // Refresh Token
-  // const refreshTokenData = {
-  //   refreshToken: userToken.refreshToken,
-  // };
-
-  // register Data
-  const registerData = {
-    name: "",
-    password: registerPassword,
-    mobile: registerPhone,
-    email: registerEmail,
-    roles: ["ROLE_ADMIN"],
-  };
   // function that returns true if value is email, false otherwise
   const verifyEmail = (value) => {
     var emailRex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -121,76 +104,36 @@ export default function AdminManagement() {
       setregisterConfirmPasswordState("error");
       setIsEmptyCheck(true);
     }
-    accessTokenValidityCheck();
-  };
 
-  const accessTokenValidityCheck = () => {
-    var currentLocalDateTime = new Date();
-
-    // if isEmptyCheck is false, proceed to register
-    if (isEmptyCheck === false) {
-      if (
-        registerPassword.length >= 6 &&
-        registerPassword == registerConfirmPassword
-      ) {
-        if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-          console.log(
-            "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-          );
-          adminCreateHandler();
-        } else {
-          console.log(
-            "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-          );
-          // If access token validity expires, call refresh token api
-          refreshTokenHandler();
-        }
-      } else {
-        alert("Password not matched!");
-      }
+    if (
+      registerPhoneState !== "" &&
+      registerEmailState !== "" &&
+      registerPasswordState !== "" &&
+      registerConfirmPasswordState !== ""
+    ) {
+      getToken((token) => {
+        console.log("registerClick / TOken: ", token);
+        adminCreateHandler(token);
+      });
     }
   };
 
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      console.log(
-        "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
-      axios
-        .post(refreshTokenAPI, userToken.refreshToken)
-        .then(function (response) {
-          console.log("Refresh token response: ", response);
-
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            // Logout forcefully from here
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            
-            adminCreateHandler();
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      console.log(
-        "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      );
-      // Logout forcefully from here
-    }
+  // register Data
+  const registerData = {
+    name: "",
+    password: registerPassword,
+    mobile: registerPhone,
+    email: registerEmail,
+    roles: ["ROLE_ADMIN"],
   };
+  const adminCreateHandler = (token) => {
+    // API Header
+    let config = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
 
-  const adminCreateHandler = () => {
     console.log("config", config);
     const registerAPI = "http://localhost:8080/auth/signup?";
     axios
@@ -201,6 +144,78 @@ export default function AdminManagement() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  // get Token
+  function getToken(callback) {
+    let userTkn = userToken;
+    console.log("getToken/userToken: ", userTkn);
+    // token
+    let token = userTkn.token;
+    // tokenValidity
+    var tokenTime = new Date(userTkn.tokenValidity);
+    // current time
+    var now = new Date();
+
+    if (tokenTime.getTime() > now.getTime()) {
+      console.log("getToken/If conditio", token);
+      callback(token);
+    } else {
+      refreshTokenGenerator((newToken) => {
+        console.log("getToken/Else conditio", newToken);
+        if (newToken !== null && newToken.length > 0) {
+          token = newToken;
+          callback(token);
+        }
+      });
+    }
+  }
+  // Refresh Token Generator
+  function refreshTokenGenerator(callback) {
+    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
+    var now = new Date();
+
+    if (refreshTokenTime.getTime() > now.getTime()) {
+      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      console.log(
+        "RefreshTokenGenerator/refreshToken before generation: ",
+        userToken.refreshToken
+      );
+
+      axios
+        .post(refreshTokenAPI, {
+          refreshToken: userToken.refreshToken,
+        })
+        .then(function (response) {
+          if (response.status == 403) {
+            alert(response.data.message);
+            localStorage.clear();
+            window.location.href = "/";
+          } else {
+            tokenUdateHandler(response.data);
+
+            console.log("RefreshTokenGenerator/response.data: ", response.data);
+            callback(response.data.token);
+          }
+        })
+        .catch(function (error) {
+          console.log("RefreshTokenGenerator / error: ", error);
+          localStorage.clear();
+          window.location.href = "/";
+        });
+    } else {
+      localStorage.clear();
+      window.location.href = "/";
+    }
+  }
+  // token Udate to Global state
+  const tokenUdateHandler = (TokenContent) => {
+    updateUserToken(function (accessToken) {
+      accessToken.token = TokenContent.token;
+      accessToken.tokenValidity = TokenContent.tokenValidity;
+      accessToken.refreshToken = TokenContent.refreshToken;
+      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
+    });
   };
 
   return (

@@ -24,7 +24,7 @@ export default function UpdateWarning(props) {
       <SweetAlert
         warning
         style={{ display: "block", marginTop: "-100px" }}
-        title="Are you sure?"
+        title="Confirm Update?"
         onConfirm={() => successUpdate()}
         onCancel={() => hideAlert()}
         confirmBtnCssClass={classes.button + " " + classes.success}
@@ -44,12 +44,12 @@ export default function UpdateWarning(props) {
       <SweetAlert
         success
         style={{ display: "block", marginTop: "-100px" }}
-        title="Updated!"
+        title="Updating..."
         onConfirm={() => confirmAlert()}
         onCancel={() => hideAlert()}
         confirmBtnCssClass={classes.button + " " + classes.success}
       >
-        Data has been updated.
+        Info update in-progress!
         
       </SweetAlert>
     );
@@ -58,7 +58,7 @@ export default function UpdateWarning(props) {
 
   const confirmAlert = () => {
     props.updateConfirmationFlag(true);
-    props.onUpdateChangeFlag(false);
+    // props.onUpdateChangeFlag(false);
 
     setAlert(null);
     
@@ -66,7 +66,7 @@ export default function UpdateWarning(props) {
 
   const hideAlert = () => {
     props.updateConfirmationFlag(false);
-    props.onUpdateChangeFlag(false);
+    // props.onUpdateChangeFlag(false);
     setAlert(null);
   };
 

@@ -31,37 +31,35 @@ import Dashboard from "views/Dashboard/Dashboard.js";
 // @material-ui/icons
 // import Apps from "@material-ui/icons/Apps";
 import DashboardIcon from "@material-ui/icons/Dashboard";
+import InventoryIcon from "@mui/icons-material/Inventory";
 // import DateRange from "@material-ui/icons/DateRange";
 // import GridOn from "@material-ui/icons/GridOn";
 // import Image from "@material-ui/icons/Image";
 // import Place from "@material-ui/icons/Place";
 // import Timeline from "@material-ui/icons/Timeline";
 // import WidgetsIcon from "@material-ui/icons/Widgets";
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import AmpStoriesIcon from '@material-ui/icons/AmpStories';
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
+import AmpStoriesIcon from "@material-ui/icons/AmpStories";
 // import LockIcon from '@material-ui/icons/Lock';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
-import TrackChangesIcon from '@material-ui/icons/TrackChanges';
-import PaymentIcon from '@material-ui/icons/Payment';
+import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
+import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import TrackChangesIcon from "@material-ui/icons/TrackChanges";
+import PaymentIcon from "@material-ui/icons/Payment";
 // import AcUnitIcon from '@material-ui/icons/AcUnit';
-import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
-
-//Ghorwali Component
-import AdminProfile from './views/Admin/AdminProfile.js'
-import CreateAdmin from './views/Admin/CreateAdmin.js'
-import AdminManagement from './views/Admin/AdminManagement.js'
-import VoucherList from './views/Voucher/VoucherList.js'
-import CreateVoucher from './views/Voucher/CreateVoucher.js'
+//Okolele Component
+import AdminProfile from "./views/Admin/AdminProfile.js";
+import CreateAdmin from "./views/Admin/CreateAdmin.js";
+import AdminManagement from "./views/Admin/AdminManagement.js";
+import VoucherList from "./views/Voucher/VoucherList.js";
+import CreateVoucher from "./views/Voucher/CreateVoucher.js";
 import AppPrivacy from "views/AppPrivacy/AppPrivacy.js";
 import SlideList from "views/Slide/SlideList.js";
-import NotificationComponent from "views/OkoleleNotifications/NotificationComponent.js"
-import CustomerList from "views/Customer/CustomerList.js";
-import CustomerTransectionList from "views/Customer/CustomerTransectionList.js";
-import CustomerOrderList from "views/Customer/CustomerOrderList.js";
+import NotificationComponent from "views/OkoleleNotifications/NotificationComponent.js";
 import CreateSlide from "views/Slide/CreateSlide.js";
 import Payments from "views/Payments/Payments.js";
 import AddCity from "views/Resources/AddCity.js";
@@ -74,16 +72,23 @@ import GlobalProductCommission from "views/Resources/GlobalProductCommission.js"
 import CreateProducts from "views/ProductManagement/CreateProducts.js";
 import UpdateProducts from "views/ProductManagement/UpdateProducts.js";
 import ReviewManagement from "views/OkoleleVideoReviews/ReviewManagement.js";
-
-
-
+import UpdateStock from "views/OkoleleInventory/UpdateStock.js";
+import CustomerOrderList from "views/OkoleleOrderMgmt/CustomerOrderList.js";
+import CustomerList from "views/OkoleleCustomer/CustomerList.js";
+import CustomerTransectionList from "views/OkoleleCustomer/CustomerTransectionList.js";
+import OrderDetails from "views/OkoleleOrderMgmt/OrderDetails.js";
+import UpdateOrderStatus from "views/OkoleleOrderMgmt/UpdateOrderStatus.js";
+import CustomerDetails from "views/OkoleleCustomer/CustomerDetails.js";
+import UpdateCustomerDetails from "views/OkoleleCustomer/UpdateCustomerDetails.js";
+import ProductList from "views/ProductManagement/ProductList.js";
+import ProductDetails from "views/ProductManagement/ProductDetails.js";
 
 var dashRoutes = [
   // ###################### Admin ######################
   {
     collapse: true,
     name: "Admin",
-    rtlName: "صفحات",
+    // rtlName: "صفحات",
     icon: AccountCircleIcon,
     state: "pageCollapse",
     views: [
@@ -94,7 +99,7 @@ var dashRoutes = [
         mini: "MP",
         rtlMini: "تي",
         component: AdminProfile,
-        layout: "/admin"
+        layout: "/admin",
       },
       {
         path: "/create-admin",
@@ -103,7 +108,7 @@ var dashRoutes = [
         mini: "CA",
         rtlMini: "تي",
         component: CreateAdmin,
-        layout: "/admin"
+        layout: "/admin",
       },
       {
         path: "/admin-management",
@@ -112,18 +117,18 @@ var dashRoutes = [
         mini: "AM",
         rtlMini: "تي",
         component: AdminManagement,
-        layout: "/admin"
-      }
-    ]
+        layout: "/admin",
+      },
+    ],
   },
   // ###################### Dashboard ######################
   {
     path: "/dashboard",
     name: "Dashboard",
-    rtlName: "لوحة القيادة",
+    // rtlName: "لوحة القيادة",
     icon: DashboardIcon,
     component: Dashboard,
-    layout: "/admin"
+    layout: "/admin",
   },
   // ###################### Notification Management ######################
   // {
@@ -158,41 +163,79 @@ var dashRoutes = [
   //   ]
   // },
   // ###################### User Management ######################
-  // {
-  //   collapse: true,
-  //   name: "Customer Manag...",
-  //   rtlName: "صفحات",
-  //   icon: SupervisedUserCircleIcon,
-  //   state: "customerCollapse",
-  //   views: [
-  //     {
-  //       path: "/customer-list",
-  //       name: "Customer List",
-  //       mini: "UL",
-  //       component: CustomerList,
-  //       layout: "/admin"
-  //     },
-  //     {
-  //       path: "/user-transection-list",
-  //       name: "Transection List",
-  //       mini: "TL",
-  //       component: CustomerTransectionList,
-  //       layout: "/admin"
-  //     },
-  //     {
-  //       path: "/user-order-list",
-  //       name: "Order List",
-  //       mini: "OL",
-  //       component: CustomerOrderList,
-  //       layout: "/admin"
-  //     }
-  //   ]
-  // },
+  {
+    collapse: true,
+    name: "Customer Manag...",
+    rtlName: "صفحات",
+    icon: SupervisedUserCircleIcon,
+    state: "customerCollapse",
+    views: [
+      {
+        path: "/customer-list",
+        name: "Customer List",
+        mini: "CL",
+        component: CustomerList,
+        layout: "/admin",
+      },
+      {
+        path: "/customer-details",
+        name: "Customer Details",
+        mini: "CD",
+        component: CustomerDetails,
+        layout: "/admin",
+      },
+      {
+        path: "/update-customer",
+        name: "Update Customer",
+        mini: "UC",
+        component: UpdateCustomerDetails,
+        layout: "/admin",
+      },
+      {
+        path: "/user-transection-list",
+        name: "Transection List",
+        mini: "TL",
+        component: CustomerTransectionList,
+        layout: "/admin",
+      },
+    ],
+  },
+  // ###################### Order Management ######################
+  {
+    collapse: true,
+    name: "Order Manag...",
+    rtlName: "صفحات",
+    icon: AddShoppingCartIcon,
+    state: "orderCollapse",
+    views: [
+      {
+        path: "/user-order-list",
+        name: "Order List",
+        mini: "OL",
+        component: CustomerOrderList,
+        layout: "/admin",
+      },
+      {
+        path: "/order-details",
+        name: "Order Details",
+        mini: "OD",
+        component: OrderDetails,
+        layout: "/admin",
+      },
+      {
+        path: "/update-orderStatus",
+        name: "Update Status",
+        mini: "US",
+        component: UpdateOrderStatus,
+        layout: "/admin",
+      },
+    ],
+  },
   // ###################### Product Management ######################
   {
     collapse: true,
     name: "Product Manag...",
-    rtlName: "صفحات",
+    // rtlName: "صفحات",
     icon: CardGiftcardIcon,
     state: "productCollapse",
     views: [
@@ -201,30 +244,47 @@ var dashRoutes = [
         name: "Create Products",
         mini: "CP",
         component: CreateProducts,
-        layout: "/admin"
+        layout: "/admin",
+      },
+      {
+        path: "/product-list",
+        name: "Product List",
+        mini: "PL",
+        component: ProductList,
+        layout: "/admin",
       },
       {
         path: "/update-products",
-        name: "update Products",
+        name: "Update Products",
         mini: "UP",
         component: UpdateProducts,
-        layout: "/admin"
+        layout: "/admin",
       },
-      // {
-      //   path: "/user-transection-list",
-      //   name: "Transection List",
-      //   mini: "TL",
-      //   component: CustomerTransectionList,
-      //   layout: "/admin"
-      // },
-      // {
-      //   path: "/user-order-list",
-      //   name: "Order List",
-      //   mini: "OL",
-      //   component: CustomerOrderList,
-      //   layout: "/admin"
-      // }
-    ]
+      {
+        path: "/product-details",
+        name: "Product Details",
+        mini: "PD",
+        component: ProductDetails,
+        layout: "/admin",
+      },
+    ],
+  },
+  // ###################### Inventory Management ######################
+  {
+    collapse: true,
+    name: "Inventory Manag...",
+    // rtlName: "صفحات",
+    icon: InventoryIcon,
+    state: "inventoryCollapse",
+    views: [
+      {
+        path: "/update-stock",
+        name: "Update Stock",
+        mini: "US",
+        component: UpdateStock,
+        layout: "/admin",
+      },
+    ],
   },
   // ###################### Voucher Management ######################
   // {
@@ -325,7 +385,7 @@ var dashRoutes = [
         name: "Review Mgmt",
         mini: "RM",
         component: ReviewManagement,
-        layout: "/admin"
+        layout: "/admin",
       },
       // {
       //   path: "/about",
@@ -362,7 +422,7 @@ var dashRoutes = [
       //   component: UpdateContacts,
       //   layout: "/admin"
       // },
-    ]
+    ],
   },
   // ###################### About ######################
   // {
@@ -387,6 +447,5 @@ var dashRoutes = [
   //     },
   //   ]
   // },
-
 ];
 export default dashRoutes;
