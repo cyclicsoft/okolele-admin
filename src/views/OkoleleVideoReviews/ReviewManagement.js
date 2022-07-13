@@ -138,7 +138,7 @@ export default function ReviewManagement() {
   };
 
   // Refresh product List
-  const productListRefresh = () => {
+  const reviewListRefreshOnclick = () => {
     // Show Data Loader
     setIsDataLoaded(false);
     // const pageNo = 0;
@@ -158,26 +158,20 @@ export default function ReviewManagement() {
         console.log(error);
       });
   };
-  // Radio button handler
-  const handleRadioChange = (event) => {
-    if (event.target.value == "create") {
-      setShouldCreate(true);
-      setShouldUpdate(false);
-    } else if (event.target.value == "update") {
-      setShouldCreate(false);
-      setShouldUpdate(true);
-    }
-    setSelectedRadioValue(event.target.value);
-  };
+
   // Create New Review
+  const createNewReview = () => {
+    history.push({
+      pathname: "/admin/create-review",
+    });
+  };
 
   // edit Review
-  const editReview = (id) => {
-    setShouldUpdate(false);
-    setShouldCreate(false);
-    setShouldUpdate(true);
-    setSelectedRadioValue("update");
-    setEditReviewId(id);
+  const editReview = (reviewDetails) => {
+    history.push({
+      pathname: "/admin/update-review",
+      reviewDetails: reviewDetails,
+    });
   };
 
   // change Product Status
@@ -290,13 +284,10 @@ export default function ReviewManagement() {
       ) : null}
 
       {/* Create / Update */}
-      <GridContainer>
+      {/* <GridContainer>
         <GridItem xs={12} sm={12}>
           <Card>
             <CardHeader color="rose" icon>
-              {/* <CardIcon color="rose">
-                <CardGiftcardIcon />
-              </CardIcon> */}
               <h4 className={classes.cardIconTitle}>Create / Update Review</h4>
             </CardHeader>
 
@@ -326,7 +317,7 @@ export default function ReviewManagement() {
             </CardBody>
           </Card>
         </GridItem>
-      </GridContainer>
+      </GridContainer> */}
 
       <GridContainer>
         {/* Product List */}
@@ -345,9 +336,17 @@ export default function ReviewManagement() {
             <div style={{ display: "flex", fontWeight: "bold" }}>
               <CachedIcon
                 className="product-list-refresh"
-                onClick={productListRefresh}
+                onClick={reviewListRefreshOnclick}
               />{" "}
               Refresh
+              <Button
+                color="rose"
+                style={{ marginLeft: "53vw" }}
+                className={classes.updateProfileButton}
+                onClick={createNewReview}
+              >
+                + Create New
+              </Button>
             </div>
             {isDataLoaded === false ? (
               <div
@@ -417,7 +416,7 @@ export default function ReviewManagement() {
                             " " +
                             classes.actionButtonRound
                           }
-                          onClick={() => editReview(id)}
+                          onClick={() => editReview(reviews)}
                         >
                           <Edit className={classes.icon} />
                         </Button>

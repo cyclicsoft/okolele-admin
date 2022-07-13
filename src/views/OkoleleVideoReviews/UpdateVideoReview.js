@@ -75,6 +75,10 @@ const useStyles = makeStyles(styles);
 
 function UpdateVideoReview(props) {
   const classes = useStyles();
+
+  //   Review Details from props
+  var reviewDetails = props.location.reviewDetails;
+  console.log("reviewDetails: ", reviewDetails);
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -91,11 +95,19 @@ function UpdateVideoReview(props) {
     },
   };
   // Review Info
-  const [name, setName] = useState("");
-  const [productDescription, setProductDescription] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [activeStatus, setActiveStatus] = useState("");
-  const [reviewId, setReviewId] = useState(props.editReviewId);
+  const [name, setName] = useState(reviewDetails ? reviewDetails.title : "");
+  const [productDescription, setProductDescription] = useState(
+    reviewDetails ? reviewDetails.description : ""
+  );
+  const [videoUrl, setVideoUrl] = useState(
+    reviewDetails ? reviewDetails.url : ""
+  );
+  const [activeStatus, setActiveStatus] = useState(
+    reviewDetails ? reviewDetails.activeStatus : false
+  );
+  const [reviewId, setReviewId] = useState(
+    reviewDetails ? reviewDetails.id : ""
+  );
   // const [reviewDetails, setReviewDetails] = useState([]);
 
   // Product create confirmation popup viewar
@@ -132,7 +144,7 @@ function UpdateVideoReview(props) {
         setHttpResponseCode(error.response.status);
         setShowHttpResponseMsg(true);
       });
-  }, [props.editReviewId]);
+  }, []);
 
   const reviewUpdateHandler = () => {
     setShowProductCreatePopup(true);
@@ -182,7 +194,13 @@ function UpdateVideoReview(props) {
   };
 
   // inputs Reset Handler
-  const inputsResetHandler = () => {};
+  const inputsResetHandler = () => {
+    setName(reviewDetails ? reviewDetails.title : "");
+    setProductDescription(reviewDetails ? reviewDetails.description : "");
+    setVideoUrl(reviewDetails ? reviewDetails.url : "");
+    setActiveStatus(reviewDetails ? reviewDetails.activeStatus : false);
+    setReviewId(reviewDetails ? reviewDetails.id : "");
+  };
 
   const refreshTokenHandler = () => {
     var currentLocalDateTime = new Date();
@@ -257,86 +275,109 @@ function UpdateVideoReview(props) {
           {/* md={8} */}
           <Card>
             <CardHeader color="rose" icon>
-              <h4 className={classes.cardIconTitle}>Update New Review</h4>
+              <h4 className={classes.cardIconTitle}>Update Review</h4>
             </CardHeader>
-            <CardBody>
-              {/* Reset */}
-              <div className="resetIcon-container">
-                <RefreshIcon
-                  className="reset-input"
-                  onClick={inputsResetHandler}
-                />{" "}
-                Reset
-              </div>
+            {reviewDetails ? (
+              <CardBody>
+                {/* Reset */}
+                <div className="resetIcon-container">
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={inputsResetHandler}
+                  />{" "}
+                  Reset
+                </div>
 
-              {/* Name & Product Description  */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Product Name"
-                    id="product-name"
-                    disabled="true"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: name || "",
-                      onChange: (event) => setName(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
+                {/* Name & Product Description  */}
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product Name"
+                      id="product-name"
+                      disabled="true"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: "String",
+                        value: name || "",
+                        onChange: (event) => setName(event.target.value),
+                        maxLength: "100",
+                      }}
+                    />
+                  </GridItem>
 
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Product Description "
-                    id="product-description"
-                    disabled="true"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: productDescription || "",
-                      onChange: (event) =>
-                        setProductDescription(event.target.value),
-                      maxLength: "200",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product Description "
+                      id="product-description"
+                      disabled="true"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: "String",
+                        value: productDescription || "",
+                        onChange: (event) =>
+                          setProductDescription(event.target.value),
+                        maxLength: "200",
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
 
-              {/* Review URL */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                  <CustomInput
-                    labelText="Review URL"
-                    id="review-url"
-                    disabled="true"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: videoUrl || "",
-                      onChange: (event) => setVideoUrl(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
+                {/* Review Active Status & URL */}
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Active Status"
+                      id="active-status"
+                      disabled="true"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: "String",
+                        value: activeStatus || "",
+                        // onChange: (event) => setVideoUrl(event.target.value),
+                        maxLength: "10",
+                      }}
+                    />
+                  </GridItem>
 
-              <Button
-                color="rose"
-                className={classes.updateProfileButton}
-                onClick={reviewUpdateHandler}
-              >
-                Update
-              </Button>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Review URL"
+                      id="review-url"
+                      disabled="true"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        type: "String",
+                        value: videoUrl || "",
+                        onChange: (event) => setVideoUrl(event.target.value),
+                        maxLength: "100",
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
 
-              <Clearfix />
-            </CardBody>
+                <Button
+                  color="rose"
+                  className={classes.updateProfileButton}
+                  onClick={reviewUpdateHandler}
+                >
+                  Update
+                </Button>
+
+                <Clearfix />
+              </CardBody>
+            ) : (
+              <h5 style={{ textAlign: "center", color: "red" }}>
+                No data to update!
+              </h5>
+            )}
           </Card>
         </GridItem>
       </GridContainer>

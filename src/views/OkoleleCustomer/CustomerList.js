@@ -13,6 +13,7 @@ import Close from "@material-ui/icons/Close";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import UnpublishedIcon from "@mui/icons-material/Unpublished";
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -344,6 +345,16 @@ export default function CustomerList() {
     });
   };
 
+  // go To user-notifications
+  const goToUserNotifications = (id) => {
+    alert(id);
+
+    history.push({
+      pathname: "/admin/user-notifications",
+      customerId: id,
+    });
+  };
+
   // get Token
   function getToken(callback) {
     let userTkn = userToken;
@@ -537,13 +548,24 @@ export default function CustomerList() {
                       <Button
                         style={{ margin: "2px" }}
                         round
-                        color="rose"
+                        color="primary"
                         className={
                           classes.actionButton + " " + classes.actionButtonRound
                         }
                         onClick={() => goToCustomerOrderList(user.id)}
                       >
                         <AddShoppingCartIcon className={classes.icon} />
+                      </Button>
+                      <Button
+                        style={{ margin: "2px" }}
+                        round
+                        color="danger"
+                        className={
+                          classes.actionButton + " " + classes.actionButtonRound
+                        }
+                        onClick={() => goToUserNotifications(user.id)}
+                      >
+                        <ForwardToInboxIcon className={classes.icon} />
                       </Button>
                     </div>,
                   ];

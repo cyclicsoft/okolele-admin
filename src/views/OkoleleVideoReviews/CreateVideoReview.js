@@ -42,17 +42,7 @@ function CreateVideoReview() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  const refreshTkn = {
-    refreshToken: userToken.refreshToken,
-  };
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+
   // Review Info
   const [name, setName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -77,27 +67,20 @@ function CreateVideoReview() {
   // Review Create Flag From Modal
   const reviewCreateFlagFromModal = (isConfirmed) => {
     if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        console.log(
-          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        );
-        saveNewVideoReview();
-      } else {
-        console.log(
-          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        );
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          console.log("isRefreshed: ", isRefreshed);
-          saveNewVideoReview();
-        });
-      }
+      getToken((token) => {
+        saveNewVideoReview(token);
+      });
     }
     setShowProductCreatePopup(false);
   };
 
-  const saveNewVideoReview = () => {
+  const saveNewVideoReview = (token) => {
+    let config = {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    };
+
     if (name != "" && productDescription != "" && videoUrl != "") {
       const reviewCreateAPI = "http://localhost:8080/reviews";
       axios
@@ -117,58 +100,76 @@ function CreateVideoReview() {
     }
   };
 
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
+  // get Token
+  function getToken(callback) {
+    let userTkn = userToken;
+    console.log("getToken/userToken: ", userTkn);
+    // token
+    let token = userTkn.token;
+    // tokenValidity
+    var tokenTime = new Date(userTkn.tokenValidity);
+    // current time
+    var now = new Date();
 
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      console.log(
-        "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      );
+    if (tokenTime.getTime() > now.getTime()) {
+      console.log("getToken/If conditio", token);
+      callback(token);
+    } else {
+      refreshTokenGenerator((newToken) => {
+        console.log("getToken/Else conditio", newToken);
+        if (newToken !== null && newToken.length > 0) {
+          token = newToken;
+          callback(token);
+        }
+      });
+    }
+  }
+  // Refresh Token Generator
+  function refreshTokenGenerator(callback) {
+    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
+    var now = new Date();
+
+    if (refreshTokenTime.getTime() > now.getTime()) {
       const refreshTokenAPI = "http://localhost:8080/auth/token";
+      console.log(
+        "RefreshTokenGenerator/refreshToken before generation: ",
+        userToken.refreshToken
+      );
 
       axios
-        .post(refreshTokenAPI, refreshTkn)
+        .post(refreshTokenAPI, {
+          refreshToken: userToken.refreshToken,
+        })
         .then(function (response) {
-          console.log("Refresh token response: ", response);
-          console.log("Status Code: ", response.status);
-
-          if (response.data.code == 403) {
+          if (response.status == 403) {
             alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-            try {
-              localStorage.clear();
-              window.location.href = "/";
-            } catch (e) {
-              console.log(e.message);
-            }
+            localStorage.clear();
+            window.location.href = "/";
           } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
+            tokenUdateHandler(response.data);
+
+            console.log("RefreshTokenGenerator/response.data: ", response.data);
+            callback(response.data.token);
           }
         })
         .catch(function (error) {
-          console.log("Status Code: ", error.response.status);
-          console.log(error);
+          console.log("RefreshTokenGenerator / error: ", error);
+          localStorage.clear();
+          window.location.href = "/";
         });
     } else {
-      console.log(
-        "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      );
-      // Logout forcefully from here
-      try {
-        localStorage.clear();
-        window.location.href = "/";
-      } catch (e) {
-        console.log(e.message);
-      }
+      localStorage.clear();
+      window.location.href = "/";
     }
+  }
+  // token Udate to Global state
+  const tokenUdateHandler = (TokenContent) => {
+    updateUserToken(function (accessToken) {
+      accessToken.token = TokenContent.token;
+      accessToken.tokenValidity = TokenContent.tokenValidity;
+      accessToken.refreshToken = TokenContent.refreshToken;
+      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
+    });
   };
 
   return (
@@ -222,7 +223,7 @@ function CreateVideoReview() {
                       fullWidth: true,
                     }}
                     inputProps={{
-                      type: "Number",
+                      type: "String",
                       value: productDescription || "",
                       onChange: (event) =>
                         setProductDescription(event.target.value),

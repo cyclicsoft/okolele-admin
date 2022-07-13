@@ -32,24 +32,18 @@ import Dashboard from "views/Dashboard/Dashboard.js";
 // import Apps from "@material-ui/icons/Apps";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import InventoryIcon from "@mui/icons-material/Inventory";
-// import DateRange from "@material-ui/icons/DateRange";
-// import GridOn from "@material-ui/icons/GridOn";
-// import Image from "@material-ui/icons/Image";
-// import Place from "@material-ui/icons/Place";
-// import Timeline from "@material-ui/icons/Timeline";
-// import WidgetsIcon from "@material-ui/icons/Widgets";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import AmpStoriesIcon from "@material-ui/icons/AmpStories";
-// import LockIcon from '@material-ui/icons/Lock';
 import NotificationsActiveIcon from "@material-ui/icons/NotificationsActive";
 import SupervisedUserCircleIcon from "@material-ui/icons/SupervisedUserCircle";
 import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import TrackChangesIcon from "@material-ui/icons/TrackChanges";
 import PaymentIcon from "@material-ui/icons/Payment";
-// import AcUnitIcon from '@material-ui/icons/AcUnit';
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 
 //Okolele Component
 import AdminProfile from "./views/Admin/AdminProfile.js";
@@ -61,7 +55,6 @@ import AppPrivacy from "views/AppPrivacy/AppPrivacy.js";
 import SlideList from "views/Slide/SlideList.js";
 import NotificationComponent from "views/OkoleleNotifications/NotificationComponent.js";
 import CreateSlide from "views/Slide/CreateSlide.js";
-import Payments from "views/Payments/Payments.js";
 import AddCity from "views/Resources/AddCity.js";
 import ProductCommission from "views/Commission/ProductCommission.js";
 import CommissionAdjustment from "views/Commission/CommissionAdjustment.js";
@@ -82,6 +75,12 @@ import CustomerDetails from "views/OkoleleCustomer/CustomerDetails.js";
 import UpdateCustomerDetails from "views/OkoleleCustomer/UpdateCustomerDetails.js";
 import ProductList from "views/ProductManagement/ProductList.js";
 import ProductDetails from "views/ProductManagement/ProductDetails.js";
+import TransectionHistory from "views/OkoleleBilling/TransectionHistory.js";
+import CreateVideoReview from "views/OkoleleVideoReviews/CreateVideoReview.js";
+import UpdateVideoReview from "views/OkoleleVideoReviews/UpdateVideoReview.js";
+import SendNotification from "views/UserNotifications/SendNotification.js";
+import UserNotifications from "views/UserNotifications/UserNotifications.js";
+import UpdateNotificaton from "views/UserNotifications/UpdateNotificaton.js";
 
 var dashRoutes = [
   // ###################### Admin ######################
@@ -200,12 +199,46 @@ var dashRoutes = [
       },
     ],
   },
+  // ###################### Transection ######################
+  {
+    collapse: true,
+    name: "Customer Transection",
+    rtlName: "صفحات",
+    icon: PaymentIcon,
+    state: "customerTransection",
+    views: [
+      {
+        path: "/transection-history",
+        name: "Transection History",
+        mini: "TH",
+        component: TransectionHistory,
+        layout: "/admin",
+      },
+    ],
+  },
+  // ###################### Cart Management ######################
+  {
+    collapse: true,
+    name: "Cart Manag...",
+    rtlName: "صفحات",
+    icon: AddShoppingCartIcon,
+    state: "cartCollapse",
+    views: [
+      {
+        path: "/user-order-list",
+        name: "Cart Items",
+        mini: "CI",
+        component: CustomerOrderList,
+        layout: "/admin",
+      },
+    ],
+  },
   // ###################### Order Management ######################
   {
     collapse: true,
     name: "Order Manag...",
     rtlName: "صفحات",
-    icon: AddShoppingCartIcon,
+    icon: ShoppingCartIcon,
     state: "orderCollapse",
     views: [
       {
@@ -269,6 +302,37 @@ var dashRoutes = [
       },
     ],
   },
+  // ###################### User Notifications ######################
+  {
+    collapse: true,
+    name: "User Notifications",
+    rtlName: "صفحات",
+    icon: CircleNotificationsIcon,
+    state: "userNotificationCollapse",
+    views: [
+      {
+        path: "/user-notifications",
+        name: "User Notifications",
+        mini: "UN",
+        component: UserNotifications,
+        layout: "/admin",
+      },
+      {
+        path: "/send-notification",
+        name: "Send A Notification",
+        mini: "SN",
+        component: SendNotification,
+        layout: "/admin",
+      },
+      {
+        path: "/update-notification",
+        name: "Update Notification",
+        mini: "UaN",
+        component: UpdateNotificaton,
+        layout: "/admin",
+      },
+    ],
+  },
   // ###################### Inventory Management ######################
   {
     collapse: true,
@@ -286,6 +350,7 @@ var dashRoutes = [
       },
     ],
   },
+
   // ###################### Voucher Management ######################
   // {
   //   collapse: true,
@@ -385,6 +450,20 @@ var dashRoutes = [
         name: "Review Mgmt",
         mini: "RM",
         component: ReviewManagement,
+        layout: "/admin",
+      },
+      {
+        path: "/create-review",
+        name: "Create Review",
+        mini: "CR",
+        component: CreateVideoReview,
+        layout: "/admin",
+      },
+      {
+        path: "/update-review",
+        name: "Update Review",
+        mini: "UR",
+        component: UpdateVideoReview,
         layout: "/admin",
       },
       // {
