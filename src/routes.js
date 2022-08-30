@@ -81,6 +81,7 @@ import UpdateVideoReview from "views/OkoleleVideoReviews/UpdateVideoReview.js";
 import SendNotification from "views/UserNotifications/SendNotification.js";
 import UserNotifications from "views/UserNotifications/UserNotifications.js";
 import UpdateNotificaton from "views/UserNotifications/UpdateNotificaton.js";
+import AreaManagement from "views/Resources/AreaManagement.js";
 
 var dashRoutes = [
   // ###################### Admin ######################
@@ -464,6 +465,13 @@ var dashRoutes = [
         name: "Update Review",
         mini: "UR",
         component: UpdateVideoReview,
+        layout: "/admin",
+      },
+      {
+        path: "/area-management",
+        name: "+ City/Area",
+        mini: "CA",
+        component: AreaManagement,
         layout: "/admin",
       },
       // {
