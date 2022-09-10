@@ -49,8 +49,8 @@ import CircleNotificationsIcon from "@mui/icons-material/CircleNotifications";
 import AdminProfile from "./views/Admin/AdminProfile.js";
 import CreateAdmin from "./views/Admin/CreateAdmin.js";
 import AdminManagement from "./views/Admin/AdminManagement.js";
-import VoucherList from "./views/Voucher/VoucherList.js";
-import CreateVoucher from "./views/Voucher/CreateVoucher.js";
+import VoucherList from "./views/OkoleleVoucher/VoucherList.js";
+import CreateVoucher from "./views/OkoleleVoucher/CreateVoucher.js";
 import AppPrivacy from "views/AppPrivacy/AppPrivacy.js";
 import SlideList from "views/Slide/SlideList.js";
 import NotificationComponent from "views/OkoleleNotifications/NotificationComponent.js";
@@ -130,38 +130,6 @@ var dashRoutes = [
     component: Dashboard,
     layout: "/admin",
   },
-  // ###################### Notification Management ######################
-  // {
-  //   collapse: true,
-  //   name: "Notifications",
-  //   icon: NotificationsActiveIcon,
-  //   state: "notificationCollapse",
-  //   views: [
-  //     {
-  //       path: "/all-notification",
-  //       name: "All Notifications",
-  //       mini: "AN",
-  //       component: NotificationComponent,
-  //       layout: "/admin"
-  //     }
-  //   ]
-  // },
-  // ###################### Payment Management ######################
-  // {
-  //   collapse: true,
-  //   name: "Payments",
-  //   icon: AccountBalanceWalletIcon,
-  //   state: "paymentCollapse",
-  //   views: [
-  //     {
-  //       path: "/payments",
-  //       name: "payments",
-  //       mini: "P",
-  //       component: Payments,
-  //       layout: "/admin"
-  //     }
-  //   ]
-  // },
   // ###################### User Management ######################
   {
     collapse: true,
@@ -353,29 +321,29 @@ var dashRoutes = [
   },
 
   // ###################### Voucher Management ######################
-  // {
-  //   collapse: true,
-  //   name: "Voucher Management",
-  //   rtlName: "صفحات",
-  //   icon: LocalOfferIcon,
-  //   state: "voucherCollapse",
-  //   views: [
-  //     {
-  //       path: "/create-voucher",
-  //       name: "Create Voucher",
-  //       mini: "CV",
-  //       component: CreateVoucher,
-  //       layout: "/admin"
-  //     },
-  //     {
-  //       path: "/voucher-list",
-  //       name: "Voucher List",
-  //       mini: "VL",
-  //       component: VoucherList,
-  //       layout: "/admin"
-  //     }
-  //   ]
-  // },
+  {
+    collapse: true,
+    name: "Voucher Management",
+    rtlName: "صفحات",
+    icon: LocalOfferIcon,
+    state: "voucherCollapse",
+    views: [
+      {
+        path: "/create-voucher",
+        name: "Create Voucher",
+        mini: "CV",
+        component: CreateVoucher,
+        layout: "/admin",
+      },
+      {
+        path: "/voucher-list",
+        name: "Voucher List",
+        mini: "VL",
+        component: VoucherList,
+        layout: "/admin",
+      },
+    ],
+  },
   // ###################### Slide Management ######################
   // {
   //   collapse: true,
