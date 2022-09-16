@@ -42,6 +42,8 @@ function CreateVideoReview() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   // Review Info
   const [name, setName] = useState("");
@@ -82,7 +84,7 @@ function CreateVideoReview() {
     };
 
     if (name != "" && productDescription != "" && videoUrl != "") {
-      const reviewCreateAPI = "http://localhost:8080/reviews";
+      const reviewCreateAPI = rootPath[0] + "/reviews";
       axios
         .post(reviewCreateAPI, videoReviewData, config)
         .then(function (response) {
@@ -130,7 +132,7 @@ function CreateVideoReview() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

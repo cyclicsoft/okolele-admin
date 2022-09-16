@@ -72,6 +72,8 @@ export default function UserNotifications(props) {
   // customerId from props
   var customer_Id = props.location.customerId;
   console.log("customerId: ", customer_Id);
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
@@ -114,7 +116,8 @@ export default function UserNotifications(props) {
 
     const pageNo = 0;
     const notificationListAPI =
-      "http://localhost:8080/notification/user?userId=" +
+      rootPath[0] +
+      "/notification/user?userId=" +
       customerID +
       "&activeStatusType=ALL&page=" +
       pageNo +
@@ -195,7 +198,7 @@ export default function UserNotifications(props) {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

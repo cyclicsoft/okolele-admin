@@ -47,6 +47,8 @@ function CreateVoucher() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   const [VoucherCode, setVoucherCode] = useState("");
   const [voucherType, setVoucherType] = useState("FLAT");
@@ -105,7 +107,7 @@ function CreateVoucher() {
       },
     };
     if (inputDateValidityCheck() === true) {
-      const voucherCreateAPI = "http://localhost:8080/coupon";
+      const voucherCreateAPI = rootPath[0] + "/coupon";
       console.log("voucherSaveHandler/voucherData: ", voucherData);
 
       axios
@@ -198,7 +200,7 @@ function CreateVoucher() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

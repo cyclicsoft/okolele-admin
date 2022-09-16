@@ -52,6 +52,8 @@ const useStyles = makeStyles(styles);
 
 export default function AdminLogin(props) {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // login popup with animation
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   // Loing data
@@ -84,7 +86,7 @@ export default function AdminLogin(props) {
 
     if (emailPhone.length != 0 || password.length != 0) {
       //alert('Opps! Please Enter All The Fields')
-      const loginAPI = "http://localhost:8080/auth/login";
+      const loginAPI = rootPath[0] + "/auth/login";
       axios
         .post(loginAPI, userData)
         .then(function (response) {

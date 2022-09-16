@@ -43,6 +43,8 @@ export default function AdminManagement() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   console.log("userToken: ", userToken);
 
@@ -135,7 +137,7 @@ export default function AdminManagement() {
     };
 
     console.log("config", config);
-    const registerAPI = "http://localhost:8080/auth/signup?";
+    const registerAPI =rootPath[0] + "/auth/signup?";
     axios
       .post(registerAPI, registerData, config)
       .then(function (response) {
@@ -176,7 +178,7 @@ export default function AdminManagement() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

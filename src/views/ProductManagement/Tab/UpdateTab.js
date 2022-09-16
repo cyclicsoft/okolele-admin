@@ -70,6 +70,8 @@ const useStyles = makeStyles(styles);
 
 function UpdateTab(props) {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -167,8 +169,7 @@ function UpdateTab(props) {
   const [imgIdToPreview, setImgIdToPreview] = useState("");
 
   useEffect(() => {
-    const tabDetailsAPI =
-      "http://localhost:8080/tablets/" + props.editProductId;
+    const tabDetailsAPI = rootPath[0] + "/tablets/" + props.editProductId;
 
     axios
       .get(tabDetailsAPI)
@@ -445,7 +446,7 @@ function UpdateTab(props) {
     setShowProductUpdatePopup(false);
   };
   const tabUpdate = () => {
-    const tabUpdateAPI = "http://localhost:8080/tablets/" + props.editProductId;
+    const tabUpdateAPI = rootPath[0] + "/tablets/" + props.editProductId;
 
     axios
       .put(tabUpdateAPI, tabDetails, config)
@@ -603,7 +604,7 @@ function UpdateTab(props) {
   // Update Comment in DB after removing comments from userComments variable
   const commentsUpdateHandler = () => {
     const commentsUpdateAPI =
-      "http://localhost:8080/tablets/deleteComment/" + props.editProductId;
+      rootPath[0] + "/tablets/deleteComment/" + props.editProductId;
 
     axios
       .post(commentsUpdateAPI, userComments)
@@ -622,7 +623,7 @@ function UpdateTab(props) {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

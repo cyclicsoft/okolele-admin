@@ -90,6 +90,8 @@ const customStyles = {
 export default function UpdateStock() {
   const classes = useStyles();
   const history = useHistory();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // loggedIn Admin Info
   const [adminInfo, setAdminInfo, updateAdminInfo] = useGlobalState(
     "loggedInAdminInfo"
@@ -146,7 +148,8 @@ export default function UpdateStock() {
 
     const pageNo = 0;
     const allProductsAPI =
-      "http://localhost:8080/products?page=" +
+      rootPath[0] +
+      "/products?page=" +
       pageNo +
       "&size=10&productType=" +
       dropdownValue +
@@ -182,7 +185,8 @@ export default function UpdateStock() {
     const pageNo = pageNumber - 1;
     setCurrentPage(pageNo);
     const allProductsAPI =
-      "http://localhost:8080/products?page=" +
+      rootPath[0] +
+      "/products?page=" +
       pageNo +
       "&size=10&productType=" +
       dropdownValue +
@@ -212,7 +216,8 @@ export default function UpdateStock() {
     setIsDataLoaded(false);
     // const pageNo = 0;
     const allProductsAPI =
-      "http://localhost:8080/products?page=" +
+      rootPath[0] +
+      "/products?page=" +
       currentPage +
       "&size=10&productType=" +
       dropdownValue +
@@ -253,7 +258,8 @@ export default function UpdateStock() {
       productCategory = "accessories";
     }
     const phoneSearchAPI =
-      "http://localhost:8080/" +
+      rootPath[0] +
+      "/" +
       productCategory +
       "/searchByTitle?keyword=" +
       searchKeyword +
@@ -341,7 +347,8 @@ export default function UpdateStock() {
     setIsDataLoaded(false);
 
     const statusUpdateAPI =
-      "http://localhost:8080/" +
+      rootPath[0] +
+      "/" +
       productCategory +
       "/updatePublishStatus/" +
       statusUpdateProductId +
@@ -444,7 +451,8 @@ export default function UpdateStock() {
     let totalStockUpdateAPI = "";
     if (addDeductFlag == "deduct") {
       totalStockUpdateAPI =
-        "http://localhost:8080/products/updateStock/" +
+        rootPath[0] +
+        "/products/updateStock/" +
         editProductId +
         "?variantId=" +
         innerVariantId +
@@ -455,7 +463,8 @@ export default function UpdateStock() {
         "&stockType=TOTAL";
     } else if (addDeductFlag == "add") {
       totalStockUpdateAPI =
-        "http://localhost:8080/products/updateStock/" +
+        rootPath[0] +
+        "/products/updateStock/" +
         editProductId +
         "?variantId=" +
         innerVariantId +
@@ -500,7 +509,8 @@ export default function UpdateStock() {
     let sellableStockUpdateAPI = "";
     if (addDeductFlag == "deduct") {
       sellableStockUpdateAPI =
-        "http://localhost:8080/products/updateStock/" +
+        rootPath[0] +
+        "/products/updateStock/" +
         editProductId +
         "?variantId=" +
         innerVariantId +
@@ -511,7 +521,8 @@ export default function UpdateStock() {
         "&stockType=SELL";
     } else if (addDeductFlag == "add") {
       sellableStockUpdateAPI =
-        "http://localhost:8080/products/updateStock/" +
+        rootPath[0] +
+        "/products/updateStock/" +
         editProductId +
         "?variantId=" +
         innerVariantId +
@@ -570,7 +581,7 @@ export default function UpdateStock() {
       console.log(
         "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       axios
         .post(refreshTokenAPI, userToken.refreshToken)
         .then(function (response) {

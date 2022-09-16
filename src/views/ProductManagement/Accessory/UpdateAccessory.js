@@ -60,6 +60,8 @@ const useStyles = makeStyles(styles);
 
 function UpdateAccessory(props) {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -108,7 +110,7 @@ function UpdateAccessory(props) {
 
   useEffect(() => {
     const accessoryDetailsAPI =
-      "http://localhost:8080/accessories/" + props.editProductId;
+      rootPath[0] + "/accessories/" + props.editProductId;
 
     axios
       .get(accessoryDetailsAPI)
@@ -258,7 +260,7 @@ function UpdateAccessory(props) {
   };
   const accessoryUpdate = () => {
     const accessoryUpdateAPI =
-      "http://localhost:8080/accessories/" + props.editProductId;
+      rootPath[0] + "/accessories/" + props.editProductId;
 
     axios
       .put(accessoryUpdateAPI, accessoryDetails, config)
@@ -316,7 +318,7 @@ function UpdateAccessory(props) {
   // Update Comment in DB after removing comments from userComments variable
   const commentsUpdateHandler = () => {
     const commentsUpdateAPI =
-      "http://localhost:8080/accessories/deleteComment/" + props.editProductId;
+      rootPath[0] + "/accessories/deleteComment/" + props.editProductId;
 
     axios
       .post(commentsUpdateAPI, userComments)
@@ -335,7 +337,7 @@ function UpdateAccessory(props) {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

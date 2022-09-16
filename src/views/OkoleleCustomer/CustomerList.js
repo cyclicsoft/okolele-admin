@@ -70,6 +70,8 @@ export default function CustomerList() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   const [showActiveInactivePopup, setShowActiveInactivePopup] = useState(false);
   const [customerToBeUpdated, setCustomerToBeUpdated] = useState("");
@@ -106,7 +108,7 @@ export default function CustomerList() {
     console.log("config...: ", config);
 
     const customerListByPagination =
-      "http://localhost:8080/users?page=" + pageNo + "&size=5";
+      rootPath[0] + "/users?page=" + pageNo + "&size=5";
     axios
       .get(customerListByPagination, config)
       .then(function (response) {
@@ -138,7 +140,7 @@ export default function CustomerList() {
     const pageNo = pageNumber - 1;
 
     const customerListByPagination =
-      "http://localhost:8080/users?page=" + pageNo + "&size=5";
+      rootPath[0] + "/users?page=" + pageNo + "&size=5";
 
     axios
       .get(customerListByPagination, config)
@@ -185,7 +187,8 @@ export default function CustomerList() {
 
     if (searchTypeValue === "Search By Phone") {
       const customerByPhone =
-        "http://localhost:8080/users/search?keyword=" +
+        rootPath[0] +
+        "/users/search?keyword=" +
         searchKeyword +
         "&userFilterType=PHONE&page=" +
         pageNo +
@@ -202,7 +205,8 @@ export default function CustomerList() {
         });
     } else if (searchTypeValue === "Search By Name") {
       const customerByName =
-        "http://localhost:8080/users/search?keyword=" +
+        rootPath[0] +
+        "/users/search?keyword=" +
         searchKeyword +
         "&userFilterType=NAME&page=" +
         pageNo +
@@ -219,7 +223,7 @@ export default function CustomerList() {
         });
     } else if (searchTypeValue === "No Select") {
       const customerListByPagination =
-        "http://localhost:8080/users?page=" + pageNo + "&size=5";
+        rootPath[0] + "/users?page=" + pageNo + "&size=5";
       axios
         .get(customerListByPagination, config)
         .then(function (response) {
@@ -314,7 +318,8 @@ export default function CustomerList() {
     };
 
     const statusUpdateAPI =
-      "http://localhost:8080/users/activation/" +
+      rootPath[0] +
+      "/users/activation/" +
       customerToBeUpdated +
       "?status=" +
       statusChangeAction;
@@ -385,7 +390,7 @@ export default function CustomerList() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

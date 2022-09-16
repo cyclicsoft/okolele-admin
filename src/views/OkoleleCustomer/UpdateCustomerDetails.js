@@ -37,6 +37,8 @@ const UpdateCustomerDetails = (props) => {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   // Customer Info
   const [customerID, setCustomerID] = useState(customerId);
@@ -66,7 +68,7 @@ const UpdateCustomerDetails = (props) => {
 
     console.log("config...: ", config);
 
-    const customerDetailsAPI = "http://localhost:8080/users/" + customerID;
+    const customerDetailsAPI = rootPath[0] + "/users/" + customerID;
     axios
       .get(customerDetailsAPI, config)
       .then(function (response) {
@@ -114,7 +116,7 @@ const UpdateCustomerDetails = (props) => {
 
     console.log("config...: ", config);
 
-    const customerUpdateAPI = "http://localhost:8080/users/" + customerID;
+    const customerUpdateAPI = rootPath[0] + "/users/" + customerID;
     axios
       .put(customerUpdateAPI, customerData, config)
       .then(function (response) {
@@ -155,7 +157,7 @@ const UpdateCustomerDetails = (props) => {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

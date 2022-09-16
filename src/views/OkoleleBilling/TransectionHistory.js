@@ -65,6 +65,8 @@ const useStyles = makeStyles(styles);
 export default function TransectionHistory() {
   const classes = useStyles();
   const history = useHistory();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
@@ -105,7 +107,8 @@ export default function TransectionHistory() {
     const pageNo = 0;
 
     const transectionByPhoneAPI =
-      "http://localhost:8080/transaction/mobile?mobile=" +
+      rootPath[0] +
+      "/transaction/mobile?mobile=" +
       customerPhone +
       "&page=" +
       pageNo +
@@ -138,7 +141,8 @@ export default function TransectionHistory() {
     const pageNo = pageNumber - 1;
 
     const transectionByIdAPI =
-      "http://localhost:8080/transaction/type?transactionType=" +
+      rootPath[0] +
+      "/transaction/type?transactionType=" +
       transectionType +
       "&page=" +
       pageNo +
@@ -170,7 +174,8 @@ export default function TransectionHistory() {
     const pageNo = pageNumber - 1;
 
     const transectionByPhoneAPI =
-      "http://localhost:8080/transaction/mobile?mobile=" +
+      rootPath[0] +
+      "/transaction/mobile?mobile=" +
       customerPhone +
       "&page=" +
       pageNo +
@@ -218,7 +223,8 @@ export default function TransectionHistory() {
     console.log("transectionType...: ", transectionType);
 
     const transectionByIdAPI =
-      "http://localhost:8080/transaction/type?transactionType=" +
+      rootPath[0] +
+      "/transaction/type?transactionType=" +
       transectionType +
       "&page=" +
       pageNo +
@@ -265,7 +271,7 @@ export default function TransectionHistory() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

@@ -70,6 +70,8 @@ const useStyles = makeStyles(styles);
 
 function UpdatePhone(props) {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -167,8 +169,7 @@ function UpdatePhone(props) {
   const [imgIdToPreview, setImgIdToPreview] = useState("");
 
   useEffect(() => {
-    const mobileDetailsAPI =
-      "http://localhost:8080/mobiles/" + props.editProductId;
+    const mobileDetailsAPI = rootPath[0] + "/mobiles/" + props.editProductId;
 
     axios
       .get(mobileDetailsAPI)
@@ -445,8 +446,7 @@ function UpdatePhone(props) {
     setShowProductUpdatePopup(false);
   };
   const phoneUpdate = () => {
-    const phoneUpdateAPI =
-      "http://localhost:8080/mobiles/" + props.editProductId;
+    const phoneUpdateAPI = rootPath[0] + "/mobiles/" + props.editProductId;
 
     axios
       .put(phoneUpdateAPI, phoneDetails, config)
@@ -604,7 +604,7 @@ function UpdatePhone(props) {
   // Update Comment in DB after removing comments from userComments variable
   const commentsUpdateHandler = () => {
     const commentsUpdateAPI =
-      "http://localhost:8080/mobiles/deleteComment/" + props.editProductId;
+      rootPath[0] + "/mobiles/deleteComment/" + props.editProductId;
 
     axios
       .post(commentsUpdateAPI, userComments)
@@ -623,7 +623,7 @@ function UpdatePhone(props) {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

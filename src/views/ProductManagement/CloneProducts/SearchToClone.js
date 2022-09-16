@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+// Global State
+import { store, useGlobalState } from "state-pool";
 // core components
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
@@ -19,6 +21,8 @@ const useStyles = makeStyles(styles);
 
 function SearchToClone(props) {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // Search
   const [productCategory, setProductCategory] = useState(props.productType);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -33,7 +37,8 @@ function SearchToClone(props) {
   const productSearchHanler = () => {
     setIsDataLoaded(false);
     const phoneSearchAPI =
-      "http://localhost:8080/" +
+      rootPath[0] +
+      "/" +
       productCategory +
       "/searchByTitle?keyword=" +
       searchKeyword +

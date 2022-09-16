@@ -34,6 +34,9 @@ const useStyles = makeStyles(styles);
 
 const SendNotification = (props) => {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
+
   const searchButton = classes.top + " " + classes.searchButton;
 
   //   orderId from props
@@ -82,7 +85,7 @@ const SendNotification = (props) => {
       },
     };
 
-    const sendNotificationAPI = "http://localhost:8080/notification";
+    const sendNotificationAPI = rootPath[0] + "/notification";
     axios
       .post(sendNotificationAPI, notificationData, config)
       .then(function (response) {
@@ -123,7 +126,7 @@ const SendNotification = (props) => {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

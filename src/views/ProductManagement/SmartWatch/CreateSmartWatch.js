@@ -21,7 +21,7 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import SpeedIcon from "@mui/icons-material/Speed";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
-import DetailsIcon from '@mui/icons-material/Details';
+import DetailsIcon from "@mui/icons-material/Details";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -70,6 +70,8 @@ const useStyles = makeStyles(styles);
 
 function CreateSmartWatch() {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -232,7 +234,7 @@ function CreateSmartWatch() {
 
   const saveNewSW = () => {
     // console.log("saveNewSW/swDetails: ", swDetails);
-    const swCreateAPI = "http://localhost:8080/smartwatches";
+    const swCreateAPI = rootPath[0] + "/smartwatches";
     axios
       .post(swCreateAPI, swDetails, config)
       .then(function (response) {
@@ -386,7 +388,7 @@ function CreateSmartWatch() {
       },
     };
 
-    const bulkUploadAPI = "http://localhost:8080/products/bulkdata";
+    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
 
     axios
       .post(bulkUploadAPI, data, csvConfig)
@@ -430,7 +432,7 @@ function CreateSmartWatch() {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

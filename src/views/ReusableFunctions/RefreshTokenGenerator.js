@@ -7,6 +7,8 @@ import { store, useGlobalState } from "state-pool";
 
 export function RefreshTokenGenerator(callback) {
   // let userToken = JSON.parse(localStorage.getItem("userToken"));
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -16,7 +18,7 @@ export function RefreshTokenGenerator(callback) {
   var now = new Date();
 
   if (refreshTokenTime.getTime() > now.getTime()) {
-    const refreshTokenAPI = "http://localhost:8080/auth/token";
+    const refreshTokenAPI = rootPath[0] + "/auth/token";
     console.log("RefreshTokenGenerator/refreshToken: ", userToken.refreshToken);
     axios
       .post(refreshTokenAPI, {

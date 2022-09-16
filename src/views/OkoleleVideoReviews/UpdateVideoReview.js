@@ -83,6 +83,8 @@ function UpdateVideoReview(props) {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   var accessTknValidity = new Date(userToken.tokenValidity);
   var refreshTknValidity = new Date(userToken.refreshTokenValidity);
   const refreshTkn = {
@@ -125,8 +127,7 @@ function UpdateVideoReview(props) {
 
   useEffect(() => {
     console.log("reviewId: ", props.editReviewId);
-    const reviewCreateAPI =
-      "http://localhost:8080/reviews/" + props.editReviewId;
+    const reviewCreateAPI = rootPath[0] + "/reviews/" + props.editReviewId;
     axios
       .get(reviewCreateAPI)
       .then(function (response) {
@@ -174,7 +175,7 @@ function UpdateVideoReview(props) {
 
   const updateReview = () => {
     if (name != "" && productDescription != "" && videoUrl != "") {
-      const reviewUpdateAPI = "http://localhost:8080/reviews/" + reviewId;
+      const reviewUpdateAPI = rootPath[0] + "/reviews/" + reviewId;
       axios
         .put(reviewUpdateAPI, videoReviewData, config)
         .then(function (response) {
@@ -209,7 +210,7 @@ function UpdateVideoReview(props) {
       console.log(
         "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

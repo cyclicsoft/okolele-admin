@@ -51,6 +51,8 @@ const useStyles = makeStyles(styles);
 export default function ProductList() {
   const classes = useStyles();
   const history = useHistory();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -88,7 +90,8 @@ export default function ProductList() {
 
     const pageNo = 0;
     const allProductsAPI =
-      "http://localhost:8080/products?page=" +
+      rootPath[0] +
+      "/products?page=" +
       pageNo +
       "&size=10&productType=" +
       dropdownValue +
@@ -120,7 +123,8 @@ export default function ProductList() {
     const pageNo = pageNumber - 1;
     setCurrentPage(pageNo);
     const allProductsAPI =
-      "http://localhost:8080/products?page=" +
+      rootPath[0] +
+      "/products?page=" +
       pageNo +
       "&size=10&productType=" +
       dropdownValue +
@@ -146,7 +150,8 @@ export default function ProductList() {
     setIsDataLoaded(false);
     // const pageNo = 0;
     const allProductsAPI =
-      "http://localhost:8080/products?page=" +
+      rootPath[0] +
+      "/products?page=" +
       currentPage +
       "&size=10&productType=" +
       dropdownValue +
@@ -183,7 +188,8 @@ export default function ProductList() {
       productCategory = "accessories";
     }
     const phoneSearchAPI =
-      "http://localhost:8080/" +
+      rootPath[0] +
+      "/" +
       productCategory +
       "/searchByTitle?keyword=" +
       searchKeyword +
@@ -267,7 +273,8 @@ export default function ProductList() {
     setIsDataLoaded(false);
 
     const statusUpdateAPI =
-      "http://localhost:8080/" +
+      rootPath[0] +
+      "/" +
       productCategory +
       "/updatePublishStatus/" +
       statusUpdateProductId +
@@ -300,7 +307,7 @@ export default function ProductList() {
       console.log(
         "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       axios
         .post(refreshTokenAPI, userToken.refreshToken)
         .then(function (response) {

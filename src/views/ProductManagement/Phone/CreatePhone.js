@@ -69,6 +69,8 @@ const useStyles = makeStyles(styles);
 
 function CreatePhone() {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -296,7 +298,7 @@ function CreatePhone() {
 
   const saveNewPhone = () => {
     console.log("saveNewPhone/phoneDetails: ", phoneDetails);
-    const phoneCreateAPI = "http://localhost:8080/mobiles";
+    const phoneCreateAPI = rootPath[0] + "/mobiles";
     axios
       .post(phoneCreateAPI, phoneDetails, config)
       .then(function (response) {
@@ -482,7 +484,7 @@ function CreatePhone() {
       },
     };
 
-    const bulkUploadAPI = "http://localhost:8080/products/bulkdata";
+    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
 
     axios
       .post(bulkUploadAPI, data, csvConfig)
@@ -657,7 +659,7 @@ function CreatePhone() {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

@@ -67,6 +67,8 @@ export default function VoucherList() {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   const [voucherId, setVoucherId] = useState("");
   const [VoucherCode, setVoucherCode] = useState("");
@@ -131,8 +133,7 @@ export default function VoucherList() {
     };
 
     const pageNo = 0;
-    const voucherListAPI =
-      "http://localhost:8080/coupon?page=" + pageNo + "&size=5";
+    const voucherListAPI = rootPath[0] + "/coupon?page=" + pageNo + "&size=5";
 
     axios
       .get(voucherListAPI, config)
@@ -158,8 +159,7 @@ export default function VoucherList() {
     });
     // console.log("---------Called from paginationHandler----------");
     const pageNo = pageNumber - 1;
-    const voucherListAPI =
-      "http://localhost:8080/coupon?page=" + pageNo + "&size=5";
+    const voucherListAPI = rootPath[0] + "/coupon?page=" + pageNo + "&size=5";
 
     axios
       .get(voucherListAPI, config)
@@ -190,7 +190,8 @@ export default function VoucherList() {
     const pageNo = 0;
 
     const voucherSearchByCode =
-      "http://localhost:8080/coupon/search?page=" +
+      rootPath[0] +
+      "/coupon/search?page=" +
       pageNo +
       "&size=5&coupon_code=" +
       searchKeyword;
@@ -221,7 +222,8 @@ export default function VoucherList() {
     const pageNo = pageNumber - 1;
 
     const voucherSearchByCode =
-      "http://localhost:8080/coupon/search?page=" +
+      rootPath[0] +
+      "/coupon/search?page=" +
       pageNo +
       "&size=5&coupon_code=" +
       searchKeyword;
@@ -253,10 +255,7 @@ export default function VoucherList() {
     });
 
     const statusUpdateAPI =
-      "http://localhost:8080/coupon/status/" +
-      voucherId +
-      "?status=" +
-      statusToUpdate;
+      rootPath[0] + "/coupon/status/" + voucherId + "?status=" + statusToUpdate;
 
     axios
       .post(statusUpdateAPI, {}, config)
@@ -347,7 +346,7 @@ export default function VoucherList() {
         };
       });
 
-      const voucherUpdateAPI = "http://localhost:8080/coupon/" + voucherId;
+      const voucherUpdateAPI = rootPath[0] + "/coupon/" + voucherId;
       console.log("updateConfirmationFlag/voucherData: ", voucherData);
       axios
         .put(voucherUpdateAPI, voucherData, config)
@@ -399,7 +398,7 @@ export default function VoucherList() {
   // Record delete handler
   const deleteVoucher = (id) => {
     alert(id);
-    const voucherDeleteAPI = "http://localhost:8080/coupon/" + id;
+    const voucherDeleteAPI = rootPath[0] + "/coupon/" + id;
     setDeleteUrl(voucherDeleteAPI);
 
     setDeleteBtnClicked(true);
@@ -457,7 +456,7 @@ export default function VoucherList() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

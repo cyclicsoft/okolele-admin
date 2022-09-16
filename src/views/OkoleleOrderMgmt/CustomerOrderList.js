@@ -63,6 +63,8 @@ export default function CustomerOrderList(props) {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   const searchButton = classes.top + " " + classes.searchButton;
 
@@ -93,7 +95,8 @@ export default function CustomerOrderList(props) {
 
     const pageNo = 0;
     const odrListAPI =
-      "http://localhost:8080/order?userId=" +
+      rootPath[0] +
+      "/order?userId=" +
       customerID +
       "&page=" +
       pageNo +
@@ -129,7 +132,8 @@ export default function CustomerOrderList(props) {
     const pageNo = 0;
 
     const searchOdrListAPI =
-      "http://localhost:8080/order/mobile?page=" +
+      rootPath[0] +
+      "/order/mobile?page=" +
       pageNo +
       "&size=5&mobile=" +
       customerPhone;
@@ -194,7 +198,7 @@ export default function CustomerOrderList(props) {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

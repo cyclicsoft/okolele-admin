@@ -58,6 +58,8 @@ const useStyles = makeStyles(styles);
 
 function CreateAccessory() {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -156,7 +158,7 @@ function CreateAccessory() {
 
   const saveNewSW = () => {
     // console.log("saveNewSW/swDetails: ", swDetails);
-    const accessoryCreateAPI = "http://localhost:8080/accessories";
+    const accessoryCreateAPI = rootPath[0] + "/accessories";
     axios
       .post(accessoryCreateAPI, swDetails, config)
       .then(function (response) {
@@ -242,7 +244,7 @@ function CreateAccessory() {
       },
     };
 
-    const bulkUploadAPI = "http://localhost:8080/products/bulkdata";
+    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
 
     axios
       .post(bulkUploadAPI, data, csvConfig)
@@ -286,7 +288,7 @@ function CreateAccessory() {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

@@ -35,6 +35,8 @@ const UpdateOrderStatus = (props) => {
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
 
   //   Order Info
   const [orderDetails, setOrderDetails] = useState([]);
@@ -71,7 +73,7 @@ const UpdateOrderStatus = (props) => {
 
     console.log("config...: ", config);
 
-    const orderDetailsAPI = "http://localhost:8080/order/" + orderID;
+    const orderDetailsAPI = rootPath[0] + "/order/" + orderID;
     axios
       .get(orderDetailsAPI, config)
       .then(function (response) {
@@ -114,7 +116,8 @@ const UpdateOrderStatus = (props) => {
     };
 
     const statusUpdateAPI =
-      "http://localhost:8080/order/status/" +
+      rootPath[0] +
+      "/order/status/" +
       orderID +
       "?userId=" +
       userId +
@@ -162,7 +165,7 @@ const UpdateOrderStatus = (props) => {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

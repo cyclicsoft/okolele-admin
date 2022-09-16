@@ -57,6 +57,8 @@ const useStyles = makeStyles(styles);
 
 function AreaManagement() {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -97,7 +99,7 @@ function AreaManagement() {
       },
     };
 
-    const areaListAPI = "http://localhost:8080/area";
+    const areaListAPI = rootPath[0] + "/area";
 
     axios
       .get(areaListAPI, config)
@@ -131,7 +133,7 @@ function AreaManagement() {
     };
 
     const addDivisionAPI =
-      "http://localhost:8080/area/division?div_name=" + newDivisionName;
+      rootPath[0] + "/area/division?div_name=" + newDivisionName;
 
     axios
       .post(addDivisionAPI, {}, config)
@@ -194,7 +196,8 @@ function AreaManagement() {
     };
 
     const addCityAPI =
-      "http://localhost:8080/area/cities?div_id=" +
+      rootPath[0] +
+      "/area/cities?div_id=" +
       selectedDivId +
       "&city_name=" +
       newCityName;
@@ -254,7 +257,8 @@ function AreaManagement() {
     };
 
     const addAreaAPI =
-      "http://localhost:8080/area/areas?div_id=" +
+      rootPath[0] +
+      "/area/areas?div_id=" +
       selectedDivId +
       "&city_id=" +
       selectedCityId +
@@ -309,13 +313,15 @@ function AreaManagement() {
     let updateAPI = "";
     if (toUpdate === "Division") {
       updateAPI =
-        "http://localhost:8080/area/division/" +
+        rootPath[0] +
+        "/area/division/" +
         updatedDivId +
         "?div_name=" +
         nameToUpdate;
     } else if (toUpdate === "City") {
       updateAPI =
-        "http://localhost:8080/area/cities/" +
+        rootPath[0] +
+        "/area/cities/" +
         updatedCityId +
         "?div_id=" +
         selectedDivId +
@@ -323,7 +329,8 @@ function AreaManagement() {
         nameToUpdate;
     } else if (toUpdate === "Area") {
       updateAPI =
-        "http://localhost:8080/area/areas/" +
+        rootPath[0] +
+        "/area/areas/" +
         updatedAreaId +
         "?div_id=" +
         selectedDivId +
@@ -371,13 +378,14 @@ function AreaManagement() {
 
     let deleteAPI = "";
     if (type === "Division") {
-      deleteAPI = "http://localhost:8080/area/division/" + id;
+      deleteAPI = rootPath[0] + "/area/division/" + id;
     } else if (type === "City") {
       deleteAPI =
-        "http://localhost:8080/area/cities/" + id + "?div_id=" + selectedDivId;
+        rootPath[0] + "/area/cities/" + id + "?div_id=" + selectedDivId;
     } else if (type === "Area") {
       deleteAPI =
-        "http://localhost:8080/area/areas/" +
+        rootPath[0] +
+        "/area/areas/" +
         id +
         "?div_id=" +
         selectedDivId +
@@ -427,7 +435,7 @@ function AreaManagement() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

@@ -57,6 +57,8 @@ const useStyles = makeStyles(styles);
 export default function ReviewManagement() {
   const classes = useStyles();
   const history = useHistory();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -99,7 +101,7 @@ export default function ReviewManagement() {
     setIsDataLoaded(false);
     const pageNo = 0;
     const allReviewsAPI =
-      "http://localhost:8080/reviews?page=" + pageNo + "&size=10&activeStatus=";
+      rootPath[0] + "/reviews?page=" + pageNo + "&size=10&activeStatus=";
 
     axios
       .get(allReviewsAPI)
@@ -124,7 +126,7 @@ export default function ReviewManagement() {
     const pageNo = pageNumber - 1;
     setCurrentPage(pageNo);
     const allReviewsAPI =
-      "http://localhost:8080/reviews?page=" + pageNo + "&size=10&activeStatus=";
+      rootPath[0] + "/reviews?page=" + pageNo + "&size=10&activeStatus=";
 
     axios
       .get(allReviewsAPI)
@@ -143,9 +145,7 @@ export default function ReviewManagement() {
     setIsDataLoaded(false);
     // const pageNo = 0;
     const allReviewsAPI =
-      "http://localhost:8080/reviews?page=" +
-      currentPage +
-      "&size=10&activeStatus=";
+      rootPath[0] + "/reviews?page=" + currentPage + "&size=10&activeStatus=";
 
     axios
       .get(allReviewsAPI)
@@ -205,7 +205,8 @@ export default function ReviewManagement() {
 
   const updateActiveStatus = () => {
     const statusUpdateAPI =
-      "http://localhost:8080/reviews/status/" +
+      rootPath[0] +
+      "/reviews/status/" +
       statusUpdateReviewtId +
       "?isActive=" +
       statusToBeChanged;
@@ -227,7 +228,7 @@ export default function ReviewManagement() {
       console.log(
         "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

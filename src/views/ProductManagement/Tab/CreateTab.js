@@ -69,6 +69,8 @@ const useStyles = makeStyles(styles);
 
 function CreateTab() {
   const classes = useStyles();
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -296,7 +298,7 @@ function CreateTab() {
 
   const saveNewTab = () => {
     console.log("saveNewTab/tabDetails: ", tabDetails);
-    const tabCreateAPI = "http://localhost:8080/tablets";
+    const tabCreateAPI = rootPath[0] + "/tablets";
     axios
       .post(tabCreateAPI, tabDetails, config)
       .then(function (response) {
@@ -482,7 +484,7 @@ function CreateTab() {
       },
     };
 
-    const bulkUploadAPI = "http://localhost:8080/products/bulkdata";
+    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
 
     axios
       .post(bulkUploadAPI, data, csvConfig)
@@ -527,7 +529,7 @@ function CreateTab() {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = "http://localhost:8080/auth/token";
+      const refreshTokenAPI = rootPath[0] + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)
