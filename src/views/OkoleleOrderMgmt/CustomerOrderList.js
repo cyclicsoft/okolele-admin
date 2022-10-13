@@ -72,10 +72,9 @@ export default function CustomerOrderList(props) {
   const [customerOrders, setCustomerOrders] = useState([]);
   const [customerPhone, setCustomerPhone] = useState("");
 
+  // Pagination
   const [totalPageNo, setTotalPageNo] = useState(1);
-
-  const [riderList, setRiderList] = useState([]);
-  const [currentOrderList, setCurrentOrderList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     getToken((token) => {
@@ -107,10 +106,50 @@ export default function CustomerOrderList(props) {
       .then(function (response) {
         setCustomerOrders(response.data.content.data);
         console.log("Order List...: ", response.data.content.data);
-        // setTotalPageNo(Math.ceil(response.data.totalElements / 10));
+        setTotalPageNo(Math.ceil(response.data.content.totalItems / 10));
       })
       .catch(function (error) {
         console.log(error);
+      });
+  };
+
+  // Pagination handler
+  const paginationHandler = (pageNumber) => {
+    // Show Data Loader
+    // setIsDataLoaded(false);
+    console.log("pageNumber: ", pageNumber);
+    const pageNo = pageNumber - 1;
+    setCurrentPage(pageNo);
+
+    let config = {};
+
+    getToken((token) => {
+      config = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+    });
+
+    const odrListAPI =
+      rootPath[0] +
+      "/order?userId=" +
+      customerID +
+      "&page=" +
+      pageNo +
+      "&size=10";
+
+    axios
+      .get(odrListAPI, config)
+      .then(function (response) {
+        if (response.status == 200 && response.data.content.totalItems > 0) {
+          setCustomerOrders(response.data.content.data);
+        }
+        // setIsDataLoaded(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+        // setIsDataLoaded(true);
       });
   };
 
@@ -135,7 +174,7 @@ export default function CustomerOrderList(props) {
       rootPath[0] +
       "/order/mobile?page=" +
       pageNo +
-      "&size=5&mobile=" +
+      "&size=10&mobile=" +
       customerPhone;
     axios
       .get(searchOdrListAPI, config)
@@ -240,27 +279,6 @@ export default function CustomerOrderList(props) {
     });
   };
 
-  // ============================
-
-  // Pagination handler
-  const paginationHandler = (pageNumber) => {
-    console.log("pageNumber: ", pageNumber);
-    const pageNo = pageNumber - 1;
-    const riderListByPagination =
-      "/multivendorshop/mv/v1/rider/paginate/all?page=" + pageNo + "&size=10";
-
-    axios
-      .get(riderListByPagination)
-      .then(function (response) {
-        setRiderList(response.data.content);
-        console.log("riderListByPagination: ", response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-        setRiderList([]);
-      });
-  };
-
   return (
     <>
       {/* ############################# Order List ############################# */}
@@ -275,7 +293,7 @@ export default function CustomerOrderList(props) {
                 Order List
               </h4>
 
-              <div style={{ marginLeft: "45vw", display: "flex" }}>
+              <div style={{ marginLeft: "59vw", display: "flex" }}>
                 {/* <div className="search-dropdown-style">
                   <select value={searchTypeValue} onChange={handleSearchType}>
                     <option value="Search By Name">Search By Name</option>

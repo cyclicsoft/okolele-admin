@@ -235,6 +235,7 @@ const UpdateOrderStatus = (props) => {
                       <option value="DELIVERY_IN_PROGRESS">
                         DELIVERY_IN_PROGRESS
                       </option>
+                      <option value="DELIVERED">DELIVERED</option>
                       <option value="CANCELLED_USER">CANCELLED_USER</option>
                       <option value="CANCELLED_ADMIN">CANCELLED_ADMIN</option>
                       <option value="FAILED_DELIVER1">FAILED_DELIVER1</option>
