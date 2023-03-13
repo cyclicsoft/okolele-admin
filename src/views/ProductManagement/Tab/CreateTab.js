@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 // Global State
-import { store, useGlobalState } from "state-pool";
+import { useGlobalState } from "state-pool";
 
 // material-ui icons
 import AcUnitIcon from "@mui/icons-material/AcUnit";

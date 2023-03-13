@@ -9,8 +9,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 
 // @material-ui/icons
-import Face from "@material-ui/icons/Face";
-import Email from "@material-ui/icons/Email";
+// import Face from "@material-ui/icons/Face";
+// import Email from "@material-ui/icons/Email";
 // import LockOutline from "@material-ui/icons/LockOutline";
 
 // core components
@@ -72,7 +72,7 @@ export default function AdminLogin(props) {
       setCardAnimation("");
     }, 700);
     //Specify how to clean up after this effect:
-    return function cleanup() {
+    return function clearTimeout(id) {
       //window.clearTimeout(id);
     };
   });
@@ -81,6 +81,7 @@ export default function AdminLogin(props) {
     const userData = {
       userName: emailPhone,
       password: password,
+      app_name: "ADMIN",
     };
     console.log(userData);
 

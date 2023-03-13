@@ -591,8 +591,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {m2GBand.map((m2GBands) => (
-                          <div key={m2GBands.id}>{m2GBands}</div>
+                        {m2GBand.map((m2GBands, index) => (
+                          <div key={index}>{m2GBands}</div>
                         ))}
                       </div>
                     </div>
@@ -609,8 +609,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {m3GBand.map((m3GBands) => (
-                          <div key={m3GBands.id}>{m3GBands}</div>
+                        {m3GBand.map((m3GBands, index) => (
+                          <div key={index}>{m3GBands}</div>
                         ))}
                       </div>
                     </div>
@@ -627,8 +627,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {m4GBand.map((m4GBands) => (
-                          <div key={m4GBands.id}>{m4GBands}</div>
+                        {m4GBand.map((m4GBands, index) => (
+                          <div key={index}>{m4GBands}</div>
                         ))}
                       </div>
                     </div>
@@ -645,8 +645,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {m5GBand.map((m5GBands) => (
-                          <div key={m5GBands.id}>{m5GBands}</div>
+                        {m5GBand.map((m5GBands, index) => (
+                          <div key={index}>{m5GBands}</div>
                         ))}
                       </div>
                     </div>
@@ -922,8 +922,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mainCameras.map((mainCameras) => (
-                          <div key={mainCameras.id}>{mainCameras}</div>
+                        {mainCameras.map((mainCameras, index) => (
+                          <div key={index}>{mainCameras}</div>
                         ))}
                       </div>
                     </div>
@@ -941,8 +941,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mMainFeatures.map((mMainFeatures) => (
-                          <div key={mMainFeatures.id}>{mMainFeatures}</div>
+                        {mMainFeatures.map((mMainFeatures, index) => (
+                          <div key={index}>{mMainFeatures}</div>
                         ))}
                       </div>
                     </div>
@@ -960,8 +960,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mMainVideo.map((mMainVideo) => (
-                          <div key={mMainVideo.id}>{mMainVideo}</div>
+                        {mMainVideo.map((mMainVideo, index) => (
+                          <div key={index}>{mMainVideo}</div>
                         ))}
                       </div>
                     </div>
@@ -994,8 +994,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mSecondaryMP1.map((mSecondaryMP1) => (
-                          <div key={mSecondaryMP1.id}>{mSecondaryMP1}</div>
+                        {mSecondaryMP1.map((mSecondaryMP1, index) => (
+                          <div key={index}>{mSecondaryMP1}</div>
                         ))}
                       </div>
                     </div>
@@ -1013,11 +1013,11 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mSecondaryFeatures1.map((mSecondaryFeatures1) => (
-                          <div key={mSecondaryFeatures1.id}>
-                            {mSecondaryFeatures1}
-                          </div>
-                        ))}
+                        {mSecondaryFeatures1.map(
+                          (mSecondaryFeatures1, index) => (
+                            <div key={index}>{mSecondaryFeatures1}</div>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -1034,10 +1034,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mSecondaryVideo1.map((mSecondaryVideo1) => (
-                          <div key={mSecondaryVideo1.id}>
-                            {mSecondaryVideo1}
-                          </div>
+                        {mSecondaryVideo1.map((mSecondaryVideo1, index) => (
+                          <div key={index}>{mSecondaryVideo1}</div>
                         ))}
                       </div>
                     </div>
@@ -1098,8 +1096,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mSensor.map((mSensor) => (
-                          <div key={mSensor.id}>{mSensor}</div>
+                        {mSensor.map((mSensor, index) => (
+                          <div key={index}>{mSensor}</div>
                         ))}
                       </div>
                     </div>
@@ -1223,8 +1221,8 @@ export default function PhoneDetails(props) {
                           alignItems: "flex-start",
                         }}
                       >
-                        {mPerformance.map((mPerformance) => (
-                          <div key={mPerformance.id}>{mPerformance}</div>
+                        {mPerformance.map((mPerformance, index) => (
+                          <div key={index}>{mPerformance}</div>
                         ))}
                       </div>
                     </div>
@@ -1233,7 +1231,7 @@ export default function PhoneDetails(props) {
               </GridContainer>
 
               {/* User Opinions & Reviews */}
-              <GridContainer>
+              {/* <GridContainer>
                 <h3 className={classes.title + "" + classes.textCenter}>
                   {mName1} - User Opinions & Reviews
                 </h3>
@@ -1242,7 +1240,6 @@ export default function PhoneDetails(props) {
                     <h3 className={classes.title + " " + classes.textCenter}>
                       {userComments.length} Comments
                     </h3>
-                    {/* Users all comments */}
                     <div className="comments-container">
                       {userComments.map((userComments) => (
                         <div
@@ -1257,19 +1254,12 @@ export default function PhoneDetails(props) {
                           <h4 className="user-comment-msg">
                             {userComments.msg}
                           </h4>
-                          {/* <CloseIcon
-                              className="close-icon"
-                              onClick={deleteComment.bind(
-                                null,
-                                userComments.msg
-                              )}
-                            /> */}
                         </div>
                       ))}
                     </div>
                   </div>
                 </GridItem>
-              </GridContainer>
+              </GridContainer> */}
             </div>
           </div>
         </div>

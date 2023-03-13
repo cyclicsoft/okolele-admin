@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 // Global State
-import { store, useGlobalState } from "state-pool";
+import { useGlobalState } from "state-pool";
 
 // material-ui icons
 import AcUnitIcon from "@mui/icons-material/AcUnit";
@@ -11,9 +11,9 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import SmartDisplayIcon from "@mui/icons-material/SmartDisplay";
 import HardwareIcon from "@mui/icons-material/Hardware";
 import MemoryIcon from "@mui/icons-material/Memory";
-import CameraRearIcon from "@mui/icons-material/CameraRear";
-import CameraFrontIcon from "@mui/icons-material/CameraFront";
-import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+// import CameraRearIcon from "@mui/icons-material/CameraRear";
+// import CameraFrontIcon from "@mui/icons-material/CameraFront";
+// import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import SettingsInputAntennaIcon from "@mui/icons-material/SettingsInputAntenna";
 import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
 import BatteryCharging50Icon from "@mui/icons-material/BatteryCharging50";

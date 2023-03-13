@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
@@ -83,7 +84,7 @@ function CreateVideoReview() {
       },
     };
 
-    if (name != "" && productDescription != "" && videoUrl != "") {
+    if (name !== "" && productDescription !== "" && videoUrl !== "") {
       const reviewCreateAPI = rootPath[0] + "/reviews";
       axios
         .post(reviewCreateAPI, videoReviewData, config)
@@ -143,7 +144,7 @@ function CreateVideoReview() {
           refreshToken: userToken.refreshToken,
         })
         .then(function (response) {
-          if (response.status == 403) {
+          if (response.status === 403) {
             alert(response.data.message);
             localStorage.clear();
             window.location.href = "/";

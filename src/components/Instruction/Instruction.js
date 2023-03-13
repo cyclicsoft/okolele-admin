@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React from "react";
 import PropTypes from "prop-types";
 import cx from "classnames";
@@ -18,11 +19,11 @@ export default function Instruction(props) {
   const { title, text, image, className, imageClassName, imageAlt } = props;
   const instructionClasses = cx({
     [classes.instruction]: true,
-    [className]: className !== undefined
+    [className]: className !== undefined,
   });
   const pictureClasses = cx({
     [classes.picture]: true,
-    [imageClassName]: imageClassName !== undefined
+    [imageClassName]: imageClassName !== undefined,
   });
   return (
     <div className={instructionClasses}>
@@ -42,7 +43,7 @@ export default function Instruction(props) {
 }
 
 Instruction.defaultProps = {
-  imageAlt: "..."
+  imageAlt: "...",
 };
 
 Instruction.propTypes = {
@@ -51,5 +52,5 @@ Instruction.propTypes = {
   image: PropTypes.string,
   imageAlt: PropTypes.string,
   className: PropTypes.string,
-  imageClassName: PropTypes.string
+  imageClassName: PropTypes.string,
 };

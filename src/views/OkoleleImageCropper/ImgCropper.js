@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, useCallback } from "react";
 // react-image-crop
 import ReactCrop from "react-image-crop";

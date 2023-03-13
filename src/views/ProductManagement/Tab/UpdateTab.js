@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
@@ -446,17 +447,27 @@ function UpdateTab(props) {
     setShowProductUpdatePopup(false);
   };
   const tabUpdate = () => {
+    console.log("tabUpdate/tabDetails >>>", tabDetails);
+
+    console.log("tabUpdate/config >>>", config);
+
     const tabUpdateAPI = rootPath[0] + "/tablets/" + props.editProductId;
 
+    console.log("tabUpdate/tabUpdateAPI >>>", tabUpdateAPI);
     axios
       .put(tabUpdateAPI, tabDetails, config)
       .then(function (response) {
         // console.log("update response: ", response);
         // console.log("response code: ", response.status);
+        // if(response.status === 200){
+        //   setHttpResponseCode(response.status);
+        // setShowHttpResponseMsg(true);
+        // }
         setHttpResponseCode(response.status);
         setShowHttpResponseMsg(true);
       })
       .catch(function (error) {
+        console.log("tabUpdate/error >> ", error);
         setHttpResponseCode(error.response.status);
         setShowHttpResponseMsg(true);
       });

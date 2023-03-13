@@ -1,3 +1,4 @@
+/*eslint-disable*/
 //index->App->SectionContainer->Sidebar->AdminProfile
 //Ghorwali Component
 

@@ -1,3 +1,4 @@
+/*eslint-disable*/
 // import Buttons from "views/Components/Buttons.js";
 // import Calendar from "views/Calendar/Calendar.js";
 // import Charts from "views/Charts/Charts.js";
