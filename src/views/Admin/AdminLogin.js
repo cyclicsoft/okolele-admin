@@ -75,7 +75,7 @@ export default function AdminLogin(props) {
     return function clearTimeout(id) {
       //window.clearTimeout(id);
     };
-  });
+  },[]);
 
   const loginFormHandler = (event) => {
     const userData = {

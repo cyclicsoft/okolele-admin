@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -57,7 +57,6 @@ const ProductVariants = ({ productVariants, setProductVariants }) => {
   };
 
   return (
-    // onBlur={callBackDataSender}
     <div style={{ marginBottom: "15px" }}>
       {productVariants.map((x, i) => {
         return (
