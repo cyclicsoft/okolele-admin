@@ -3,9 +3,9 @@ import React from "react";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import DynamicImgElmntCreator from "./DynamicImgElmntCreator";
+import DynamicImgElmntCreator from "../DynamicInputs/DynamicImgElmntCreator";
 // SCSS
-import "../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
+import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
 const AccessoryVariants = ({ productVariants, setProductVariants }) => {
   const productImagesSetter = (images, index) => {

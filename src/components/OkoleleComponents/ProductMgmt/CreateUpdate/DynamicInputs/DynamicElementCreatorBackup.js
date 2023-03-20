@@ -18,7 +18,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 // SCSS
-import "../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
+import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 import { red } from "@material-ui/core/colors";
 
 const useStyles = makeStyles(styles);

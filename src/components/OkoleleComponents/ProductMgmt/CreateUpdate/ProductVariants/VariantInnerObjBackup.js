@@ -1,33 +1,73 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useEffect, useState } from "react";
 // core components
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import GridContainer from "components/Grid/GridContainer.js";
+import GridItem from "components/Grid/GridItem.js";
+import Button from "components/CustomButtons/Button.js";
+import { makeStyles } from "@material-ui/core/styles";
+import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 import Select from "@mui/material/Select";
-// SCSS
-import "../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
-const VariantInnerObj = ({ ramRomVariants, setRamRomVariants }) => {
+// material-ui icons
+import UpdateIcon from "@mui/icons-material/Update";
+
+// SCSS
+import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
+
+const VariantInnerObj = (props) => {
+  // console.log("VariantInnerObj/props.variants: ", props.variants);
+
+  const [innerObj, setInnerObj] = useState([
+    {
+      ramUnit: "GB",
+      ram: "",
+      romUnit: "GB",
+      rom: "",
+      basePrice: "",
+    },
+  ]);
+
+  useEffect(() => {
+    if (Object.keys(props.variants).length > 0) {
+      setInnerObj(props.variants);
+    } else {
+      setInnerObj([
+        {
+          ramUnit: "GB",
+          ram: "",
+          romUnit: "GB",
+          rom: "",
+          basePrice: "",
+        },
+      ]);
+    }
+  }, [props.variants]);
+
   // handle input change
   const handleInputChange = (e, index) => {
     const { name, value } = e.target;
-    const list = [...ramRomVariants];
+    const list = [...innerObj];
     list[index][name] = value;
-    setRamRomVariants(list);
+    setInnerObj(list);
   };
 
   // handle click event of the Remove button
   const handleRemoveClick = (index) => {
-    const list = [...ramRomVariants];
+    const list = [...innerObj];
     list.splice(index, 1);
-    setRamRomVariants(list);
+    setInnerObj(list);
+
+    // props.innerObjCallbackFun(list);
   };
 
   // handle click event of the Add button
   const handleAddClick = () => {
-    setRamRomVariants([
-      ...ramRomVariants,
+    setInnerObj([
+      ...innerObj,
       {
         ramUnit: "GB",
         ram: "",
@@ -38,9 +78,14 @@ const VariantInnerObj = ({ ramRomVariants, setRamRomVariants }) => {
     ]);
   };
 
+  const dataSender = () => {
+    props.innerObjCallbackFun(innerObj, props.variantIndex);
+  };
+
   return (
-    <div>
-      {ramRomVariants.map((x, i) => {
+    // onBlur={dataSender}
+    <div key={props.variantIndex}>
+      {innerObj.map((x, i) => {
         return (
           <div key={i} style={{ display: "flex" }}>
             {/* RAM Unit */}
@@ -57,8 +102,8 @@ const VariantInnerObj = ({ ramRomVariants, setRamRomVariants }) => {
               <Select
                 labelId="ramUnit"
                 id="ramUnit"
-                style={{ fontSize: "14px" }}
                 name="ramUnit"
+                style={{ fontSize: "14px" }}
                 value={x.ramUnit}
                 onChange={(e) => handleInputChange(e, i)}
                 label="RAM Unit"
@@ -70,11 +115,11 @@ const VariantInnerObj = ({ ramRomVariants, setRamRomVariants }) => {
             </FormControl>
             {/* RAM */}
             <input
+              name="ram"
               placeholder="RAM"
               className="input-field"
               style={{ marginRight: "10px" }}
               type="Number"
-              name="ram"
               value={x !== undefined ? x.ram : ""}
               onChange={(e) => handleInputChange(e, i)}
             />
@@ -105,28 +150,28 @@ const VariantInnerObj = ({ ramRomVariants, setRamRomVariants }) => {
             </FormControl>
             {/* ROM */}
             <input
+              name="rom"
               placeholder="ROM"
               className="input-field"
               style={{ marginRight: "10px" }}
               type="Number"
-              name="rom"
               value={x !== undefined ? x.rom : ""}
               onChange={(e) => handleInputChange(e, i)}
             />
             {/* Base Price */}
             <input
+              name="basePrice"
               placeholder="Base Price"
               className="input-field"
               style={{ marginRight: "10px" }}
               type="Number"
-              name="basePrice"
               value={x !== undefined ? x.basePrice : ""}
               onChange={(e) => handleInputChange(e, i)}
             />
 
             <div style={{ display: "flex" }}>
               {/* Remove Inner Obj */}
-              {ramRomVariants.length !== 1 && (
+              {innerObj.length !== 1 && (
                 <button
                   className="add-remove-btn"
                   style={{ width: "5vh" }}
@@ -136,13 +181,27 @@ const VariantInnerObj = ({ ramRomVariants, setRamRomVariants }) => {
                 </button>
               )}
               {/* Add Inner Obj */}
-              {ramRomVariants.length - 1 === i && (
+              {innerObj.length - 1 === i && (
                 <button
                   className="add-remove-btn"
                   style={{ width: "5vh" }}
                   onClick={handleAddClick}
                 >
                   +
+                </button>
+              )}
+              {/* Update Inner Obj */}
+              {innerObj.length - 1 === i && (
+                <button
+                  className="add-remove-btn"
+                  style={{
+                    width: "6vh",
+                    marginTop: "26px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={() => dataSender()}
+                >
+                  <UpdateIcon />
                 </button>
               )}
             </div>

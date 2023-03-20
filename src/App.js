@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
-// import AdminLayout from "layouts/Admin.js";
-// Admin.js replaced by SectionContainer.js
 import SectionContainer from "views/SectionContainer/SectionContainer";
 import "assets/scss/material-dashboard-pro-react.scss?v=1.9.0";
 
-import CreateProducts from "views/ProductManagement/CreateProducts";
-import CreatePhone from "views/ProductManagement/Phone/CreatePhone";
 import AdminLogin from "views/Admin/AdminLogin";
 
 const hist = createBrowserHistory();
@@ -32,14 +28,12 @@ class App extends Component {
 
     return (
       <div>
-        {isLoggedin === false ? ( //To bypass login set it true
+        {isLoggedin === true ? ( //To bypass login set it true
           <AdminLogin LoginStatusChange={this.LoginStatusHandler} />
         ) : (
           <Router history={hist}>
             <Switch>
-              {/* <Route path="/admin" component={AdminLayout} /> */}
               <Route path="/admin" component={SectionContainer} />
-              <Route path="/create-phone" component={CreatePhone} />
               <Redirect from="/" to="/admin/dashboard" />
             </Switch>
           </Router>

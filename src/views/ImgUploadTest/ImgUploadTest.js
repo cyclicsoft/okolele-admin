@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Add from "@material-ui/icons/Add";
 import GridItem from "components/Grid/GridItem";
@@ -10,7 +10,7 @@ const ImgUploadTest = () => {
   // Root Path URL
   const rootPath = useGlobalState("rootPathVariable");
   // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
+  const [userToken, updateUserToken] = useGlobalState(
     "accessToken"
   );
   var accessTknValidity = new Date(userToken.tokenValidity);
@@ -22,6 +22,10 @@ const ImgUploadTest = () => {
   let config = {
     headers: {
       Authorization: "Bearer " + userToken.token,
+      accept: "application/json",
+      "Content-Type": "multipart/form-data",
+      // "Content-Type":
+      //   "multipart/form-data; boundary=---------------------------123456789012345678901234567",
     },
   };
 
@@ -71,21 +75,23 @@ const ImgUploadTest = () => {
   };
 
   const prodDetails = {
-    embeded: {
-      name: name,
-      file: files,
-    },
+    file: files,
   };
 
   const saveNewProd = () => {
+    console.log(
+      "%cImgUploadTest.js line:81 prodDetails",
+      "color: #007acc;",
+      prodDetails
+    );
     const createAPI = rootPath[0] + "/file/example";
     axios
       .post(createAPI, prodDetails, config)
       .then(function (response) {
-        alert("Success");
+        console.log("Success", response);
       })
       .catch(function (error) {
-        alert("Failed");
+        console.log("Failed", error);
       });
   };
 
@@ -98,7 +104,7 @@ const ImgUploadTest = () => {
       axios
         .post(refreshTokenAPI, refreshTkn)
         .then(function (response) {
-          if (response.data.code == 403) {
+          if (response.data.code === 403) {
             alert(response.data.message);
             return false;
             // Logout forcefully from here

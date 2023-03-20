@@ -23,6 +23,7 @@ import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 
 export default function GeneralInfo({ prodData, setProdData }) {
+  // console.log('%cGeneralInfo.js line:26 prodData', 'color: #007acc;', prodData);
   const inputChangeHandler = (event) => {
     const { name, value } = event.target;
     let tempData = { ...prodData };
@@ -185,8 +186,10 @@ export default function GeneralInfo({ prodData, setProdData }) {
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {brandList.map((brand) => (
-                        <MenuItem value={brand.code}>{brand.name}</MenuItem>
+                      {brandList.map((brand, index) => (
+                        <MenuItem key={index} value={brand.code}>
+                          {brand.name}
+                        </MenuItem>
                       ))}
                     </Select>
                   </FormControl>

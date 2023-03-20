@@ -60,8 +60,8 @@ import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 
 import SearchToClone from "../CloneProducts/SearchToClone";
-import DynamicElementCreator from "../DynamicElementCreator";
-import ProductVariants from "../ProductVariants";
+import DynamicElementCreator from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DynamicInputs/DynamicElementCreator";
+import ProductVariants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/ProductVariants/ProductVariants";
 // toast-configuration method,
 // it is compulsory method.
 toast.configure();

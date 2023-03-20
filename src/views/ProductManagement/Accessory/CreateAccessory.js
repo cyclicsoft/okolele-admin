@@ -84,7 +84,7 @@ function CreateAccessory() {
       value: prodData.discountValue,
     },
     variants: prodData.productAllVariants,
-    others: prodData.otherDetails,
+    details: prodData.otherDetails,
   };
 
   const accessorySaveClick = () => {

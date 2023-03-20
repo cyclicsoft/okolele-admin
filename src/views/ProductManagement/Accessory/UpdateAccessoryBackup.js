@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+/*eslint-disable*/
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
-import { useGlobalState } from "state-pool";
+import { store, useGlobalState } from "state-pool";
 
 // material-ui icons
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import LaunchIcon from "@mui/icons-material/Launch";
-import SpeedIcon from "@mui/icons-material/Speed";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import DetailsIcon from "@mui/icons-material/Details";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -48,15 +49,17 @@ import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 
 import SearchToClone from "../CloneProducts/SearchToClone";
 import DynamicElementCreator from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DynamicInputs/DynamicElementCreator";
-// import ProductVariants from "../ProductVariants";
+import ProductVariants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/ProductVariants/ProductVariants";
+import ProductUpdateWarning from "views/ConfirmationModals/ProductUpdateWarning";
 import AccessoryVariants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/ProductVariants/AccessoryVariants";
+
 // toast-configuration method,
 // it is compulsory method.
 toast.configure();
 
 const useStyles = makeStyles(styles);
 
-function CreateAccessory() {
+function UpdateAccessory(props) {
   const classes = useStyles();
   // Root Path URL
   const rootPath = useGlobalState("rootPathVariable");
@@ -75,19 +78,16 @@ function CreateAccessory() {
       Authorization: "Bearer " + userToken.token,
     },
   };
-  // Product Info
-  // Bulk Upload
-  const [csvFile, setCsvFile] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const [fileSize, setFileSize] = useState(0);
   // const [fileUpdateDate, setFileUpdateDate] = useState([]);
   // Basic
-  const [category, setCategory] = useState("4"); //category 4 is fixed for accessory
+  const [category, setCategory] = useState("3"); //category 3 is fixed for SW
   const [mName, setmName] = useState("");
   const [mDiscountType, setmDiscountType] = useState("FLAT");
   const [mDiscountValue, setmDiscountValue] = useState(0);
   const [mBrandName, setmBrandName] = useState("1101");
   const [mWarranty, setmWarranty] = useState(0);
+  const [userComments, setUserComments] = useState([]);
+  const [isPublished, setPsPublished] = useState(false);
 
   // LAUNCH
   const [mAnnounchDate, setmAnnounchDate] = useState(new Date());
@@ -98,22 +98,126 @@ function CreateAccessory() {
   // other Details
   const [otherDetails, setOtherDetails] = useState([]);
 
-  // Product create confirmation popup viewar
-  const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
+  // Data loader flag
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  // Product update confirmation popup viewar
+  const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false); // Http Response Msg
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
+  // Preview and Crop Img
+  const [shouldPreview, setShouldPreview] = useState(false);
+  const [imgIdToPreview, setImgIdToPreview] = useState("");
 
-  const otherDetailHandler = (callBackData) => {
+  useEffect(() => {
+    const accessoryDetailsAPI =
+      rootPath[0] + "/accessories/" + props.editProductId;
+
+    axios
+      .get(accessoryDetailsAPI)
+      .then(function (response) {
+        console.log("axios / Product Details: ", response);
+        setIsDataLoaded(false);
+
+        setCategory(response.data.content.category);
+        // Basic
+        setmName(response.data.content.title);
+        setmDiscountType(response.data.content.discount.type);
+        setmDiscountValue(response.data.content.discount.value);
+        if (response.data.content.brand === "SAMSUNG") {
+          setmBrandName(1101);
+        } else if (response.data.content.brand === "APPLE") {
+          setmBrandName(1102);
+        } else if (response.data.content.brand === "XIAOMI") {
+          setmBrandName(1103);
+        } else if (response.data.content.brand === "REALME") {
+          setmBrandName(1104);
+        } else if (response.data.content.brand === "ONEPLUS") {
+          setmBrandName(1105);
+        } else if (response.data.content.brand === "WALTON") {
+          setmBrandName(1106);
+        } else if (response.data.content.brand === "SYMPHONY") {
+          setmBrandName(1107);
+        } else if (response.data.content.brand === "OPPO") {
+          setmBrandName(1108);
+        } else if (response.data.content.brand === "NOKIA") {
+          setmBrandName(1109);
+        } else if (response.data.content.brand === "VIVO") {
+          setmBrandName(1110);
+        } else if (response.data.content.brand === "HUAWEI") {
+          setmBrandName(1111);
+        } else if (response.data.content.brand === "TECNO") {
+          setmBrandName(1112);
+        } else if (response.data.content.brand === "INFINIX") {
+          setmBrandName(1113);
+        } else if (response.data.content.brand === "GOOGLE") {
+          setmBrandName(1114);
+        } else if (response.data.content.brand === "HONOR") {
+          setmBrandName(1115);
+        } else if (response.data.content.brand === "SONY") {
+          setmBrandName(1116);
+        } else if (response.data.content.brand === "ASUS") {
+          setmBrandName(1117);
+        } else if (response.data.content.brand === "UMIDIGI") {
+          setmBrandName(1118);
+        } else if (response.data.content.brand === "MICROMAX") {
+          setmBrandName(1119);
+        } else if (response.data.content.brand === "MAXIMUS") {
+          setmBrandName(1120);
+        } else if (response.data.content.brand === "LG") {
+          setmBrandName(1121);
+        } else if (response.data.content.brand === "HTC") {
+          setmBrandName(1122);
+        } else if (response.data.content.brand === "LAVA") {
+          setmBrandName(1123);
+        } else if (response.data.content.brand === "HELIO") {
+          setmBrandName(1124);
+        } else if (response.data.content.brand === "ALCATEL") {
+          setmBrandName(1125);
+        } else if (response.data.content.brand === "LENOVO") {
+          setmBrandName(1126);
+        } else if (response.data.content.brand === "OKAPIA") {
+          setmBrandName(1127);
+        } else if (response.data.content.brand === "MYCELL") {
+          setmBrandName(1128);
+        } else if (response.data.content.brand === "ITEL") {
+          setmBrandName(1129);
+        }
+
+        setmWarranty(response.data.content.warranty);
+        setUserComments(response.data.content.comments);
+
+        setPsPublished(response.data.content.published);
+
+        // LAUNCH
+        setmAnnounchDate(response.data.content.announceDate);
+        setmReleaseDate(response.data.content.releaseDate);
+
+        // Variants
+        setProductAllVariants(response.data.content.variants);
+
+        // other Details
+        setOtherDetails(response.data.content.details);
+
+        setIsDataLoaded(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setIsDataLoaded(true);
+      });
+  }, [props.editProductId]);
+
+  // Dynamic Elements Handler
+  const otherDetailsHandler = (callBackData) => {
     setOtherDetails(callBackData);
   };
 
   const productVariantsSetter = (response) => {
-    // console.log("productVariantsSetter/All Variants: ", response);
+    console.log("productVariantsSetter/All Variants: ", response);
     setProductAllVariants(response);
   };
 
-  const swDetails = {
+  const accessoryDetails = {
     category: category,
     title: mName,
     brand: mBrandName,
@@ -128,40 +232,42 @@ function CreateAccessory() {
     details: otherDetails,
   };
 
-  const swSaveClick = () => {
-    setShowProductCreatePopup(true);
+  // phone update Handler
+  const accessoryUpdateClick = () => {
+    setShowProductUpdatePopup(true);
   };
-  // Product Create Flag From Modal
-  const productCreateFlagFromModal = (isConfirmed) => {
+
+  // Product Update Flag From Modal
+  const productUpdateFlagFromModal = (isConfirmed) => {
     if (isConfirmed === true) {
       var currentLocalDateTime = new Date();
       if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        // console.log(
-        //   "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        // );
-        saveNewSW();
+        console.log(
+          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
+        );
+        accessoryUpdate();
       } else {
-        // console.log(
-        //   "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        // );
+        console.log(
+          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
+        );
         // If access token validity expires, call refresh token api
         refreshTokenHandler((isRefreshed) => {
-          // console.log("isRefreshed: ", isRefreshed);
-          saveNewSW();
+          console.log("isRefreshed: ", isRefreshed);
+          accessoryUpdate();
         });
       }
     }
-
-    setShowHttpResponseMsg(false);
-    setShowProductCreatePopup(false);
+    setShowProductUpdatePopup(false);
   };
+  const accessoryUpdate = () => {
+    const accessoryUpdateAPI =
+      rootPath[0] + "/accessories/" + props.editProductId;
 
-  const saveNewSW = () => {
-    // console.log("saveNewSW/swDetails: ", swDetails);
-    const accessoryCreateAPI = rootPath[0] + "/accessories";
     axios
-      .post(accessoryCreateAPI, swDetails, config)
+      .put(accessoryUpdateAPI, accessoryDetails, config)
       .then(function (response) {
+        // console.log("update response: ", response);
+        // console.log("response code: ", response.status);
         setHttpResponseCode(response.status);
         setShowHttpResponseMsg(true);
       })
@@ -177,14 +283,14 @@ function CreateAccessory() {
     resetGeneralInfo();
     // Variants
     resetVariants();
-    // LAUNCH
+    // Launch
     resetLaunch();
     // Other Details
     resetOtherDetails();
   };
 
   const resetGeneralInfo = () => {
-    setCategory("4");
+    setCategory("3");
     setmName("");
     setmDiscountType("FLAT");
     setmDiscountValue(0);
@@ -205,80 +311,24 @@ function CreateAccessory() {
     setOtherDetails([]);
   };
 
-  // Bulk Upload
-  const setFile = (event) => {
-    setCsvFile(event.target.files[0]);
-
-    var files = event.target.files;
-    var filesArray = [].slice.call(files);
-    filesArray.forEach((event) => {
-      setFileName(event.name);
-      setFileSize(Math.round(event.size / 1024));
-      // console.log(event.type);
-      // console.log(event.length);
-      // setFileUpdateDate(event.lastModifiedDate);
-    });
+  // remove Comment from front end ( remove from userComments variable)
+  const deleteComment = (msg) => {
+    console.log("userComments: ", userComments);
+    setUserComments(userComments.filter((item) => item.msg !== msg));
   };
-  const bulkUploadHandler = () => {
-    // console.log("CSV: ", csvFile);
-
-    //Get file extension from file name
-    const split_name = csvFile.name.split(".");
-    const type = split_name[split_name.length - 1];
-
-    //create a blob from file calling mime type injection function
-    const blob = new Blob([csvFile], { type: mimeType(type) });
-
-    //Here you can use the file as you wish
-    const new_file = blobToFile(blob, "csv");
-    // console.log(new_file);
-
-    const data = new FormData();
-    data.append("file", new_file);
-    data.append("productType", "SMARTWATCHE");
-
-    const csvConfig = {
-      headers: {
-        "content-type": `multipart/form-data; boundary=${data._boundary}`,
-        Authorization: "Bearer " + userToken.token,
-      },
-    };
-
-    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
+  // Update Comment in DB after removing comments from userComments variable
+  const commentsUpdateHandler = () => {
+    const commentsUpdateAPI =
+      rootPath[0] + "/accessories/deleteComment/" + props.editProductId;
 
     axios
-      .post(bulkUploadAPI, data, csvConfig)
+      .post(commentsUpdateAPI, userComments)
       .then(function (response) {
-        // console.log("update response: ", response);
+        console.log("commentsUpdateAPI response: ", response);
       })
       .catch(function (error) {
-        // console.log("error: ", error);
-        // if (error.response) {
-        //   console.log(error.response.data);
-        //   console.log(error.response.status);
-        //   console.log(error.response.headers);
-        // }
+        console.log(error);
       });
-  };
-  //Inject mimeType By extension - Excel files check only
-  const mimeType = (extension) => {
-    switch (extension) {
-      case "xlsx":
-        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-      case "xls":
-        return "application/vnd.ms-excel";
-
-      default:
-        return "text/csv";
-    }
-  };
-  //Convert Blob to File
-  const blobToFile = (theBlob, fileName) => {
-    theBlob.lastModifiedDate = new Date();
-    theBlob.name = fileName;
-
-    return theBlob;
   };
 
   const refreshTokenHandler = () => {
@@ -335,154 +385,23 @@ function CreateAccessory() {
     }
   };
 
-  // Searched Product from SearchToCLone.js
-  const getSearchedProduct = (searchedProduct) => {
-    setCategory("4");
-    // Basic
-    setmName(searchedProduct.title);
-    setmDiscountType(searchedProduct.discount.type);
-    setmDiscountValue(searchedProduct.discount.value);
-
-    setProductAllVariants(searchedProduct.variants);
-
-    if (searchedProduct.brand === "SAMSUNG") {
-      setmBrandName(1101);
-    } else if (searchedProduct.brand === "APPLE") {
-      setmBrandName(1102);
-    } else if (searchedProduct.brand === "XIAOMI") {
-      setmBrandName(1103);
-    } else if (searchedProduct.brand === "REALME") {
-      setmBrandName(1104);
-    } else if (searchedProduct.brand === "ONEPLUS") {
-      setmBrandName(1105);
-    } else if (searchedProduct.brand === "WALTON") {
-      setmBrandName(1106);
-    } else if (searchedProduct.brand === "SYMPHONY") {
-      setmBrandName(1107);
-    } else if (searchedProduct.brand === "OPPO") {
-      setmBrandName(1108);
-    } else if (searchedProduct.brand === "NOKIA") {
-      setmBrandName(1109);
-    } else if (searchedProduct.brand === "VIVO") {
-      setmBrandName(1110);
-    } else if (searchedProduct.brand === "HUAWEI") {
-      setmBrandName(1111);
-    } else if (searchedProduct.brand === "TECNO") {
-      setmBrandName(1112);
-    } else if (searchedProduct.brand === "INFINIX") {
-      setmBrandName(1113);
-    } else if (searchedProduct.brand === "GOOGLE") {
-      setmBrandName(1114);
-    } else if (searchedProduct.brand === "HONOR") {
-      setmBrandName(1115);
-    } else if (searchedProduct.brand === "SONY") {
-      setmBrandName(1116);
-    } else if (searchedProduct.brand === "ASUS") {
-      setmBrandName(1117);
-    } else if (searchedProduct.brand === "UMIDIGI") {
-      setmBrandName(1118);
-    } else if (searchedProduct.brand === "MICROMAX") {
-      setmBrandName(1119);
-    } else if (searchedProduct.brand === "MAXIMUS") {
-      setmBrandName(1120);
-    } else if (searchedProduct.brand === "LG") {
-      setmBrandName(1121);
-    } else if (searchedProduct.brand === "HTC") {
-      setmBrandName(1122);
-    } else if (searchedProduct.brand === "LAVA") {
-      setmBrandName(1123);
-    } else if (searchedProduct.brand === "HELIO") {
-      setmBrandName(1124);
-    } else if (searchedProduct.brand === "ALCATEL") {
-      setmBrandName(1125);
-    } else if (searchedProduct.brand === "LENOVO") {
-      setmBrandName(1126);
-    } else if (searchedProduct.brand === "OKAPIA") {
-      setmBrandName(1127);
-    } else if (searchedProduct.brand === "MYCELL") {
-      setmBrandName(1128);
-    } else if (searchedProduct.brand === "ITEL") {
-      setmBrandName(1129);
-    }
-
-    setmWarranty(searchedProduct.warranty);
-
-    // LAUNCH
-    setmAnnounchDate(searchedProduct.announceDate);
-    setmReleaseDate(searchedProduct.releaseDate);
-    setOtherDetails(searchedProduct.details);
-  };
-
   return (
     <>
       {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductCreatePopup ? (
-          <ProductCreateConfirmation
-            productCreateFlagFromModal={productCreateFlagFromModal}
+        {showProductUpdatePopup ? (
+          <ProductUpdateWarning
+            productUpdateFlagFromModal={productUpdateFlagFromModal}
           />
         ) : null}
-
         {/* Show HTTP response code  */}
         {showHttpResponseMsg === true ? (
           <HttpStatusCode responseCode={httpResponseCode} />
         ) : null}
       </div>
 
-      {/* Bulk SW Upload  */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card>
-            <CardHeader color="rose" icon>
-              {/* <CardIcon color="rose">
-                <LocalOfferIcon />
-              </CardIcon> */}
-              <h4 className={classes.cardIconTitle}>Bulk Upload</h4>
-            </CardHeader>
-            <CardBody>
-              {/* Bulk Phone Upload  */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Select CSV"
-                    id="select-csv"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "file",
-                      onChange: (event) => setFile(event),
-                    }}
-                  />
-                </GridItem>
-                {/* Upload button */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <Button
-                    color="rose"
-                    style={{ marginTop: "20px" }}
-                    className={classes.updateProfileButton}
-                    onClick={bulkUploadHandler}
-                  >
-                    Upload CSV
-                  </Button>
-                </GridItem>
-              </GridContainer>
-
-              {fileSize > 0 ? (
-                <GridContainer>
-                  <GridItem>
-                    <div>File Size: {fileSize} KB</div>
-                  </GridItem>
-                </GridContainer>
-              ) : null}
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
-      <h4 className={classes.cardIconTitle}>Create New Accessory</h4>
+      <h4 className={classes.cardIconTitle}>Update Accessory</h4>
       {/* Reset & Search To Clone */}
       <div style={{ display: "flex" }}>
         {/* Reset */}
@@ -490,12 +409,6 @@ function CreateAccessory() {
           <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "}
           Reset A~Z
         </div>
-
-        {/* Search To Clone */}
-        <SearchToClone
-          getSearchedProduct={getSearchedProduct}
-          productType={"accessories"}
-        />
       </div>
 
       {/* [GENERAL INFO] */}
@@ -555,7 +468,7 @@ function CreateAccessory() {
                       type: "Number",
                       value: category || "",
                       // onChange: (event) => setCategory(event.target.value),
-                      maxLength: "3",
+                      maxLength: "5",
                     }}
                   />
                 </GridItem>
@@ -781,7 +694,7 @@ function CreateAccessory() {
         </GridItem>
       </GridContainer>
 
-      {/* [OTHER DETAILS] */}
+      {/* [Other Details] */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
           {/* md={8} */}
@@ -790,8 +703,8 @@ function CreateAccessory() {
               {/* Section Ttitle and Reset button */}
               <div style={{ display: "flex" }}>
                 <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <SpeedIcon />
-                  <p className="sectionPara">[OTHER DETAILS]</p>
+                  <DetailsIcon />
+                  <p className="sectionPara">[Other Details]</p>
                   {/* Reset */}
                 </div>
                 <div
@@ -811,7 +724,7 @@ function CreateAccessory() {
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
                     objectValue={otherDetails}
-                    callBackFun={otherDetailHandler}
+                    callBackFun={otherDetailsHandler}
                     placeHolder="Other Details"
                   />
                 </GridItem>
@@ -825,12 +738,12 @@ function CreateAccessory() {
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={swSaveClick}
+        onClick={accessoryUpdateClick}
       >
-        Save
+        Save & Update
       </Button>
     </>
   );
 }
 
-export default CreateAccessory;
+export default UpdateAccessory;

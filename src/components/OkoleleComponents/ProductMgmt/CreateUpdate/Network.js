@@ -9,7 +9,7 @@ import GridItem from "components/Grid/GridItem";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import CustomInput from "components/CustomInput/CustomInput";
-import DynamicElementCreator from "views/ProductManagement/DynamicElementCreator";
+import DynamicElementCreator from "./DynamicInputs/DynamicElementCreator";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 toast.configure();
@@ -105,7 +105,7 @@ export default function Network({ prodData, setProdData }) {
                 {/* 2G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
-                    objectValue={prodData.band2G}
+                    objectValue={prodData.band2G ? prodData.band2G : []}
                     callBackFun={(list) =>
                       setProdData((prevState) => ({
                         ...prevState,
@@ -118,7 +118,7 @@ export default function Network({ prodData, setProdData }) {
                 {/* 3G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
-                    objectValue={prodData.band3G}
+                    objectValue={prodData.band3G ? prodData.band3G : []}
                     callBackFun={(list) =>
                       setProdData((prevState) => ({
                         ...prevState,
@@ -135,7 +135,7 @@ export default function Network({ prodData, setProdData }) {
                 {/* 4G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
-                    objectValue={prodData.band4G}
+                    objectValue={prodData.band4G ? prodData.band4G : []}
                     callBackFun={(list) =>
                       setProdData((prevState) => ({
                         ...prevState,
@@ -148,7 +148,7 @@ export default function Network({ prodData, setProdData }) {
                 {/* 5G Bands */}
                 <GridItem xs={12} sm={12} md={6}>
                   <DynamicElementCreator
-                    objectValue={prodData.band5G}
+                    objectValue={prodData.band5G ? prodData.band5G : []}
                     callBackFun={(list) =>
                       setProdData((prevState) => ({
                         ...prevState,

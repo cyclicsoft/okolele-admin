@@ -1,50 +1,61 @@
 /*eslint-disable*/
-//index->App->Admin->Sidebar->CreateAdmin
-//Ghorwali Component
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import axios from "axios";
 // Global State
 import { store, useGlobalState } from "state-pool";
-// @material-ui/core components
-import axios from "axios";
-
-import { makeStyles } from "@material-ui/core/styles";
-
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Clearfix from "components/Clearfix/Clearfix.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
 
-import styles from "assets/jss/material-dashboard-pro-react/views/userProfileStyles.js";
-
-// Loader
-import FillingBottle from "react-cssfx-loading/lib/FillingBottle";
-
+import UpdatePhone from "views/ProductManagement/Phone/UpdatePhone";
+import UpdateTab from "views/ProductManagement/Tab/UpdateTab";
+import UpdateSmartWatch from "views/ProductManagement/SmartWatch/UpdateSmartWatch";
+import UpdateAccessory from "views/ProductManagement/Accessory/UpdateAccessory";
 // SCSS
-// import "../../assets/scss/ghorwali-scss/search-dropdown.scss";
 import "assets/scss/ghorwali-scss/update-product.scss";
-import "../../assets/scss/ghorwali-scss/create-admin.scss";
-
-import UpdatePhone from "./Phone/UpdatePhone";
-import UpdateTab from "./Tab/UpdateTab";
-// Warning Popup
-import UpdateSmartWatch from "./SmartWatch/UpdateSmartWatch";
-import UpdateAccessory from "./Accessory/UpdateAccessory";
-
-const useStyles = makeStyles(styles);
 
 export default function UpdateProducts(props) {
-  const classes = useStyles();
-
+  // Root Path URL
+  const rootPath = useGlobalState("rootPathVariable");
   // Products Info
-  const [editProductId, setEditProductId] = useState(props.location.productId);
-  // Search
-  const [dropdownValue, setDropdownValue] = useState(
-    props.location.productType
-  );
+  const [prodId, setProdId] = useState(null);
+  const [prodCategory, setProdCategory] = useState(null);
+  const [prodDetails, setProdDetails] = useState(null);
+
+  useEffect(() => {
+    if (window?.location?.pathname) {
+      const queryParams = window.location.pathname.split("/");
+      setProdCategory(queryParams[3]);
+      setProdId(queryParams[4]);
+
+      getProdDetails(queryParams[3], queryParams[4]);
+    }
+  }, [window.location]);
+
+  const getProdDetails = (category, id) => {
+    const detailsAPI = rootPath[0] + "/" + category + "/" + id;
+
+    axios
+      .get(detailsAPI)
+      .then(function (response) {
+        console.log("axios / Product Details: ", response);
+        if (response.status === 200) {
+          setProdDetails(response.data.content);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  if (!prodId || !prodCategory || !prodDetails) {
+    return (
+      <div>Select a product from product listing page first to update</div>
+    );
+  }
 
   return (
     <>
@@ -54,20 +65,26 @@ export default function UpdateProducts(props) {
           {/* md={8} */}
           <Card>
             <CardBody>
-              {dropdownValue == "MOBILE" ? (
-                <UpdatePhone editProductId={editProductId} />
+              {prodCategory == "mobiles" ? (
+                <UpdatePhone editProductId={prodId} prodDetails={prodDetails} />
               ) : null}
 
-              {dropdownValue == "TABLET" ? (
-                <UpdateTab editProductId={editProductId} />
+              {prodCategory == "tablets" ? (
+                <UpdateTab editProductId={prodId} prodDetails={prodDetails} />
               ) : null}
 
-              {dropdownValue == "SMARTWATCH" ? (
-                <UpdateSmartWatch editProductId={editProductId} />
+              {prodCategory == "smartwatches" ? (
+                <UpdateSmartWatch
+                  editProductId={prodId}
+                  prodDetails={prodDetails}
+                />
               ) : null}
 
-              {dropdownValue == "ACCESSORY" ? (
-                <UpdateAccessory editProductId={editProductId} />
+              {prodCategory == "accessories" ? (
+                <UpdateAccessory
+                  editProductId={prodId}
+                  prodDetails={prodDetails}
+                />
               ) : null}
 
               <Clearfix />

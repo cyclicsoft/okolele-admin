@@ -10,7 +10,7 @@ import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DynamicElementCreator from "views/ProductManagement/DynamicElementCreator";
+import DynamicElementCreator from "./DynamicInputs/DynamicElementCreator";
 toast.configure();
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";

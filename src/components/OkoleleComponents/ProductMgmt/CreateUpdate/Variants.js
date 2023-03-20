@@ -8,7 +8,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
-import ProductVariants from "views/ProductManagement/ProductVariants";
+import ProductVariants from "./ProductVariants/ProductVariants";
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import { toast } from "react-toastify";
@@ -19,6 +19,7 @@ import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 
 export default function Variants({ prodData, setProdData }) {
+  console.log('%cVariants.js line:22 prodData', 'color: #007acc;', prodData);
   const [productVariants, setProductVariants] = useState([
     {
       color: "",

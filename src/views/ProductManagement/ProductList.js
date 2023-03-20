@@ -70,6 +70,7 @@ export default function ProductList() {
   const [allProducts, setallProducts] = useState([]);
   // Search
   const [dropdownValue, setDropdownValue] = useState("MOBILE");
+  const [prodCategory, setProdCategory] = useState("mobiles");
   const [searchKeyword, setSearchKeyword] = useState("");
   // Pagination
   const [totalPageNo, setTotalPageNo] = useState(1);
@@ -84,7 +85,7 @@ export default function ProductList() {
   // useEffect 1
   // Initial API Call
   useEffect(() => {
-    console.log("useEffect 1 start / dropdownValue", dropdownValue);
+    console.log("useEffect 1 start / prodCategory", prodCategory);
     // Show Data Loader
     setIsDataLoaded(false);
 
@@ -177,20 +178,20 @@ export default function ProductList() {
     // Show Data Loader
     setIsDataLoaded(false);
     const pageNo = 0;
-    let productCategory = "";
-    if (dropdownValue == "MOBILE") {
-      productCategory = "mobiles";
-    } else if (dropdownValue == "TABLET") {
-      productCategory = "tablets";
-    } else if (dropdownValue == "SMARTWATCH") {
-      productCategory = "smartwatches";
-    } else if (dropdownValue == "ACCESSORY") {
-      productCategory = "accessories";
-    }
+    // let productCategory = "";
+    // if (dropdownValue == "MOBILE") {
+    //   productCategory = "mobiles";
+    // } else if (dropdownValue == "TABLET") {
+    //   productCategory = "tablets";
+    // } else if (dropdownValue == "SMARTWATCH") {
+    //   productCategory = "smartwatches";
+    // } else if (dropdownValue == "ACCESSORY") {
+    //   productCategory = "accessories";
+    // }
     const phoneSearchAPI =
       rootPath[0] +
       "/" +
-      productCategory +
+      prodCategory +
       "/searchByTitle?keyword=" +
       searchKeyword +
       "&page=" +
@@ -224,9 +225,9 @@ export default function ProductList() {
   // Edit Product
   const editProduct = (id) => {
     history.push({
-      pathname: "/admin/update-products",
-      productId: id,
-      productType: dropdownValue,
+      pathname: "/admin/update-products/" + prodCategory + "/" + id,
+      // productId: id,
+      // productType: dropdownValue,
     });
   };
 
@@ -298,6 +299,20 @@ export default function ProductList() {
   const dropdownHandler = (event) => {
     // console.log('event.target.value', event.target.value);
     setDropdownValue(event.target.value);
+    switch (event.target.value) {
+      case "MOBILE":
+        setProdCategory("mobiles");
+        break;
+      case "TABLET":
+        setProdCategory("tablets");
+        break;
+      case "SMARTWATCH":
+        setProdCategory("smartwatches");
+        break;
+      case "ACCESSORY":
+        setProdCategory("accessories");
+        break;
+    }
   };
 
   const refreshTokenHandler = () => {
@@ -519,7 +534,6 @@ export default function ProductList() {
                               margin: "0px 2px 0px 2px",
                             }}
                             round
-                            color="default"
                             className={
                               classes.actionButton +
                               " " +

@@ -1,32 +1,63 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useState, useEffect } from "react";
 // material-ui icons
-import DetailsIcon from "@mui/icons-material/Details";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 // core components
 import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
+import ProductVariants from "./ProductVariants/ProductVariants";
+import "assets/scss/ghorwali-scss/voucherCard.scss";
+import "assets/scss/ghorwali-scss/create-products.scss";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DynamicElementCreator from "./DynamicInputs/DynamicElementCreator";
 toast.configure();
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 
-export default function OtherDetails({ prodData, setProdData }) {
-  const resetOtherDetails = () => {
+export default function VariantsUpdate({ prodData, setProdData }) {
+  console.log("%cVariants.js line:22 prodData", "color: #007acc;", prodData);
+  const [productVariants, setProductVariants] = useState([
+    {
+      color: "",
+      colorCode: "",
+      images: [""],
+      variants: [
+        {
+          ramUnit: "GB",
+          ram: "",
+          romUnit: "GB",
+          rom: "",
+          basePrice: "",
+        },
+      ],
+    },
+  ]);
+
+  // useEffect(() => {
+  //   setProductVariants(prodData.productAllVariants);
+  // }, [prodData]);
+
+  useEffect(() => {
     setProdData((prevState) => ({
       ...prevState,
-      otherDetails: [],
+      productAllVariants: productVariants,
+    }));
+  }, [productVariants]);
+
+  const resetVariants = () => {
+    setProdData((prevState) => ({
+      ...prevState,
+      productAllVariants: [],
     }));
   };
 
   return (
     <>
-      {/* [OTHER DETAILS] */}
+      {/* [VARIANTS] */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
           {/* md={8} */}
@@ -35,8 +66,8 @@ export default function OtherDetails({ prodData, setProdData }) {
               {/* Section Ttitle and Reset button */}
               <div style={{ display: "flex" }}>
                 <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <DetailsIcon />
-                  <p className="sectionPara">[OTHER DETAILS]</p>
+                  <BakeryDiningIcon />
+                  <p className="sectionPara">[VARIANTS]</p>
                   {/* Reset */}
                 </div>
                 <div
@@ -45,25 +76,17 @@ export default function OtherDetails({ prodData, setProdData }) {
                 >
                   <RefreshIcon
                     className="reset-input"
-                    onClick={resetOtherDetails}
+                    onClick={resetVariants}
                   />{" "}
                   Reset
                 </div>
               </div>
 
-              {/* Models */}
               <GridContainer>
-                {/* Models */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={prodData.otherDetails}
-                    callBackFun={(list) =>
-                      setProdData((prevState) => ({
-                        ...prevState,
-                        otherDetails: list,
-                      }))
-                    }
-                    placeHolder="Other Details"
+                <GridItem xs={12} sm={12} md={12}>
+                  <ProductVariants
+                    productVariants={prodData.productAllVariants}
+                    setProductVariants={setProductVariants}
                   />
                 </GridItem>
               </GridContainer>

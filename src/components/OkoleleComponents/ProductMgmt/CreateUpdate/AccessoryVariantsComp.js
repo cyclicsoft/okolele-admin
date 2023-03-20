@@ -8,7 +8,7 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
-import ProductVariants from "views/ProductManagement/ProductVariants";
+import ProductVariants from "./ProductVariants/ProductVariants";
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import { toast } from "react-toastify";
@@ -17,7 +17,7 @@ toast.configure();
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
-import AccessoryVariants from "views/ProductManagement/AccessoryVariants";
+import AccessoryVariants from "./ProductVariants/AccessoryVariants";
 
 export default function AccessoryVariantsComp({ prodData, setProdData }) {
   const [productVariants, setProductVariants] = useState([

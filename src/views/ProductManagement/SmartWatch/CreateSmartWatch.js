@@ -421,7 +421,7 @@ function CreateSmartWatch() {
       <Models prodData={prodData} setProdData={setProdData} />
       {/* Tests */}
       <Tests prodData={prodData} setProdData={setProdData} />
-      {/* Tests */}
+      {/* OtherDetails */}
       <OtherDetails prodData={prodData} setProdData={setProdData} />
 
       {/* Save Button  */}

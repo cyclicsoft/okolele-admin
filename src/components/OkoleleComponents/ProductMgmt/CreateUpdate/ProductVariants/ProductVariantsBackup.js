@@ -21,10 +21,9 @@ import Select from "@mui/material/Select";
 // Images
 import updateIcon from "assets/img/okolele-img/updated.png";
 // SCSS
-import "../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
+import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
 // import { red } from "@material-ui/core/colors";
-// import DynamicElementCreator from "./DynamicElementCreator";
 import VariantInnerObj from "./VariantInnerObj";
 // import { DirectionsRailway } from "@material-ui/icons";
 import DynamicImgElmntCreator from "./DynamicImgElmntCreator";

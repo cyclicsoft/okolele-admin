@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+/*eslint-disable*/
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
-import { useGlobalState } from "state-pool";
+import { store, useGlobalState } from "state-pool";
 
 // material-ui icons
 import AcUnitIcon from "@mui/icons-material/AcUnit";
@@ -21,6 +22,7 @@ import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices
 import SpeedIcon from "@mui/icons-material/Speed";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import DetailsIcon from "@mui/icons-material/Details";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -61,13 +63,14 @@ import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 import SearchToClone from "../CloneProducts/SearchToClone";
 import DynamicElementCreator from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DynamicInputs/DynamicElementCreator";
 import ProductVariants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/ProductVariants/ProductVariants";
+import ProductUpdateWarning from "views/ConfirmationModals/ProductUpdateWarning";
 // toast-configuration method,
 // it is compulsory method.
 toast.configure();
 
 const useStyles = makeStyles(styles);
 
-function CreateTab() {
+function UpdateSmartWatch(props) {
   const classes = useStyles();
   // Root Path URL
   const rootPath = useGlobalState("rootPathVariable");
@@ -86,27 +89,17 @@ function CreateTab() {
       Authorization: "Bearer " + userToken.token,
     },
   };
-  // Product Info
-  // Bulk Upload
-  const [csvFile, setCsvFile] = useState(null);
-  const [fileName, setFileName] = useState("");
-  const [fileSize, setFileSize] = useState(0);
   // const [fileUpdateDate, setFileUpdateDate] = useState([]);
   // Basic
-  const [category, setCategory] = useState("2"); //category 2 is fixed for tab
+  const [category, setCategory] = useState("3"); //category 3 is fixed for SW
   const [mName, setmName] = useState("");
   const [mDiscountType, setmDiscountType] = useState("FLAT");
   const [mDiscountValue, setmDiscountValue] = useState(0);
   const [mBrandName, setmBrandName] = useState("1101");
   const [mWarranty, setmWarranty] = useState(0);
+  const [userComments, setUserComments] = useState([]);
+  const [isPublished, setPsPublished] = useState(false);
 
-  // NETWORK
-  const [mTechnology, setmTechnology] = useState("");
-  const [m2GBand, setm2GBand] = useState([]);
-  const [m3GBand, setm3GBand] = useState([]);
-  const [m4GBand, setm4GBand] = useState([]);
-  const [m5GBand, setm5GBand] = useState([]);
-  const [mSpeed, setmSpeed] = useState("");
   // LAUNCH
   const [mAnnounchDate, setmAnnounchDate] = useState(new Date());
   const [mReleaseDate, setmReleaseDate] = useState(new Date());
@@ -114,7 +107,6 @@ function CreateTab() {
   const [mDimension, setmDimension] = useState("");
   const [mWeight, setmWeight] = useState("");
   const [mBuild, setmBuild] = useState("");
-  const [mSim, setmSim] = useState("");
   // DISPLAY
   const [mDisplayType, setmDisplayType] = useState("");
   const [mSize, setmSize] = useState("");
@@ -126,19 +118,7 @@ function CreateTab() {
   const [mCPU, setmCPU] = useState("");
   const [mGPU, setmGPU] = useState("");
   // MEMORY
-  const [mCardSlot, setmCardSlot] = useState("");
   const [mInternal, setmInternal] = useState("");
-  // MAIN CAMERA
-  const [mainCams, setMainCams] = useState([]);
-  const [mainCamFeatures, setMainCamFeatures] = useState([]);
-  const [mainCamVideos, setMainCamVideos] = useState([]);
-  // SELFIE CAMERA
-  const [frontCams, setFrontCams] = useState([]);
-  const [frontCamFeatures, setFrontCamFeatures] = useState([]);
-  const [frontCamVideos, setFrontCamVideos] = useState([]);
-  // SOUND
-  const [mLoudSpeaker, setmLoudSpeaker] = useState("");
-  const [mJack, setmJack] = useState("");
   // COMMS
   const [mWlan, setmWlan] = useState("");
   const [mBlueTooth, setmBlueTooth] = useState("");
@@ -153,51 +133,154 @@ function CreateTab() {
   const [mBatteryCharging, setmBatteryCharging] = useState("");
   // MISC
   const [models, setModels] = useState([]);
-  const [mSar, setmSar] = useState("");
-  const [mSarEu, setmSarEu] = useState("");
   // TESTS
   const [performances, setPerformances] = useState([]);
   // product All Variants
   const [productAllVariants, setProductAllVariants] = useState([]);
+  // other Details
+  const [otherDetails, setOtherDetails] = useState([]);
 
-  // Product create confirmation popup viewar
-  const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
+  // Data loader flag
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  // Product update confirmation popup viewar
+  const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false); // Http Response Msg
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
+  // Preview and Crop Img
+  const [shouldPreview, setShouldPreview] = useState(false);
+  const [imgIdToPreview, setImgIdToPreview] = useState("");
+
+  useEffect(() => {
+    const swDetailsAPI = rootPath[0] + "/smartwatches/" + props.editProductId;
+
+    axios
+      .get(swDetailsAPI)
+      .then(function (response) {
+        console.log("axios / Product Details: ", response);
+        setIsDataLoaded(false);
+
+        setCategory(response.data.content.category);
+        // Basic
+        setmName(response.data.content.title);
+        setmDiscountType(response.data.content.discount.type);
+        setmDiscountValue(response.data.content.discount.value);
+        if (response.data.content.brand === "SAMSUNG") {
+          setmBrandName(1101);
+        } else if (response.data.content.brand === "APPLE") {
+          setmBrandName(1102);
+        } else if (response.data.content.brand === "XIAOMI") {
+          setmBrandName(1103);
+        } else if (response.data.content.brand === "REALME") {
+          setmBrandName(1104);
+        } else if (response.data.content.brand === "ONEPLUS") {
+          setmBrandName(1105);
+        } else if (response.data.content.brand === "WALTON") {
+          setmBrandName(1106);
+        } else if (response.data.content.brand === "SYMPHONY") {
+          setmBrandName(1107);
+        } else if (response.data.content.brand === "OPPO") {
+          setmBrandName(1108);
+        } else if (response.data.content.brand === "NOKIA") {
+          setmBrandName(1109);
+        } else if (response.data.content.brand === "VIVO") {
+          setmBrandName(1110);
+        } else if (response.data.content.brand === "HUAWEI") {
+          setmBrandName(1111);
+        } else if (response.data.content.brand === "TECNO") {
+          setmBrandName(1112);
+        } else if (response.data.content.brand === "INFINIX") {
+          setmBrandName(1113);
+        } else if (response.data.content.brand === "GOOGLE") {
+          setmBrandName(1114);
+        } else if (response.data.content.brand === "HONOR") {
+          setmBrandName(1115);
+        } else if (response.data.content.brand === "SONY") {
+          setmBrandName(1116);
+        } else if (response.data.content.brand === "ASUS") {
+          setmBrandName(1117);
+        } else if (response.data.content.brand === "UMIDIGI") {
+          setmBrandName(1118);
+        } else if (response.data.content.brand === "MICROMAX") {
+          setmBrandName(1119);
+        } else if (response.data.content.brand === "MAXIMUS") {
+          setmBrandName(1120);
+        } else if (response.data.content.brand === "LG") {
+          setmBrandName(1121);
+        } else if (response.data.content.brand === "HTC") {
+          setmBrandName(1122);
+        } else if (response.data.content.brand === "LAVA") {
+          setmBrandName(1123);
+        } else if (response.data.content.brand === "HELIO") {
+          setmBrandName(1124);
+        } else if (response.data.content.brand === "ALCATEL") {
+          setmBrandName(1125);
+        } else if (response.data.content.brand === "LENOVO") {
+          setmBrandName(1126);
+        } else if (response.data.content.brand === "OKAPIA") {
+          setmBrandName(1127);
+        } else if (response.data.content.brand === "MYCELL") {
+          setmBrandName(1128);
+        } else if (response.data.content.brand === "ITEL") {
+          setmBrandName(1129);
+        }
+
+        setmWarranty(response.data.content.warranty);
+        setUserComments(response.data.content.comments);
+
+        setPsPublished(response.data.content.published);
+
+        // LAUNCH
+        setmAnnounchDate(response.data.content.announceDate);
+        setmReleaseDate(response.data.content.releaseDate);
+        // BODY
+        setmDimension(response.data.content.dimension);
+        setmWeight(response.data.content.weight);
+        setmBuild(response.data.content.build);
+        // DISPLAY
+        setmDisplayType(response.data.content.displayType);
+        setmSize(response.data.content.displaySize);
+        setmResolution(response.data.content.displayResolution);
+        setmProtection(response.data.content.displayProtection);
+        // PLATFORM
+        setmOS(response.data.content.os);
+        setmChipset(response.data.content.chipset);
+        setmCPU(response.data.content.cpu);
+        setmGPU(response.data.content.gpu);
+        // MEMORY
+        setmInternal(response.data.content.internalSlot);
+        // COMMS
+        setmWlan(response.data.content.wlan);
+        setmBlueTooth(response.data.content.bluetooth);
+        setmGPS(response.data.content.gps);
+        setmNFC(response.data.content.nfc);
+        setmRadio(response.data.content.radio);
+        setmUSB(response.data.content.usb);
+        // FEATURES
+        setSensors(response.data.content.sensors);
+        // BATTERY
+        setmBatteryType(response.data.content.batteryType);
+        setmBatteryCharging(response.data.content.batteryCharging);
+        // MISC
+        setModels(response.data.content.models);
+        // TESTS
+        setPerformances(response.data.content.performances);
+
+        // Variants
+        setProductAllVariants(response.data.content.variants);
+
+        // other Details
+        setOtherDetails(response.data.content.others);
+
+        setIsDataLoaded(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+        setIsDataLoaded(true);
+      });
+  }, [props.editProductId]);
 
   // Dynamic Elements Handler
-  const band2gHandler = (callBackData) => {
-    setm2GBand(callBackData);
-  };
-  const band3gHandler = (callBackData) => {
-    setm3GBand(callBackData);
-  };
-  const band4gHandler = (callBackData) => {
-    setm4GBand(callBackData);
-  };
-  const band5gHandler = (callBackData) => {
-    setm5GBand(callBackData);
-  };
-  const mainCamsHandler = (callBackData) => {
-    console.log("Main Camera: ", callBackData);
-    setMainCams(callBackData);
-  };
-  const mainCamFeatureHandler = (callBackData) => {
-    setMainCamFeatures(callBackData);
-  };
-  const mainCamVideosHandler = (callBackData) => {
-    setMainCamVideos(callBackData);
-  };
-  const frontCamsHandler = (callBackData) => {
-    setFrontCams(callBackData);
-  };
-  const frontCamFeatureHandler = (callBackData) => {
-    setFrontCamFeatures(callBackData);
-  };
-  const frontCamVideosHandler = (callBackData) => {
-    setFrontCamVideos(callBackData);
-  };
   const sensorsHandler = (callBackData) => {
     setSensors(callBackData);
   };
@@ -208,28 +291,25 @@ function CreateTab() {
     setPerformances(callBackData);
   };
 
+  const otherDetailsHandler = (callBackData) => {
+    setOtherDetails(callBackData);
+  };
+
   const productVariantsSetter = (response) => {
     console.log("productVariantsSetter/All Variants: ", response);
     setProductAllVariants(response);
   };
 
-  const tabDetails = {
+  const swDetails = {
     category: category,
     title: mName,
     brand: mBrandName,
     warranty: mWarranty,
-    technology: mTechnology,
-    m2GBands: m2GBand,
-    m3GBands: m3GBand,
-    m4GBands: m4GBand,
-    m5GBands: m5GBand,
-    speed: mSpeed,
     dimension: mDimension,
     weight: mWeight,
     build: mBuild,
     announceDate: moment(mAnnounchDate).format("YYYY-MM-DD"),
     releaseDate: moment(mReleaseDate).format("YYYY-MM-DD"),
-    sim: mSim,
     displayType: mDisplayType,
     displaySize: mSize,
     displayResolution: mResolution,
@@ -238,16 +318,7 @@ function CreateTab() {
     chipset: mChipset,
     cpu: mCPU,
     gpu: mGPU,
-    cardSlot: mCardSlot,
     internalSlot: mInternal,
-    mainCamera: mainCams,
-    mainCameraFeatures: mainCamFeatures,
-    mainCameraVideo: mainCamVideos,
-    frontCamera: frontCams,
-    frontCameraFeatures: frontCamFeatures,
-    frontCameraVideo: frontCamVideos,
-    loudspeaker: mLoudSpeaker,
-    jack: mJack,
     wlan: mWlan,
     bluetooth: mBlueTooth,
     gps: mGPS,
@@ -258,50 +329,50 @@ function CreateTab() {
     batteryType: mBatteryType,
     batteryCharging: mBatteryCharging,
     models: models,
-    sarEu: mSarEu,
-    sarUs: mSar,
     performances: performances,
     discount: {
       type: mDiscountType,
       value: mDiscountValue,
     },
     variants: productAllVariants,
+    others: otherDetails,
   };
 
-  const tabSaveClick = () => {
-    setShowProductCreatePopup(true);
+  // phone update Handler
+  const swUpdateClick = () => {
+    setShowProductUpdatePopup(true);
   };
-  // Product Create Flag From Modal
-  const productCreateFlagFromModal = (isConfirmed) => {
+
+  // Product Update Flag From Modal
+  const productUpdateFlagFromModal = (isConfirmed) => {
     if (isConfirmed === true) {
       var currentLocalDateTime = new Date();
       if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        // console.log(
-        //   "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        // );
-        saveNewTab();
+        console.log(
+          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
+        );
+        swUpdate();
       } else {
-        // console.log(
-        //   "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        // );
+        console.log(
+          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
+        );
         // If access token validity expires, call refresh token api
         refreshTokenHandler((isRefreshed) => {
-          // console.log("isRefreshed: ", isRefreshed);
-          saveNewTab();
+          console.log("isRefreshed: ", isRefreshed);
+          swUpdate();
         });
       }
     }
-
-    setShowHttpResponseMsg(false);
-    setShowProductCreatePopup(false);
+    setShowProductUpdatePopup(false);
   };
+  const swUpdate = () => {
+    const swUpdateAPI = rootPath[0] + "/smartwatches/" + props.editProductId;
 
-  const saveNewTab = () => {
-    console.log("saveNewTab/tabDetails: ", tabDetails);
-    const tabCreateAPI = rootPath[0] + "/tablets";
     axios
-      .post(tabCreateAPI, tabDetails, config)
+      .put(swUpdateAPI, swDetails, config)
       .then(function (response) {
+        // console.log("update response: ", response);
+        // console.log("response code: ", response.status);
         setHttpResponseCode(response.status);
         setShowHttpResponseMsg(true);
       })
@@ -317,8 +388,6 @@ function CreateTab() {
     resetGeneralInfo();
     // Variants
     resetVariants();
-    // NETWORK
-    resetNetworks();
     // LAUNCH
     resetLaunch();
     // BODY
@@ -329,12 +398,6 @@ function CreateTab() {
     resetPlatform();
     // MEMORY
     resetMemory();
-    // MAIN CAMERA
-    resetMainCams();
-    // SELFIE CAMERA
-    resetFrontCams();
-    // SOUND
-    resetSound();
     // COMMS
     resetComms();
     // FEATURES
@@ -345,10 +408,12 @@ function CreateTab() {
     resetMisc();
     // TESTS
     resetTests();
+    // Other Details
+    resetOtherDetails();
   };
 
   const resetGeneralInfo = () => {
-    setCategory("2");
+    setCategory("3");
     setmName("");
     setmDiscountType("FLAT");
     setmDiscountValue(0);
@@ -360,15 +425,6 @@ function CreateTab() {
     setProductAllVariants([]);
   };
 
-  const resetNetworks = () => {
-    setmTechnology("");
-    setm2GBand([]);
-    setm3GBand([]);
-    setm4GBand([]);
-    setm5GBand([]);
-    setmSpeed("");
-  };
-
   const resetLaunch = () => {
     setmAnnounchDate(new Date());
     setmReleaseDate(new Date());
@@ -378,7 +434,6 @@ function CreateTab() {
     setmDimension("");
     setmWeight("");
     setmBuild("");
-    setmSim("");
   };
 
   const resetDisplay = () => {
@@ -396,25 +451,7 @@ function CreateTab() {
   };
 
   const resetMemory = () => {
-    setmCardSlot("");
     setmInternal("");
-  };
-
-  const resetMainCams = () => {
-    setMainCams([]);
-    setMainCamFeatures([]);
-    setMainCamVideos([]);
-  };
-
-  const resetFrontCams = () => {
-    setFrontCams([]);
-    setFrontCamFeatures([]);
-    setFrontCamVideos([]);
-  };
-
-  const resetSound = () => {
-    setmLoudSpeaker("");
-    setmJack("");
   };
 
   const resetComms = () => {
@@ -437,89 +474,34 @@ function CreateTab() {
 
   const resetMisc = () => {
     setModels([]);
-    setmSar("");
-    setmSarEu("");
   };
 
   const resetTests = () => {
     setPerformances([]);
   };
 
-  // Bulk Upload
-  const setFile = (event) => {
-    setCsvFile(event.target.files[0]);
-
-    var files = event.target.files;
-    var filesArray = [].slice.call(files);
-    filesArray.forEach((event) => {
-      setFileName(event.name);
-      setFileSize(Math.round(event.size / 1024));
-      // console.log(event.type);
-      // console.log(event.length);
-      // setFileUpdateDate(event.lastModifiedDate);
-    });
+  const resetOtherDetails = () => {
+    setOtherDetails([]);
   };
-  const bulkUploadHandler = () => {
-    // console.log("CSV: ", csvFile);
 
-    //Get file extension from file name
-    const split_name = csvFile.name.split(".");
-    const type = split_name[split_name.length - 1];
-
-    //create a blob from file calling mime type injection function
-    const blob = new Blob([csvFile], { type: mimeType(type) });
-
-    //Here you can use the file as you wish
-    const new_file = blobToFile(blob, "csv");
-    // console.log(new_file);
-
-    const data = new FormData();
-    data.append("file", new_file);
-    data.append("productType", "TABLET");
-
-    const csvConfig = {
-      headers: {
-        "content-type": `multipart/form-data; boundary=${data._boundary}`,
-        Authorization: "Bearer " + userToken.token,
-      },
-    };
-
-    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
+  // remove Comment from front end ( remove from userComments variable)
+  const deleteComment = (msg) => {
+    console.log("userComments: ", userComments);
+    setUserComments(userComments.filter((item) => item.msg !== msg));
+  };
+  // Update Comment in DB after removing comments from userComments variable
+  const commentsUpdateHandler = () => {
+    const commentsUpdateAPI =
+      rootPath[0] + "/smartwatches/deleteComment/" + props.editProductId;
 
     axios
-      .post(bulkUploadAPI, data, csvConfig)
+      .post(commentsUpdateAPI, userComments)
       .then(function (response) {
-        // console.log("update response: ", response);
+        console.log("commentsUpdateAPI response: ", response);
       })
       .catch(function (error) {
-        // console.log("error: ", error);
-        // if (error.response) {
-        //   console.log(error.response.data);
-        //   console.log(error.response.status);
-        //   console.log(error.response.headers);
-        // }
+        console.log(error);
       });
-  };
-
-  //Inject mimeType By extension - Excel files check only
-  const mimeType = (extension) => {
-    switch (extension) {
-      case "xlsx":
-        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-      case "xls":
-        return "application/vnd.ms-excel";
-
-      default:
-        return "text/csv";
-    }
-  };
-  //Convert Blob to File
-  const blobToFile = (theBlob, fileName) => {
-    theBlob.lastModifiedDate = new Date();
-    theBlob.name = fileName;
-
-    return theBlob;
   };
 
   const refreshTokenHandler = () => {
@@ -576,207 +558,23 @@ function CreateTab() {
     }
   };
 
-  // Searched Product from SearchToCLone.js
-  const getSearchedProduct = (searchedProduct) => {
-    setCategory("2");
-    // Basic
-    setmName(searchedProduct.title);
-    setmDiscountType(searchedProduct.discount.type);
-    setmDiscountValue(searchedProduct.discount.value);
-
-    setProductAllVariants(searchedProduct.variants);
-
-    if (searchedProduct.brand === "SAMSUNG") {
-      setmBrandName(1101);
-    } else if (searchedProduct.brand === "APPLE") {
-      setmBrandName(1102);
-    } else if (searchedProduct.brand === "XIAOMI") {
-      setmBrandName(1103);
-    } else if (searchedProduct.brand === "REALME") {
-      setmBrandName(1104);
-    } else if (searchedProduct.brand === "ONEPLUS") {
-      setmBrandName(1105);
-    } else if (searchedProduct.brand === "WALTON") {
-      setmBrandName(1106);
-    } else if (searchedProduct.brand === "SYMPHONY") {
-      setmBrandName(1107);
-    } else if (searchedProduct.brand === "OPPO") {
-      setmBrandName(1108);
-    } else if (searchedProduct.brand === "NOKIA") {
-      setmBrandName(1109);
-    } else if (searchedProduct.brand === "VIVO") {
-      setmBrandName(1110);
-    } else if (searchedProduct.brand === "HUAWEI") {
-      setmBrandName(1111);
-    } else if (searchedProduct.brand === "TECNO") {
-      setmBrandName(1112);
-    } else if (searchedProduct.brand === "INFINIX") {
-      setmBrandName(1113);
-    } else if (searchedProduct.brand === "GOOGLE") {
-      setmBrandName(1114);
-    } else if (searchedProduct.brand === "HONOR") {
-      setmBrandName(1115);
-    } else if (searchedProduct.brand === "SONY") {
-      setmBrandName(1116);
-    } else if (searchedProduct.brand === "ASUS") {
-      setmBrandName(1117);
-    } else if (searchedProduct.brand === "UMIDIGI") {
-      setmBrandName(1118);
-    } else if (searchedProduct.brand === "MICROMAX") {
-      setmBrandName(1119);
-    } else if (searchedProduct.brand === "MAXIMUS") {
-      setmBrandName(1120);
-    } else if (searchedProduct.brand === "LG") {
-      setmBrandName(1121);
-    } else if (searchedProduct.brand === "HTC") {
-      setmBrandName(1122);
-    } else if (searchedProduct.brand === "LAVA") {
-      setmBrandName(1123);
-    } else if (searchedProduct.brand === "HELIO") {
-      setmBrandName(1124);
-    } else if (searchedProduct.brand === "ALCATEL") {
-      setmBrandName(1125);
-    } else if (searchedProduct.brand === "LENOVO") {
-      setmBrandName(1126);
-    } else if (searchedProduct.brand === "OKAPIA") {
-      setmBrandName(1127);
-    } else if (searchedProduct.brand === "MYCELL") {
-      setmBrandName(1128);
-    } else if (searchedProduct.brand === "ITEL") {
-      setmBrandName(1129);
-    }
-
-    setmWarranty(searchedProduct.warranty);
-
-    // NETWORK
-    setmTechnology(searchedProduct.technology);
-    setm2GBand(searchedProduct.m2GBands);
-    setm3GBand(searchedProduct.m3GBands);
-    setm4GBand(searchedProduct.m4GBands);
-    setm5GBand(searchedProduct.m5GBands);
-    setmSpeed(searchedProduct.speed);
-    // LAUNCH
-    setmAnnounchDate(searchedProduct.announceDate);
-    setmReleaseDate(searchedProduct.releaseDate);
-    // BODY
-    setmDimension(searchedProduct.dimension);
-    setmWeight(searchedProduct.weight);
-    setmBuild(searchedProduct.build);
-    setmSim(searchedProduct.sim);
-    // DISPLAY
-    setmDisplayType(searchedProduct.displayType);
-    setmSize(searchedProduct.displaySize);
-    setmResolution(searchedProduct.displayResolution);
-    setmProtection(searchedProduct.displayProtection);
-    // PLATFORM
-    setmOS(searchedProduct.os);
-    setmChipset(searchedProduct.chipset);
-    setmCPU(searchedProduct.cpu);
-    setmGPU(searchedProduct.gpu);
-    // MEMORY
-    setmCardSlot(searchedProduct.cardSlot);
-    setmInternal(searchedProduct.internalSlot);
-    // MAIN CAMERA
-    setMainCams(searchedProduct.mainCamera);
-    setMainCamFeatures(searchedProduct.mainCameraFeatures);
-    setMainCamVideos(searchedProduct.mainCameraVideo);
-    // SELFIE CAMERA
-    setFrontCams(searchedProduct.frontCamera);
-    setFrontCamFeatures(searchedProduct.frontCameraFeatures);
-    setFrontCamVideos(searchedProduct.frontCameraVideo);
-    // SOUND
-    setmLoudSpeaker(searchedProduct.loudspeaker);
-    setmJack(searchedProduct.jack);
-    // COMMS
-    setmWlan(searchedProduct.wlan);
-    setmBlueTooth(searchedProduct.bluetooth);
-    setmGPS(searchedProduct.gps);
-    setmNFC(searchedProduct.nfc);
-    setmRadio(searchedProduct.radio);
-    setmUSB(searchedProduct.usb);
-    // FEATURES
-    setSensors(searchedProduct.sensors);
-    // BATTERY
-    setmBatteryType(searchedProduct.batteryType);
-    setmBatteryCharging(searchedProduct.batteryCharging);
-    // MISC
-    setModels(searchedProduct.models);
-    setmSar(searchedProduct.sarUs);
-    setmSarEu(searchedProduct.sarEu);
-    // TESTS
-    setPerformances(searchedProduct.performances);
-  };
-
   return (
     <>
       {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductCreatePopup ? (
-          <ProductCreateConfirmation
-            productCreateFlagFromModal={productCreateFlagFromModal}
+        {showProductUpdatePopup ? (
+          <ProductUpdateWarning
+            productUpdateFlagFromModal={productUpdateFlagFromModal}
           />
         ) : null}
-
         {/* Show HTTP response code  */}
         {showHttpResponseMsg === true ? (
           <HttpStatusCode responseCode={httpResponseCode} />
         ) : null}
       </div>
 
-      {/* Bulk Phone Upload  */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card>
-            <CardHeader color="rose" icon>
-              {/* <CardIcon color="rose">
-                <LocalOfferIcon />
-              </CardIcon> */}
-              <h4 className={classes.cardIconTitle}>Bulk Upload</h4>
-            </CardHeader>
-            <CardBody>
-              {/* Bulk Phone Upload  */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Select CSV"
-                    id="select-csv"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "file",
-                      onChange: (event) => setFile(event),
-                    }}
-                  />
-                </GridItem>
-                {/* Upload button */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <Button
-                    color="rose"
-                    style={{ marginTop: "20px" }}
-                    className={classes.updateProfileButton}
-                    onClick={bulkUploadHandler}
-                  >
-                    Upload CSV
-                  </Button>
-                </GridItem>
-              </GridContainer>
-
-              {fileSize > 0 ? (
-                <GridContainer>
-                  <GridItem>
-                    <div>File Size: {fileSize} KB</div>
-                  </GridItem>
-                </GridContainer>
-              ) : null}
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
-      <h4 className={classes.cardIconTitle}>Create New Tab</h4>
+      <h4 className={classes.cardIconTitle}>Update Smart Watch</h4>
       {/* Reset & Search To Clone */}
       <div style={{ display: "flex" }}>
         {/* Reset */}
@@ -784,12 +582,6 @@ function CreateTab() {
           <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "}
           Reset A~Z
         </div>
-
-        {/* Search To Clone */}
-        <SearchToClone
-          getSearchedProduct={getSearchedProduct}
-          productType={"tablets"}
-        />
       </div>
 
       {/* [GENERAL INFO] */}
@@ -836,7 +628,7 @@ function CreateTab() {
                   />
                 </GridItem>
 
-                {/* Category 2 is fixed for tab type */}
+                {/* Category 1 is fixed for Phone type */}
                 <GridItem xs={12} sm={12} md={3}>
                   <CustomInput
                     labelText="Product Category "
@@ -1019,109 +811,6 @@ function CreateTab() {
         </GridItem>
       </GridContainer>
 
-      {/* [NETWORK] */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card style={{ marginTop: "0" }}>
-            <CardBody>
-              {/* Section Ttitle and Reset button */}
-              <div style={{ display: "flex" }}>
-                <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <RssFeedIcon />
-                  <p className="sectionPara">[NETWORK]</p>
-                  {/* Reset */}
-                </div>
-                <div
-                  className="resetIcon-container"
-                  style={{ marginTop: "0px" }}
-                >
-                  <RefreshIcon
-                    className="reset-input"
-                    onClick={resetNetworks}
-                  />{" "}
-                  Reset
-                </div>
-              </div>
-
-              {/* Technology & Speed */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Technology"
-                    id="technology"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mTechnology || "",
-                      onChange: (event) => setmTechnology(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Speed"
-                    id="speed"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSpeed || "",
-                      onChange: (event) => setmSpeed(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-
-              {/* 2G Bands & 3G Bands*/}
-              <GridContainer>
-                {/* 2G Bands */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <DynamicElementCreator
-                    objectValue={m2GBand}
-                    callBackFun={band2gHandler}
-                    placeHolder="2G Bands"
-                  />
-                </GridItem>
-                {/* 3G Bands */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <DynamicElementCreator
-                    objectValue={m3GBand}
-                    callBackFun={band3gHandler}
-                    placeHolder="3G Bands"
-                  />
-                </GridItem>
-              </GridContainer>
-
-              {/* 4G Bands & 5G Bands */}
-              <GridContainer>
-                {/* 4G Bands */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <DynamicElementCreator
-                    objectValue={m4GBand}
-                    callBackFun={band4gHandler}
-                    placeHolder="4G Bands"
-                  />
-                </GridItem>
-                {/* 5G Bands */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <DynamicElementCreator
-                    objectValue={m5GBand}
-                    callBackFun={band5gHandler}
-                    placeHolder="5G Bands"
-                  />
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
       {/* [LAUNCH] */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
@@ -1234,7 +923,7 @@ function CreateTab() {
                 </GridItem>
               </GridContainer>
 
-              {/* Build & Sim  */}
+              {/* Build */}
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
@@ -1247,21 +936,6 @@ function CreateTab() {
                       type: "String",
                       value: mBuild || "",
                       onChange: (event) => setmBuild(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="SIM"
-                    id="sim"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSim || "",
-                      onChange: (event) => setmSim(event.target.value),
                       maxLength: "100",
                     }}
                   />
@@ -1485,23 +1159,8 @@ function CreateTab() {
                 </div>
               </div>
 
-              {/* Card Slot & Internal  */}
+              {/* Internal  */}
               <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Card Slot"
-                    id="card-slot"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mCardSlot || "",
-                      onChange: (event) => setmCardSlot(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <CustomInput
                     labelText="Internal"
@@ -1513,181 +1172,6 @@ function CreateTab() {
                       type: "String",
                       value: mInternal || "",
                       onChange: (event) => setmInternal(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
-      {/* [MAIN CAMERA] */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card style={{ marginTop: "0" }}>
-            <CardBody>
-              {/* Section Ttitle and Reset button */}
-              <div style={{ display: "flex" }}>
-                <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <CameraRearIcon />
-                  <p className="sectionPara">[MAIN CAMERA]</p>
-                  {/* Reset */}
-                </div>
-                <div
-                  className="resetIcon-container"
-                  style={{ marginTop: "0px" }}
-                >
-                  <RefreshIcon
-                    className="reset-input"
-                    onClick={resetMainCams}
-                  />{" "}
-                  Reset
-                </div>
-              </div>
-
-              {/* Main Cameras & Feature */}
-              <GridContainer>
-                {/* Main Cameras */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={mainCams}
-                    callBackFun={mainCamsHandler}
-                    placeHolder="Rare Camera"
-                  />
-                </GridItem>
-                {/* Feature */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={mainCamFeatures}
-                    callBackFun={mainCamFeatureHandler}
-                    placeHolder="Rare Camera Feature"
-                  />
-                </GridItem>
-
-                {/* Video */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={mainCamVideos}
-                    callBackFun={mainCamVideosHandler}
-                    placeHolder="Rare Camera Video Feature"
-                  />
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
-      {/* [SELFIE CAMERA] */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card style={{ marginTop: "0" }}>
-            <CardBody>
-              {/* Section Ttitle and Reset button */}
-              <div style={{ display: "flex" }}>
-                <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <CameraFrontIcon />
-                  <p className="sectionPara">[SELFIE CAMERA]</p>
-                  {/* Reset */}
-                </div>
-                <div
-                  className="resetIcon-container"
-                  style={{ marginTop: "0px" }}
-                >
-                  <RefreshIcon
-                    className="reset-input"
-                    onClick={resetFrontCams}
-                  />{" "}
-                  Reset
-                </div>
-              </div>
-
-              {/* SELFIE Cameras & Feature */}
-              <GridContainer>
-                {/* SELFIE Cameras */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={frontCams}
-                    callBackFun={frontCamsHandler}
-                    placeHolder="Front Camera"
-                  />
-                </GridItem>
-                {/* Feature */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={frontCamFeatures}
-                    callBackFun={frontCamFeatureHandler}
-                    placeHolder="Front Camera Feature"
-                  />
-                </GridItem>
-                {/* Video */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <DynamicElementCreator
-                    objectValue={frontCamVideos}
-                    callBackFun={frontCamVideosHandler}
-                    placeHolder="Front Camera Video Feature"
-                  />
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
-
-      {/* [SOUND] */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card style={{ marginTop: "0" }}>
-            <CardBody>
-              {/* Section Ttitle and Reset button */}
-              <div style={{ display: "flex" }}>
-                <div className="sectionDiv" style={{ width: "65vw" }}>
-                  <VolumeUpIcon />
-                  <p className="sectionPara">[SOUND]</p>
-                  {/* Reset */}
-                </div>
-                <div
-                  className="resetIcon-container"
-                  style={{ marginTop: "0px" }}
-                >
-                  <RefreshIcon className="reset-input" onClick={resetSound} />{" "}
-                  Reset
-                </div>
-              </div>
-
-              {/* Loud Speaker & Jack */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Loud Speaker"
-                    id="loud-speaker"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mLoudSpeaker || "",
-                      onChange: (event) => setmLoudSpeaker(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={6}>
-                  <CustomInput
-                    labelText="Jack"
-                    id="jack"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mJack || "",
-                      onChange: (event) => setmJack(event.target.value),
                       maxLength: "100",
                     }}
                   />
@@ -1949,42 +1433,8 @@ function CreateTab() {
                 </div>
               </div>
 
-              {/* SAR & SAR EU & Models */}
+              {/* Models */}
               <GridContainer>
-                {/* SAR */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="SAR"
-                    id="sar"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSar || "",
-                      onChange: (event) => setmSar(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-
-                {/* SAR EU */}
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="SAR EU"
-                    id="sar-eu"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "String",
-                      value: mSarEu || "",
-                      onChange: (event) => setmSarEu(event.target.value),
-                      maxLength: "100",
-                    }}
-                  />
-                </GridItem>
-
                 {/* Models */}
                 <GridItem xs={12} sm={12} md={4}>
                   <DynamicElementCreator
@@ -2036,16 +1486,56 @@ function CreateTab() {
         </GridItem>
       </GridContainer>
 
+      {/* [Other Details] */}
+      <GridContainer>
+        <GridItem xs={12} sm={12}>
+          {/* md={8} */}
+          <Card style={{ marginTop: "0" }}>
+            <CardBody>
+              {/* Section Ttitle and Reset button */}
+              <div style={{ display: "flex" }}>
+                <div className="sectionDiv" style={{ width: "65vw" }}>
+                  <DetailsIcon />
+                  <p className="sectionPara">[Other Details]</p>
+                  {/* Reset */}
+                </div>
+                <div
+                  className="resetIcon-container"
+                  style={{ marginTop: "0px" }}
+                >
+                  <RefreshIcon
+                    className="reset-input"
+                    onClick={resetOtherDetails}
+                  />{" "}
+                  Reset
+                </div>
+              </div>
+
+              {/* Performances */}
+              <GridContainer>
+                <GridItem xs={12} sm={12} md={6}>
+                  <DynamicElementCreator
+                    objectValue={otherDetails}
+                    callBackFun={otherDetailsHandler}
+                    placeHolder="Other Details"
+                  />
+                </GridItem>
+              </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+
       {/* Save Button  */}
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={tabSaveClick}
+        onClick={swUpdateClick}
       >
-        Save
+        Save & Update
       </Button>
     </>
   );
 }
 
-export default CreateTab;
+export default UpdateSmartWatch;
