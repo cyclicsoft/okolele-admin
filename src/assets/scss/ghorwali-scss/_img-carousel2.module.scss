@@ -1,0 +1,77 @@
+@import "../../../assets/colors/colors.scss";
+
+div.no-img-found {
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: gray;
+}
+.carousel-container {
+  margin: 20px;
+}
+div.product-picture-label {
+  display: none;
+}
+
+div.selected-image {
+  width: 100%;
+  height: 450px;
+  margin-bottom: 8px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 6px;
+
+  position: relative;
+}
+
+.carousel {
+  position: relative;
+}
+
+.carousel__images {
+  display: flex;
+  max-width: 100%;
+  height: 100px;
+  overflow-x: hidden;
+  align-items: center;
+  justify-content: center;
+}
+
+div.carousel__image-selected {
+  border: 2px solid $color-rose;
+  border-radius: 6px;
+}
+
+.carousel__image {
+  margin-right: 10px;
+  height: 95px;
+  width: 95px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border-radius: 6px;
+}
+
+button.carousel__button {
+  position: absolute;
+  top: 50%;
+  background: none;
+  border: none;
+}
+.button-icon {
+  width: 32px;
+  height: 32px;
+
+  color: $color-white;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 32px;
+}
+.carousel__button-left {
+  left: 10px;
+}
+
+.carousel__button-right {
+  right: 10px;
+}

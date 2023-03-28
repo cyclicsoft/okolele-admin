@@ -282,7 +282,7 @@ var dashRoutes = [
         layout: "/admin",
       },
       {
-        path: "/product-details",
+        path: "/product-details/:category/:id",
         name: "Product Details",
         mini: "PD",
         component: ProductDetails,

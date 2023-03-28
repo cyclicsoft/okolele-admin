@@ -1,0 +1,39 @@
+div.featue-container {
+  align-items: center;
+}
+
+.product-details-label4 {
+  // margin-top: 7px;
+  display: flex;
+  flex-direction: column;
+  display: inline-block;
+  align-items: flex-start;
+  position: relative;
+  font-size: 12px;
+  line-height: 1.33337;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  font-family: SF Pro Text, SF Pro Icons, AOS Icons, Helvetica Neue, Helvetica,
+    Arial, sans-serif;
+  color: #1d1d1f;
+}
+
+.product-details-label5 {
+  font-size: 14px;
+  line-height: 1.47059;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  font-family: SF Pro Text, SF Pro Icons, AOS Icons, Helvetica Neue, Helvetica,
+    Arial, sans-serif;
+  font-weight: 600;
+}
+
+@media only screen and (max-width: 500px) {
+  .product-details-label4 {
+    font-size: 11px;
+  }
+
+  .product-details-label5 {
+    font-size: 13px;
+  }
+}

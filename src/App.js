@@ -5,6 +5,7 @@ import SectionContainer from "views/SectionContainer/SectionContainer";
 import "assets/scss/material-dashboard-pro-react.scss?v=1.9.0";
 
 import AdminLogin from "views/Admin/AdminLogin";
+import ProductDetails from "views/ProductManagement/ProductDetails";
 
 const hist = createBrowserHistory();
 
@@ -28,7 +29,7 @@ class App extends Component {
 
     return (
       <div>
-        {isLoggedin === true ? ( //To bypass login set it true
+        {isLoggedin === false ? ( //To bypass login set it true
           <AdminLogin LoginStatusChange={this.LoginStatusHandler} />
         ) : (
           <Router history={hist}>

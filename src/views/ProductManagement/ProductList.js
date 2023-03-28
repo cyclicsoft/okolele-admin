@@ -215,10 +215,25 @@ export default function ProductList() {
 
   // View Product Details
   const viewProductDetails = (details) => {
+    let productCategory = "";
+    if (dropdownValue == "MOBILE") {
+      productCategory = "mobiles";
+    } else if (dropdownValue == "TABLET") {
+      productCategory = "tablets";
+    } else if (dropdownValue == "SMARTWATCH") {
+      productCategory = "smartwatches";
+    } else if (dropdownValue == "ACCESSORY") {
+      productCategory = "accessories";
+    }
+
     history.push({
-      pathname: "/admin/product-details",
+      pathname:
+        "/admin/product-details/" +
+        productCategory +
+        "/" +
+        details.id,
       productDetailsInfo: details,
-      productType: dropdownValue,
+      productType: productCategory,
     });
   };
 

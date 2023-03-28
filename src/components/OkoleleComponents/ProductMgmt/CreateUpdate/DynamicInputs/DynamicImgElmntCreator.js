@@ -10,6 +10,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 // SCSS
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 import ImgCropper from "views/OkoleleImageCropper/ImgCropper";
+import { getBase64Img } from "services/helper-function/getBase64Img";
+import { getBlobFromBase64 } from "services/helper-function/getBlobFromBase64";
 
 const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
   // Preview and Crop Img
@@ -30,13 +32,22 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
   };
 
   // select Img From Loacl Storage
-  const imgAddRemoveHandler = (event, id, addRemoveFlag) => {
+  const imgAddRemoveHandler = async (event, id, addRemoveFlag) => {
+    event.persist(); //To use React synthetic events inside an asynchronous callback function
     if (addRemoveFlag === "add") {
       if (event.target.files && event.target.files[0]) {
-        const blobFile = URL.createObjectURL(event.target.files[0]);
-        let tempArray = [...productImages];
-        tempArray[id] = blobFile;
-        setProductImages(tempArray);
+        getBase64Img(event.target.files[0]).then((base64) => {
+          // localStorage["fileBase64"] = base64;
+          let tempArray = [...productImages];
+          let imgObj = {
+            file_name: event.target.files[0].name,
+            file_type: event.target.files[0].type,
+            base64: base64,
+          };
+          tempArray[id] = imgObj;
+
+          setProductImages(tempArray);
+        });
       }
     } else if (addRemoveFlag === "remove") {
       let tempArray = [...productImages]; // copying the old datas array
@@ -100,7 +111,7 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
                     />
                     <img
                       className="imgPickerImg"
-                      src={productImages[i]}
+                      src={productImages[i].base64}
                       alt="ProductImg"
                     />
                   </div>
