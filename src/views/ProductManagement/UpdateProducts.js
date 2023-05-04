@@ -19,7 +19,7 @@ import "assets/scss/ghorwali-scss/update-product.scss";
 
 export default function UpdateProducts(props) {
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
   // Products Info
   const [prodId, setProdId] = useState(null);
   const [prodCategory, setProdCategory] = useState(null);
@@ -36,7 +36,7 @@ export default function UpdateProducts(props) {
   }, [window.location]);
 
   const getProdDetails = (category, id) => {
-    const detailsAPI = rootPath[0] + "/" + category + "/" + id;
+    const detailsAPI = rootPath + "/" + category + "/" + id;
 
     axios
       .get(detailsAPI)

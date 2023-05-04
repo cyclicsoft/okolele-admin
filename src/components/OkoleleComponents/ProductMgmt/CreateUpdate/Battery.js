@@ -71,7 +71,6 @@ export default function Battery({ prodData, setProdData }) {
                       name: "batteryType",
                       value: prodData.batteryType,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -87,7 +86,6 @@ export default function Battery({ prodData, setProdData }) {
                       name: "charging",
                       value: prodData.charging,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

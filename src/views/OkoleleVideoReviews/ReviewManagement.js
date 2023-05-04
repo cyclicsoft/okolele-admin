@@ -5,52 +5,34 @@ import { useHistory } from "react-router-dom";
 // @material-ui/core components
 import axios from "axios";
 // Global State
-import { store, useGlobalState } from "state-pool";
 
 import { makeStyles } from "@material-ui/core/styles";
 
 // @material-ui/icons
-import PermIdentity from "@material-ui/icons/PermIdentity";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import TabIcon from "@mui/icons-material/Tab";
-import EarbudsIcon from "@mui/icons-material/Earbuds";
-import WatchIcon from "@mui/icons-material/Watch";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
-import Person from "@material-ui/icons/Person";
 import Edit from "@material-ui/icons/Edit";
-import Close from "@material-ui/icons/Close";
-import Search from "@material-ui/icons/Search";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import CachedIcon from "@mui/icons-material/Cached";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import UnpublishedIcon from "@mui/icons-material/Unpublished";
-import Radio from "@mui/material/Radio";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardIcon from "components/Card/CardIcon.js";
 import Table from "components/Table/Table.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 
 import styles from "assets/jss/material-dashboard-pro-react/views/userProfileStyles.js";
 // Loader
 import FillingBottle from "react-cssfx-loading/lib/FillingBottle";
 // Dropdown Select
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
 // Pagination
 import PaginationComponent from "views/Pagination/PaginationComponent";
 // Warning Popup
 import ProductStatusUpdateWarning from "views/ConfirmationModals/ProductStatusUpdateWarning";
-import CreateVideoReview from "./CreateVideoReview";
-import UpdateVideoReview from "./UpdateVideoReview";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -58,22 +40,9 @@ export default function ReviewManagement() {
   const classes = useStyles();
   const history = useHistory();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  const refreshTkn = {
-    refreshToken: userToken.refreshToken,
-  };
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   // Review Info
   const [reviewList, setReviewList] = useState([]);
@@ -95,13 +64,19 @@ export default function ReviewManagement() {
   // Radio button
   const [selectedRadioValue, setSelectedRadioValue] = React.useState("create");
 
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   // Initial API Call
   useEffect(() => {
     // Show Data Loader
     setIsDataLoaded(false);
     const pageNo = 0;
     const allReviewsAPI =
-      rootPath[0] + "/reviews?page=" + pageNo + "&size=10&activeStatus=";
+      rootPath + "/reviews?page=" + pageNo + "&size=10&activeStatus=";
 
     axios
       .get(allReviewsAPI)
@@ -126,7 +101,7 @@ export default function ReviewManagement() {
     const pageNo = pageNumber - 1;
     setCurrentPage(pageNo);
     const allReviewsAPI =
-      rootPath[0] + "/reviews?page=" + pageNo + "&size=10&activeStatus=";
+      rootPath + "/reviews?page=" + pageNo + "&size=10&activeStatus=";
 
     axios
       .get(allReviewsAPI)
@@ -145,7 +120,7 @@ export default function ReviewManagement() {
     setIsDataLoaded(false);
     // const pageNo = 0;
     const allReviewsAPI =
-      rootPath[0] + "/reviews?page=" + currentPage + "&size=10&activeStatus=";
+      rootPath + "/reviews?page=" + currentPage + "&size=10&activeStatus=";
 
     axios
       .get(allReviewsAPI)
@@ -182,36 +157,22 @@ export default function ReviewManagement() {
   };
   // status Change Flag From Modal
   const statusChangeFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true) {
+    if (isConfirmed === true && headers) {
       var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        console.log(
-          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        );
-        updateActiveStatus();
-      } else {
-        console.log(
-          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        );
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          console.log("isRefreshed: ", isRefreshed);
-          updateActiveStatus();
-        });
-      }
+      updateActiveStatus();
     }
     setShowPublishPopup(false);
   };
 
   const updateActiveStatus = () => {
     const statusUpdateAPI =
-      rootPath[0] +
+      rootPath +
       "/reviews/status/" +
       statusUpdateReviewtId +
       "?isActive=" +
       statusToBeChanged;
     axios
-      .post(statusUpdateAPI, {}, config)
+      .post(statusUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("Status Update response: ", response);
         alert("Status updated!");
@@ -219,60 +180,6 @@ export default function ReviewManagement() {
       .catch(function (error) {
         console.log(error);
       });
-  };
-
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      console.log(
-        "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-
-      axios
-        .post(refreshTokenAPI, refreshTkn)
-        .then(function (response) {
-          console.log("Refresh token response: ", response);
-          console.log("Status Code: ", response.status);
-
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-            try {
-              localStorage.clear();
-              window.location.href = "/";
-            } catch (e) {
-              console.log(e.message);
-            }
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
-          }
-        })
-        .catch(function (error) {
-          console.log("Status Code: ", error.response.status);
-          console.log(error);
-        });
-    } else {
-      console.log(
-        "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      );
-      // Logout forcefully from here
-      try {
-        localStorage.clear();
-        window.location.href = "/";
-      } catch (e) {
-        console.log(e.message);
-      }
-    }
   };
 
   return (

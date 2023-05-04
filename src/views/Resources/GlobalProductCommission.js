@@ -28,7 +28,6 @@ function GlobalProductCommission() {
 
   useEffect(() => {
     // const ghorwaliAboutUrl = "/multivendorshop/mv/v1/ghorwali/app/about/702";
-
     // axios.get(ghorwaliAboutUrl)
     //     .then(function (response) {
     //         setAboutGhorwali(response.data.content);

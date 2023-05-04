@@ -2,17 +2,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 // Global State
-import { useGlobalState } from "state-pool";
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
 import { toast } from "react-toastify";
@@ -38,32 +31,17 @@ import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
 function CreateSmartWatch() {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  const refreshTkn = {
-    refreshToken: userToken.refreshToken,
-  };
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
   // Product Info
-  // Bulk Upload
-  const [csvFile, setCsvFile] = useState(null);
-  const [fileSize, setFileSize] = useState(0);
   const [prodData, setProdData] = useState({
     name: "",
     prodType: 3,
@@ -176,21 +154,19 @@ function CreateSmartWatch() {
     others: prodData.otherDetails,
   };
 
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   const swSaveClick = () => {
     setShowProductCreatePopup(true);
   };
   // Product Create Flag From Modal
   const productCreateFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        saveNewSw();
-      } else {
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          saveNewSw();
-        });
-      }
+    if (isConfirmed === true && headers) {
+      saveNewSw();
     }
 
     setShowHttpResponseMsg(false);
@@ -199,9 +175,9 @@ function CreateSmartWatch() {
 
   const saveNewSw = () => {
     console.log("saveNewSw/swDetails: ", swDetails);
-    const swCreateAPI = rootPath[0] + "/smartwatches";
+    const swCreateAPI = rootPath + "/smartwatches";
     axios
-      .post(swCreateAPI, swDetails, config)
+      .post(swCreateAPI, swDetails, headers)
       .then(function (response) {
         setHttpResponseCode(response.status);
         setShowHttpResponseMsg(true);
@@ -210,104 +186,6 @@ function CreateSmartWatch() {
         setHttpResponseCode(error.response.status);
         setShowHttpResponseMsg(true);
       });
-  };
-
-  // Bulk Upload
-  const setFile = (event) => {
-    setCsvFile(event.target.files[0]);
-
-    var files = event.target.files;
-    var filesArray = [].slice.call(files);
-    filesArray.forEach((event) => {
-      setFileSize(Math.round(event.size / 1024));
-    });
-  };
-  const bulkUploadHandler = () => {
-    //Get file extension from file name
-    const split_name = csvFile.name.split(".");
-    const type = split_name[split_name.length - 1];
-
-    //create a blob from file calling mime type injection function
-    const blob = new Blob([csvFile], { type: mimeType(type) });
-
-    //Here you can use the file as you wish
-    const new_file = blobToFile(blob, "csv");
-
-    const data = new FormData();
-    data.append("file", new_file);
-    data.append("productType", "SMARTWATCHE");
-
-    const csvConfig = {
-      headers: {
-        "content-type": `multipart/form-data; boundary=${data._boundary}`,
-        Authorization: "Bearer " + userToken.token,
-      },
-    };
-
-    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
-
-    axios
-      .post(bulkUploadAPI, data, csvConfig)
-      .then(function (response) {})
-      .catch(function (error) {});
-  };
-  //Inject mimeType By extension - Excel files check only
-  const mimeType = (extension) => {
-    switch (extension) {
-      case "xlsx":
-        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-      case "xls":
-        return "application/vnd.ms-excel";
-
-      default:
-        return "text/csv";
-    }
-  };
-  //Convert Blob to File
-  const blobToFile = (theBlob, fileName) => {
-    theBlob.lastModifiedDate = new Date();
-    theBlob.name = fileName;
-
-    return theBlob;
-  };
-
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-
-      axios
-        .post(refreshTokenAPI, refreshTkn)
-        .then(function (response) {
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      // Logout forcefully from here
-      try {
-        localStorage.clear();
-        window.location.href = "/";
-      } catch (e) {
-        console.log(e.message);
-      }
-    }
   };
 
   return (
@@ -326,58 +204,6 @@ function CreateSmartWatch() {
           <HttpStatusCode responseCode={httpResponseCode} />
         ) : null}
       </div>
-
-      {/* Bulk SW Upload  */}
-      <GridContainer>
-        <GridItem xs={12} sm={12}>
-          {/* md={8} */}
-          <Card>
-            <CardHeader color="rose" icon>
-              {/* <CardIcon color="rose">
-                <LocalOfferIcon />
-              </CardIcon> */}
-              <h4 className={classes.cardIconTitle}>Bulk Upload</h4>
-            </CardHeader>
-            <CardBody>
-              {/* Bulk SW Upload  */}
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Select CSV"
-                    id="select-csv"
-                    formControlProps={{
-                      fullWidth: true,
-                    }}
-                    inputProps={{
-                      type: "file",
-                      onChange: (event) => setFile(event),
-                    }}
-                  />
-                </GridItem>
-                {/* Upload button */}
-                <GridItem xs={12} sm={12} md={6}>
-                  <Button
-                    color="rose"
-                    style={{ marginTop: "20px" }}
-                    className={classes.updateProfileButton}
-                    onClick={bulkUploadHandler}
-                  >
-                    Upload CSV
-                  </Button>
-                </GridItem>
-              </GridContainer>
-
-              {fileSize > 0 ? (
-                <GridContainer>
-                  <GridItem>
-                    <div>File Size: {fileSize} KB</div>
-                  </GridItem>
-                </GridContainer>
-              ) : null}
-            </CardBody>
-          </Card>
-        </GridItem>
-      </GridContainer>
 
       <h4 className={classes.cardIconTitle}>Create New SmartWatch</h4>
       {/* Reset & Search To Clone */}

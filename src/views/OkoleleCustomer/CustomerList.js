@@ -60,6 +60,7 @@ import { RefreshTokenGenerator } from "../ReusableFunctions/RefreshTokenGenerato
 
 import axios from "axios";
 import ActivateDeactivatePopup from "views/ConfirmationModals/ActivateDeactivatePopup";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -67,12 +68,10 @@ export default function CustomerList() {
   const classes = useStyles();
   const history = useHistory();
 
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+
+  const [headers, setHeaders] = useState();
 
   const [showActiveInactivePopup, setShowActiveInactivePopup] = useState(false);
   const [customerToBeUpdated, setCustomerToBeUpdated] = useState("");
@@ -92,26 +91,24 @@ export default function CustomerList() {
   const [deleteBtnClicked, setDeleteBtnClicked] = useState(false);
 
   useEffect(() => {
-    getToken((token) => {
-      getCustomerList(token);
+    apiHeader((headers) => {
+      setHeaders(headers);
     });
   }, []);
 
-  const getCustomerList = (token) => {
+  useEffect(() => {
+    if (headers) {
+      getCustomerList();
+    }
+  }, [headers]);
+
+  const getCustomerList = () => {
     const pageNo = 0;
 
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
-    console.log("config...: ", config);
-
     const customerListByPagination =
-      rootPath[0] + "/users?page=" + pageNo + "&size=5";
+      rootPath + "/users?page=" + pageNo + "&size=5";
     axios
-      .get(customerListByPagination, config)
+      .get(customerListByPagination, headers)
       .then(function (response) {
         setCustomerList(response.data.data);
         console.log("users...: ", response.data.data);
@@ -124,27 +121,14 @@ export default function CustomerList() {
 
   // Pagination handler
   const paginationHandler = (pageNumber) => {
-    let Tkn = "";
-    getToken((token) => {
-      Tkn = token;
-    });
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + Tkn,
-      },
-    };
-
-    console.log("config...2: ", config);
-
     console.log("pageNumber: ", pageNumber);
     const pageNo = pageNumber - 1;
 
     const customerListByPagination =
-      rootPath[0] + "/users?page=" + pageNo + "&size=5";
+      rootPath + "/users?page=" + pageNo + "&size=5";
 
     axios
-      .get(customerListByPagination, config)
+      .get(customerListByPagination, headers)
       .then(function (response) {
         setCustomerList(response.data.data);
         console.log("CustomerList...: ", response.data.data);
@@ -172,30 +156,22 @@ export default function CustomerList() {
   };
   // Customer Search Handler
   const customerSearchHanler = () => {
-    getToken((token) => {
-      searchCustomer(token);
-    });
+    searchCustomer();
   };
   // searchCustomer
-  const searchCustomer = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  const searchCustomer = () => {
     const pageNo = 0;
 
     if (searchTypeValue === "Search By Phone") {
       const customerByPhone =
-        rootPath[0] +
+        rootPath +
         "/users/search?keyword=" +
         searchKeyword +
         "&userFilterType=PHONE&page=" +
         pageNo +
         "&size=10";
       axios
-        .get(customerByPhone, config)
+        .get(customerByPhone, headers)
         .then(function (response) {
           setCustomerList(response.data.content.data);
           // console.log("Searched Customers...: ", response.data);
@@ -206,14 +182,14 @@ export default function CustomerList() {
         });
     } else if (searchTypeValue === "Search By Name") {
       const customerByName =
-        rootPath[0] +
+        rootPath +
         "/users/search?keyword=" +
         searchKeyword +
         "&userFilterType=NAME&page=" +
         pageNo +
         "&size=10";
       axios
-        .get(customerByName, config)
+        .get(customerByName, headers)
         .then(function (response) {
           setCustomerList(response.data.content.data);
           // console.log("Searched Customers...: ", response.data.content.totalItems);
@@ -224,9 +200,9 @@ export default function CustomerList() {
         });
     } else if (searchTypeValue === "No Select") {
       const customerListByPagination =
-        rootPath[0] + "/users?page=" + pageNo + "&size=5";
+        rootPath + "/users?page=" + pageNo + "&size=5";
       axios
-        .get(customerListByPagination, config)
+        .get(customerListByPagination, headers)
         .then(function (response) {
           setCustomerList(response.data.data);
           // console.log("users...: ", response.data.data);
@@ -303,30 +279,20 @@ export default function CustomerList() {
   // status Change Flag From Modal
   const statusChangeFlag = (isConfirmed) => {
     if (isConfirmed === true) {
-      getToken((token) => {
-        updateStatus(token);
-      });
+      updateStatus();
     }
     setShowActiveInactivePopup(false);
   };
-  const updateStatus = (token) => {
-    // setIsDataLoaded(false);
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  const updateStatus = () => {
     const statusUpdateAPI =
-      rootPath[0] +
+      rootPath +
       "/users/activation/" +
       customerToBeUpdated +
       "?status=" +
       statusChangeAction;
 
     axios
-      .post(statusUpdateAPI, {}, config)
+      .post(statusUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("Status Update response: ", response);
         alert("Status updated!");
@@ -391,7 +357,7 @@ export default function CustomerList() {
     var now = new Date();
 
     if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
+      const refreshTokenAPI = rootPath + "/auth/token";
       console.log(
         "RefreshTokenGenerator/refreshToken before generation: ",
         userToken.refreshToken

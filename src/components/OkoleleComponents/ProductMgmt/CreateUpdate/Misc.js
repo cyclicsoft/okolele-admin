@@ -75,7 +75,6 @@ export default function Misc({ prodData, setProdData }) {
                       name: "sar",
                       value: prodData.sar,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -93,7 +92,6 @@ export default function Misc({ prodData, setProdData }) {
                       name: "sarEu",
                       value: prodData.sarEu,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

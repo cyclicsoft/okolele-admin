@@ -71,7 +71,7 @@ const useStyles = makeStyles(styles);
 function CreatePhone() {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -293,7 +293,7 @@ function CreatePhone() {
 
   const saveNewPhone = () => {
     console.log("saveNewPhone/phoneDetails: ", phoneDetails);
-    const phoneCreateAPI = rootPath[0] + "/mobiles";
+    const phoneCreateAPI = rootPath + "/mobiles";
     axios
       .post(phoneCreateAPI, phoneDetails, config)
       .then(function (response) {
@@ -479,7 +479,7 @@ function CreatePhone() {
       },
     };
 
-    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
+    const bulkUploadAPI = rootPath + "/products/bulkdata";
 
     axios
       .post(bulkUploadAPI, data, csvConfig)
@@ -654,7 +654,7 @@ function CreatePhone() {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
+      const refreshTokenAPI = rootPath + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

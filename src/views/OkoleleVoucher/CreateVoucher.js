@@ -38,6 +38,7 @@ import "../../assets/scss/ghorwali-scss/voucherCard.scss";
 import moment from "moment";
 import { title } from "assets/jss/material-dashboard-pro-react";
 import SaveWarning from "views/ConfirmationModals/SaveWarning";
+import { apiHeader } from "services/helper-function/api-header";
 // var moment = require('moment');
 
 const useStyles = makeStyles(styles);
@@ -49,7 +50,9 @@ function CreateVoucher() {
     "accessToken"
   );
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   const [VoucherCode, setVoucherCode] = useState("");
   const [voucherType, setVoucherType] = useState("FLAT");
@@ -65,7 +68,12 @@ function CreateVoucher() {
   const [endDateTime, setEndDateTime] = useState("");
 
   useEffect(() => {
-    console.log("selectedStartDate", selectedStartDate);
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
+  useEffect(() => {
     toTimeStamp();
   }, [selectedStartDate, selectedEndDate]);
 
@@ -97,22 +105,15 @@ function CreateVoucher() {
   };
 
   const voucherSaveClick = () => {
-    getToken((token) => {
-      voucherSaveHandler(token);
-    });
+    voucherSaveHandler();
   };
-  const voucherSaveHandler = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
+  const voucherSaveHandler = () => {
     if (inputDateValidityCheck() === true) {
-      const voucherCreateAPI = rootPath[0] + "/coupon";
+      const voucherCreateAPI = rootPath + "/coupon";
       console.log("voucherSaveHandler/voucherData: ", voucherData);
 
       axios
-        .post(voucherCreateAPI, voucherData, config)
+        .post(voucherCreateAPI, voucherData, headers)
         .then(function (response) {
           console.log("update response: ", response);
         })
@@ -169,78 +170,6 @@ function CreateVoucher() {
     const splitedDate = JSON.stringify(temp).slice(1, 11);
     console.log("temp: ", splitedDate);
     return splitedDate;
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
   };
 
   return (

@@ -83,7 +83,6 @@ import SendNotification from "views/UserNotifications/SendNotification.js";
 import UserNotifications from "views/UserNotifications/UserNotifications.js";
 import UpdateNotificaton from "views/UserNotifications/UpdateNotificaton.js";
 import AreaManagement from "views/Resources/AreaManagement.js";
-import ImgUploadTest from "views/ImgUploadTest/ImgUploadTest.js";
 
 var dashRoutes = [
   // ###################### Admin ######################
@@ -183,23 +182,6 @@ var dashRoutes = [
         name: "Transection History",
         mini: "TH",
         component: TransectionHistory,
-        layout: "/admin",
-      },
-    ],
-  },
-  // ###################### Cart Management ######################
-  {
-    collapse: true,
-    name: "Img Upload Test",
-    rtlName: "صفحات",
-    icon: PaymentIcon,
-    state: "ImgUploadTest",
-    views: [
-      {
-        path: "/test-img-upload",
-        name: "Img Upload Test",
-        mini: "TH",
-        component: ImgUploadTest,
         layout: "/admin",
       },
     ],

@@ -1,10 +1,6 @@
 //index->App->Admin->Sidebar->CreateAdmin
-//Ghorwali Component
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-// Global State
-import { store, useGlobalState } from "state-pool";
-// @material-ui/core components
 import axios from "axios";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -45,6 +41,7 @@ import "../../assets/scss/ghorwali-scss/create-admin.scss";
 
 // Warning Popup
 import ActivateDeactivatePopup from "views/ConfirmationModals/ActivateDeactivatePopup";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -52,19 +49,8 @@ export default function ProductList() {
   const classes = useStyles();
   const history = useHistory();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  const [headers, setHeaders] = useState();
 
   // Products Info
   const [allProducts, setallProducts] = useState([]);
@@ -82,7 +68,12 @@ export default function ProductList() {
   const [statusToBeChanged, setStatusToBeChanged] = useState(false);
   const [showPublishPopup, setShowPublishPopup] = useState(false);
 
-  // useEffect 1
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   // Initial API Call
   useEffect(() => {
     console.log("useEffect 1 start / prodCategory", prodCategory);
@@ -91,7 +82,7 @@ export default function ProductList() {
 
     const pageNo = 0;
     const allProductsAPI =
-      rootPath[0] +
+      rootPath +
       "/products?page=" +
       pageNo +
       "&size=10&productType=" +
@@ -124,7 +115,7 @@ export default function ProductList() {
     const pageNo = pageNumber - 1;
     setCurrentPage(pageNo);
     const allProductsAPI =
-      rootPath[0] +
+      rootPath +
       "/products?page=" +
       pageNo +
       "&size=10&productType=" +
@@ -151,7 +142,7 @@ export default function ProductList() {
     setIsDataLoaded(false);
     // const pageNo = 0;
     const allProductsAPI =
-      rootPath[0] +
+      rootPath +
       "/products?page=" +
       currentPage +
       "&size=10&productType=" +
@@ -189,7 +180,7 @@ export default function ProductList() {
     //   productCategory = "accessories";
     // }
     const phoneSearchAPI =
-      rootPath[0] +
+      rootPath +
       "/" +
       prodCategory +
       "/searchByTitle?keyword=" +
@@ -227,11 +218,7 @@ export default function ProductList() {
     }
 
     history.push({
-      pathname:
-        "/admin/product-details/" +
-        productCategory +
-        "/" +
-        details.id,
+      pathname: "/admin/product-details/" + productCategory + "/" + details.id,
       productDetailsInfo: details,
       productType: productCategory,
     });
@@ -254,23 +241,8 @@ export default function ProductList() {
   };
   // status Change Flag From Modal
   const statusChangeFlag = (isConfirmed) => {
-    if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        console.log(
-          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        );
-        updateStatus();
-      } else {
-        console.log(
-          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        );
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          console.log("isRefreshed: ", isRefreshed);
-          updateStatus();
-        });
-      }
+    if (isConfirmed === true && headers) {
+      updateStatus();
     }
     setShowPublishPopup(false);
   };
@@ -289,7 +261,7 @@ export default function ProductList() {
     setIsDataLoaded(false);
 
     const statusUpdateAPI =
-      rootPath[0] +
+      rootPath +
       "/" +
       productCategory +
       "/updatePublishStatus/" +
@@ -298,7 +270,7 @@ export default function ProductList() {
       statusToBeChanged;
 
     axios
-      .post(statusUpdateAPI, {}, config)
+      .post(statusUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("Status Update response: ", response);
         alert("Status updated!");
@@ -327,45 +299,6 @@ export default function ProductList() {
       case "ACCESSORY":
         setProdCategory("accessories");
         break;
-    }
-  };
-
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      console.log(
-        "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      axios
-        .post(refreshTokenAPI, userToken.refreshToken)
-        .then(function (response) {
-          console.log("Refresh token response: ", response);
-
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      console.log(
-        "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      );
-      // Logout forcefully from here
     }
   };
 

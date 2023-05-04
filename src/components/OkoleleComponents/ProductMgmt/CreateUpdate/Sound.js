@@ -71,7 +71,6 @@ export default function Sound({ prodData, setProdData }) {
                       name: "loudSpeaker",
                       value: prodData.loudSpeaker,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -87,7 +86,6 @@ export default function Sound({ prodData, setProdData }) {
                       name: "jack",
                       value: prodData.jack,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

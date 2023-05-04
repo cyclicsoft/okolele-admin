@@ -84,7 +84,6 @@ export default function GeneralInfo({ prodData, setProdData }) {
                       name: "name",
                       value: prodData.name,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -153,7 +152,6 @@ export default function GeneralInfo({ prodData, setProdData }) {
                         name: "discountValue",
                         value: prodData.discountValue,
                         onChange: (event) => inputChangeHandler(event),
-                        // maxLength: "3",
                       }}
                     />
                   </GridItem>

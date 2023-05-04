@@ -23,7 +23,7 @@ const useStyles = makeStyles(styles);
 function SearchToClone(props) {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
   // Search
   const [productCategory, setProductCategory] = useState(props.productType);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -38,7 +38,7 @@ function SearchToClone(props) {
   const productSearchHanler = () => {
     setIsDataLoaded(false);
     const phoneSearchAPI =
-      rootPath[0] +
+      rootPath +
       "/" +
       productCategory +
       "/searchByTitle?keyword=" +

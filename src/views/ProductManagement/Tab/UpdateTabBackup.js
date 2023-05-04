@@ -72,7 +72,7 @@ const useStyles = makeStyles(styles);
 function UpdateTab(props) {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -170,7 +170,7 @@ function UpdateTab(props) {
   const [imgIdToPreview, setImgIdToPreview] = useState("");
 
   useEffect(() => {
-    const tabDetailsAPI = rootPath[0] + "/tablets/" + props.editProductId;
+    const tabDetailsAPI = rootPath + "/tablets/" + props.editProductId;
 
     axios
       .get(tabDetailsAPI)
@@ -451,7 +451,7 @@ function UpdateTab(props) {
 
     console.log("tabUpdate/config >>>", config);
 
-    const tabUpdateAPI = rootPath[0] + "/tablets/" + props.editProductId;
+    const tabUpdateAPI = rootPath + "/tablets/" + props.editProductId;
 
     console.log("tabUpdate/tabUpdateAPI >>>", tabUpdateAPI);
     axios
@@ -615,7 +615,7 @@ function UpdateTab(props) {
   // Update Comment in DB after removing comments from userComments variable
   const commentsUpdateHandler = () => {
     const commentsUpdateAPI =
-      rootPath[0] + "/tablets/deleteComment/" + props.editProductId;
+      rootPath + "/tablets/deleteComment/" + props.editProductId;
 
     axios
       .post(commentsUpdateAPI, userComments)
@@ -634,7 +634,7 @@ function UpdateTab(props) {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
+      const refreshTokenAPI = rootPath + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

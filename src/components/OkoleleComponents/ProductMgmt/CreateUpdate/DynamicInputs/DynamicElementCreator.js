@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
 const DynamicElementCreator = (props) => {
-  console.log(
-    "%cDynamicElementCreator.js line:7 objectValue",
-    "color: #007acc;",
-    props.objectValue
-  );
+  // console.log(
+  //   "%cDynamicElementCreator.js line:7 objectValue",
+  //   "color: #007acc;",
+  //   props.objectValue
+  // );
   const [inputList, setInputList] = useState([""]);
 
   useEffect(() => {

@@ -13,6 +13,7 @@
     "@mui/icons-material": "^5.0.1",
     "@mui/material": "^5.0.1",
     "@react-google-maps/api": "^2.1.1",
+    "@reduxjs/toolkit": "^1.9.3",
     "axios": "^0.21.4",
     "bootstrap": "^5.0.1",
     "chartist": "0.10.1",
@@ -44,11 +45,13 @@
     "react-image-gallery": "^1.2.7",
     "react-js-pagination": "^3.0.3",
     "react-jvectormap": "0.0.16",
+    "react-lazy-load-image-component": "^1.5.6",
     "react-location-picker": "^1.5.0",
     "react-modal": "^3.14.4",
     "react-moment": "^1.1.1",
     "react-paginate": "^7.1.3",
     "react-places-autocomplete": "^7.3.0",
+    "react-redux": "^8.0.5",
     "react-responsive-carousel": "^3.2.22",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.1",
@@ -57,7 +60,8 @@
     "react-tagsinput": "3.19.0",
     "react-toastify": "^8.1.0",
     "state-pool": "^0.6.0",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "universal-cookie": "^4.0.4"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -2,17 +2,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
-import { useGlobalState } from "state-pool";
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
 import { toast } from "react-toastify";
@@ -36,43 +29,23 @@ import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Feat
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
 import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
-import Variants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Variants";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import { phoneDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/phoneDataSetter";
 import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
+import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
 export default function UpdatePhone({ editProductId, prodDetails }) {
-  console.log(
-    "%cUpdatePhone.js line:47 prodDetails",
-    "color: #007acc;",
-    prodDetails
-  );
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  const refreshTkn = {
-    refreshToken: userToken.refreshToken,
-  };
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
   // Product Info
-  // Bulk Upload
-  const [csvFile, setCsvFile] = useState(null);
-  const [fileSize, setFileSize] = useState(0);
   const [prodData, setProdData] = useState({
     name: "",
     prodType: 1,
@@ -128,14 +101,8 @@ export default function UpdatePhone({ editProductId, prodDetails }) {
 
   useEffect(() => {
     const data = phoneDataSetter(prodDetails);
-    // console.log("%cUpdatePhone.js line:130 data", "color: #007acc;", data);
     setProdData(data);
   }, [prodDetails]);
-  console.log(
-    "%cUpdatePhone.js line:134 prodData",
-    "color: #007acc;",
-    prodData
-  );
 
   // Product create confirmation popup viewar
   const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
@@ -198,33 +165,32 @@ export default function UpdatePhone({ editProductId, prodDetails }) {
     variants: prodData.productAllVariants,
   };
 
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   const phoneUpdateClick = () => {
     setShowProductCreatePopup(true);
   };
   // Product Create Flag From Modal
   const productCreateFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        updatePhone();
-      } else {
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          updatePhone();
-        });
-      }
+    if (isConfirmed === true && headers) {
+      updatePhone();
     }
 
     setShowHttpResponseMsg(false);
     setShowProductCreatePopup(false);
   };
 
-  const updatePhone = () => {
-    console.log("updatePhone/phoneDetails: ", phoneDetails);
-    const phoneUpdateAPI = rootPath[0] + "/mobiles/" + editProductId;
+  const updatePhone = async () => {
+    let prodDetails = await removeDbImgIdfromVariants(phoneDetails);
+
+    const phoneUpdateAPI = rootPath + "/mobiles/" + editProductId;
 
     axios
-      .put(phoneUpdateAPI, phoneDetails, config)
+      .put(phoneUpdateAPI, prodDetails, headers)
       .then(function (response) {
         console.log("update response: ", response);
         // console.log("response code: ", response.status);
@@ -235,44 +201,6 @@ export default function UpdatePhone({ editProductId, prodDetails }) {
         // setHttpResponseCode(error.response.status);
         // setShowHttpResponseMsg(true);
       });
-  };
-
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-
-      axios
-        .post(refreshTokenAPI, refreshTkn)
-        .then(function (response) {
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      // Logout forcefully from here
-      try {
-        localStorage.clear();
-        window.location.href = "/";
-      } catch (e) {
-        console.log(e.message);
-      }
-    }
   };
 
   return (

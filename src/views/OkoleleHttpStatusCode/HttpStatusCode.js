@@ -5,8 +5,7 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 // Import toastify css file
 import "react-toastify/dist/ReactToastify.css";
-// toast-configuration method,
-// it is compulsory method.
+
 toast.configure();
 
 export default function HttpStatusCode(props) {
@@ -36,6 +35,7 @@ export default function HttpStatusCode(props) {
         { position: toast.POSITION.TOP_CENTER },
         { autoClose: 2000 }
       );
+      window.location.href = "/user-login";
     } else if (props.responseCode === 409) {
       toast.error(
         "Data already exist! Please try something different.",

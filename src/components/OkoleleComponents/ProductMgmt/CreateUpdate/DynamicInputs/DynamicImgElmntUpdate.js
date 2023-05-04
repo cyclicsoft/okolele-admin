@@ -1,21 +1,30 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 // material-ui icons
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-
-// Images
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import ImgCropper from "views/OkoleleImageCropper/ImgCropper";
+import { getBase64Img } from "services/helper-function/getBase64Img";
+import { apiHeader } from "services/helper-function/api-header";
 
 // SCSS
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
-import ImgCropper from "views/OkoleleImageCropper/ImgCropper";
-import { getBase64Img } from "services/helper-function/getBase64Img";
 
-const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
+const DynamicImgElmntUpdate = ({ productImages, setProductImages }) => {
+  // Root Path URL
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  const [headers, setHeaders] = useState();
   // Preview and Crop Img
   const [shouldPreview, setShouldPreview] = useState(false);
   const [imgIdToPreview, setImgIdToPreview] = useState("");
+
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
 
   // Add HTML Img Element
   const handleAddImgElement = () => {
@@ -30,8 +39,27 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
     setProductImages(tempArray);
   };
 
+  const dbImgRemoveHandler = (imgId) => {
+    const imgDeleteAPI = rootPath + "/file/" + imgId;
+
+    axios
+      .delete(imgDeleteAPI, headers)
+      .then(function (response) {
+        console.log("Delete response: ", response);
+        // console.log("response code: ", response.status);
+        // setHttpResponseCode(response.status);
+        // setShowHttpResponseMsg(true);
+      })
+      .catch(function (error) {
+        console.log("Delete error: ", error);
+        // setHttpResponseCode(error.response.status);
+        // setShowHttpResponseMsg(true);
+      });
+  };
+
   // select Img From Loacl Storage
   const imgAddRemoveHandler = async (event, id, addRemoveFlag) => {
+    console.log("event >>> ", event);
     event.persist(); //To use React synthetic events inside an asynchronous callback function
     if (addRemoveFlag === "add") {
       if (event.target.files && event.target.files[0]) {
@@ -83,7 +111,6 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
 
       {productImages.map((x, i) => (
         <div key={i} style={{ marginRight: "15px" }}>
-          {console.log('%cDynamicImgElmntCreator.js line:86 typeof productImages[i]', 'color: #007acc;', typeof productImages[i])}
           {/* Img Selector  */}
           <div className="picture-container">
             <div
@@ -92,6 +119,7 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
             >
               {productImages[i] !== undefined &&
                 (productImages[i].length <= 0 ? (
+                  // Image picker
                   <div>
                     <AddToPhotosIcon className="imgAddIcon" />
                     <input
@@ -99,11 +127,27 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
                       onChange={(e) => imgAddRemoveHandler(e, i, "add")}
                     />
                   </div>
-                ) : (
+                ) : typeof productImages[i] == "string" ? (
+                  // DB Images
                   <div>
                     <DeleteIcon
                       className="removeSelectedImg"
-                      onClick={() => imgAddRemoveHandler(null, i, "remove")}
+                      onClick={() => dbImgRemoveHandler(productImages[i])}
+                    />
+                    <LazyLoadImage
+                      src={rootPath + "/file/download/" + productImages[i]}
+                      alt="No Image"
+                      placeholdersrc="No Image"
+                      className="imgPickerImg"
+                      effect="blur"
+                    />
+                  </div>
+                ) : (
+                  // Local Image File
+                  <div>
+                    <DeleteIcon
+                      className="removeSelectedImg"
+                      onClick={(e) => imgAddRemoveHandler(e, i, "remove")}
                     />
                     <VisibilityIcon
                       className="previewSelectedImg"
@@ -149,4 +193,4 @@ const DynamicImgElmntCreator = ({ productImages, setProductImages }) => {
   );
 };
 
-export default DynamicImgElmntCreator;
+export default DynamicImgElmntUpdate;

@@ -22,6 +22,8 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CardFooter from "components/Card/CardFooter.js";
+// universal-cookie
+import Cookies from "universal-cookie";
 
 import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle.js";
 
@@ -29,8 +31,6 @@ import styles from "assets/jss/material-dashboard-pro-react/views/loginPageStyle
 import { toast } from "react-toastify";
 // Import toastify css file
 import "react-toastify/dist/ReactToastify.css";
-// toast-configuration method,
-// it is compulsory method.
 toast.configure();
 
 // Store Global state
@@ -50,18 +50,17 @@ store.setState("loggedInAdminInfo", {
 
 const useStyles = makeStyles(styles);
 
-export default function AdminLogin(props) {
+export default function AdminLogin({ LoginStatusChange }) {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // universal-cookie
+  const cookies = new Cookies();
   // login popup with animation
   const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
   // Loing data
   const [emailPhone, setEmailPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
   const [adminInfo, setAdminInfo, updateAdminInfo] = useGlobalState(
     "loggedInAdminInfo"
   );
@@ -75,7 +74,7 @@ export default function AdminLogin(props) {
     return function clearTimeout(id) {
       //window.clearTimeout(id);
     };
-  },[]);
+  }, []);
 
   const loginFormHandler = (event) => {
     const userData = {
@@ -87,7 +86,7 @@ export default function AdminLogin(props) {
 
     if (emailPhone.length != 0 || password.length != 0) {
       //alert('Opps! Please Enter All The Fields')
-      const loginAPI = rootPath[0] + "/auth/login";
+      const loginAPI = rootPath + "/auth/login";
       axios
         .post(loginAPI, userData)
         .then(function (response) {
@@ -123,27 +122,27 @@ export default function AdminLogin(props) {
             console.log(e.message);
           }
 
-          props.LoginStatusChange(true);
+          LoginStatusChange(true);
         })
         .catch(function (error) {
           alert("Oops! Please try again.");
-          props.LoginStatusChange(false);
+          LoginStatusChange(false);
         });
     } else {
       alert("Oops! Please enter both field.");
-      // props.LoginStatusChange(true);
     }
 
     event.preventDefault();
   };
 
   const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
+    let userToken = {
+      token: TokenContent.token,
+      tokenValidity: TokenContent.tokenValidity,
+      refreshToken: TokenContent.refreshToken,
+      refreshTokenValidity: TokenContent.refreshTokenValidity,
+    };
+    cookies.set("ACCESS_TOKEN", JSON.stringify(userToken), { path: "/" });
   };
 
   const adminInfoUdateHandler = (adminInfo) => {

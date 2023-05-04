@@ -76,7 +76,6 @@ export default function Platform({ prodData, setProdData }) {
                       name: "os",
                       value: prodData.os,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -92,7 +91,6 @@ export default function Platform({ prodData, setProdData }) {
                       name: "chipset",
                       value: prodData.chipset,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -112,7 +110,6 @@ export default function Platform({ prodData, setProdData }) {
                       name: "cpu",
                       value: prodData.cpu,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -128,7 +125,6 @@ export default function Platform({ prodData, setProdData }) {
                       name: "gpu",
                       value: prodData.gpu,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

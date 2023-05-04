@@ -69,7 +69,9 @@ export default function VoucherList() {
     "accessToken"
   );
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();;
 
   const [voucherId, setVoucherId] = useState("");
   const [VoucherCode, setVoucherCode] = useState("");
@@ -95,6 +97,12 @@ export default function VoucherList() {
   // Search
   const [searchKeyword, setSearchKeyword] = useState("");
 
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   //Start Date
   const handleStartDate = (date) => {
     setselectedStartDate(date);
@@ -114,30 +122,24 @@ export default function VoucherList() {
 
   // get Voucher List
   const syncVoucherList = () => {
-    getToken((token) => {
-      getVoucherList(token);
-    });
+    getVoucherList();
   };
   // get Voucher List
   useEffect(() => {
-    getToken((token) => {
-      getVoucherList(token);
-    });
-  }, []);
+    if(headers){
+      getVoucherList();
+    }
+  }, [headers]);
   // getVoucherList
-  const getVoucherList = (token) => {
+  const getVoucherList = () => {
     setUserNormalRender(true);
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
+
 
     const pageNo = 0;
-    const voucherListAPI = rootPath[0] + "/coupon?page=" + pageNo + "&size=5";
+    const voucherListAPI = rootPath + "/coupon?page=" + pageNo + "&size=5";
 
     axios
-      .get(voucherListAPI, config)
+      .get(voucherListAPI, headers)
       .then(function (response) {
         console.log("getVoucherList...: ", response.data);
         setVoucherList(response.data.content.data);
@@ -150,20 +152,13 @@ export default function VoucherList() {
   };
   // Pagination handler
   const paginationHandler = (pageNumber) => {
-    let config = {};
-    getToken((token) => {
-      config = {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-    });
+
     // console.log("---------Called from paginationHandler----------");
     const pageNo = pageNumber - 1;
-    const voucherListAPI = rootPath[0] + "/coupon?page=" + pageNo + "&size=5";
+    const voucherListAPI = rootPath + "/coupon?page=" + pageNo + "&size=5";
 
     axios
-      .get(voucherListAPI, config)
+      .get(voucherListAPI, headers)
       .then(function (response) {
         setVoucherList(response.data.content.data);
       })
@@ -178,27 +173,18 @@ export default function VoucherList() {
   // Voucher Search Handler
   const voucherSearchHanler = (event) => {
     setUserNormalRender(false);
-    let config = {};
-    getToken((token) => {
-      config = {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-    });
 
-    console.log("searchKeyword...: ", searchKeyword);
     const pageNo = 0;
 
     const voucherSearchByCode =
-      rootPath[0] +
+      rootPath+
       "/coupon/search?page=" +
       pageNo +
       "&size=5&coupon_code=" +
       searchKeyword;
 
     axios
-      .get(voucherSearchByCode, config)
+      .get(voucherSearchByCode, headers)
       .then(function (response) {
         console.log("voucherSearchByCode/list...: ", response.data);
         setVoucherList(response.data.content.data);
@@ -211,28 +197,21 @@ export default function VoucherList() {
   };
   // Search Pagination handler
   const searchPaginationHandler = (pageNumber) => {
-    let config = {};
-    getToken((token) => {
-      config = {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-    });
+
 
     const pageNo = pageNumber - 1;
 
     const voucherSearchByCode =
-      rootPath[0] +
+      rootPath +
       "/coupon/search?page=" +
       pageNo +
       "&size=5&coupon_code=" +
       searchKeyword;
 
-    console.log("searchPaginationHandler/config...: ", config);
+
 
     axios
-      .get(voucherSearchByCode, config)
+      .get(voucherSearchByCode, headers)
       .then(function (response) {
         setVoucherList(response.data.content.data);
       })
@@ -246,20 +225,13 @@ export default function VoucherList() {
   };
 
   const statusChangeBtnClick = (voucherId, statusToUpdate) => {
-    let config = {};
-    getToken((token) => {
-      config = {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-    });
+
 
     const statusUpdateAPI =
-      rootPath[0] + "/coupon/status/" + voucherId + "?status=" + statusToUpdate;
+      rootPath + "/coupon/status/" + voucherId + "?status=" + statusToUpdate;
 
     axios
-      .post(statusUpdateAPI, {}, config)
+      .post(statusUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("statusChangeBtnClick: ", response);
         alert("Status Updated!");
@@ -338,19 +310,12 @@ export default function VoucherList() {
   // update record if Flag receives 'true'
   const updateConfirmationFlag = (flag) => {
     if (flag === true && inputDateValidityCheck() === true) {
-      let config = {};
-      getToken((token) => {
-        config = {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        };
-      });
 
-      const voucherUpdateAPI = rootPath[0] + "/coupon/" + voucherId;
+
+      const voucherUpdateAPI = rootPath + "/coupon/" + voucherId;
       console.log("updateConfirmationFlag/voucherData: ", voucherData);
       axios
-        .put(voucherUpdateAPI, voucherData, config)
+        .put(voucherUpdateAPI, voucherData, headers)
         .then(function (response) {
           console.log("update response: ", response);
         })
@@ -399,7 +364,7 @@ export default function VoucherList() {
   // Record delete handler
   const deleteVoucher = (id) => {
     alert(id);
-    const voucherDeleteAPI = rootPath[0] + "/coupon/" + id;
+    const voucherDeleteAPI = rootPath + "/coupon/" + id;
     setDeleteUrl(voucherDeleteAPI);
 
     setDeleteBtnClicked(true);
@@ -427,77 +392,7 @@ export default function VoucherList() {
     return splitedDate;
   };
 
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
 
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
-  };
 
   return (
     <>

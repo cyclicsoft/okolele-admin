@@ -7,6 +7,10 @@ import "assets/scss/material-dashboard-pro-react.scss?v=1.9.0";
 import AdminLogin from "views/Admin/AdminLogin";
 import ProductDetails from "views/ProductManagement/ProductDetails";
 
+// Redux
+import store from "../src/services/redux/store/store";
+import { Provider } from "react-redux";
+
 const hist = createBrowserHistory();
 
 class App extends Component {
@@ -28,7 +32,7 @@ class App extends Component {
     const { isLoggedin } = this.state;
 
     return (
-      <div>
+      <Provider store={store}>
         {isLoggedin === false ? ( //To bypass login set it true
           <AdminLogin LoginStatusChange={this.LoginStatusHandler} />
         ) : (
@@ -39,7 +43,7 @@ class App extends Component {
             </Switch>
           </Router>
         )}
-      </div>
+      </Provider>
     );
   }
 }

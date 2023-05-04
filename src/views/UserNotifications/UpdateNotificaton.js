@@ -30,6 +30,7 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Clearfix from "components/Clearfix/Clearfix.js";
 import UpdateWarning from "views/ConfirmationModals/UpdateWarning";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -37,17 +38,13 @@ const UpdateNotificaton = (props) => {
   const classes = useStyles();
   const searchButton = classes.top + " " + classes.searchButton;
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   //   orderId from props
   var customerId = props.location.customerId;
   var notificationDetails = props.location.notificationDetails;
-  console.log("customerId: ", customerId);
-
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
 
   const [customerID, setCustomerID] = useState(customerId);
   //   Notification Info
@@ -74,108 +71,34 @@ const UpdateNotificaton = (props) => {
     activeStatus: activeStatus,
     userId: customerID,
   };
+
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   const updateClick = () => {
     setShowUpdateWarningPopup(true);
   };
   // status Change Flag From Modal
   const updateConfirmationFlag = (isConfirmed) => {
-    if (isConfirmed === true) {
-      getToken((token) => {
-        updateNotification(token);
-      });
+    if (isConfirmed === true && headers) {
+      updateNotification();
     }
     setShowUpdateWarningPopup(false);
   };
 
-  const updateNotification = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
-    const updateNotificationAPI =
-      rootPath[0] + "/notification/" + notificationId;
+  const updateNotification = () => {
+    const updateNotificationAPI = rootPath + "/notification/" + notificationId;
     axios
-      .put(updateNotificationAPI, notificationData, config)
+      .put(updateNotificationAPI, notificationData, headers)
       .then(function (response) {
         console.log("Notification Update", response);
       })
       .catch(function (error) {
         console.log("Notification Update error", error);
       });
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
   };
 
   return (

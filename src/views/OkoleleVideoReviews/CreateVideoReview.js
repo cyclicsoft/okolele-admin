@@ -1,10 +1,6 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// Global State
-import { store, useGlobalState } from "state-pool";
-
-// material-ui icons
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -31,20 +27,17 @@ import { toast } from "react-toastify";
 // Import toastify css file
 import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
-// toast-configuration method,
-// it is compulsory method.
+import { apiHeader } from "services/helper-function/api-header";
 toast.configure();
 
 const useStyles = makeStyles(styles);
 
 function CreateVideoReview() {
   const classes = useStyles();
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   // Review Info
   const [name, setName] = useState("");
@@ -64,30 +57,28 @@ function CreateVideoReview() {
     description: productDescription,
   };
 
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
   const reviewSaveClick = () => {
     setShowProductCreatePopup(true);
   };
   // Review Create Flag From Modal
   const reviewCreateFlagFromModal = (isConfirmed) => {
     if (isConfirmed === true) {
-      getToken((token) => {
-        saveNewVideoReview(token);
-      });
+      saveNewVideoReview();
     }
     setShowProductCreatePopup(false);
   };
 
-  const saveNewVideoReview = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  const saveNewVideoReview = () => {
     if (name !== "" && productDescription !== "" && videoUrl !== "") {
-      const reviewCreateAPI = rootPath[0] + "/reviews";
+      const reviewCreateAPI = rootPath + "/reviews";
       axios
-        .post(reviewCreateAPI, videoReviewData, config)
+        .post(reviewCreateAPI, videoReviewData, headers)
         .then(function (response) {
           // console.log("update response: ", response);
           console.log("response code: ", response.status);
@@ -101,78 +92,6 @@ function CreateVideoReview() {
     } else {
       alert("Please enter all the field.");
     }
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status === 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
   };
 
   return (

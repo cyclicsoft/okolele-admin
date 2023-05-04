@@ -71,7 +71,7 @@ const useStyles = makeStyles(styles);
 function CreateSmartWatch() {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -234,7 +234,7 @@ function CreateSmartWatch() {
 
   const saveNewSW = () => {
     // console.log("saveNewSW/swDetails: ", swDetails);
-    const swCreateAPI = rootPath[0] + "/smartwatches";
+    const swCreateAPI = rootPath + "/smartwatches";
     axios
       .post(swCreateAPI, swDetails, config)
       .then(function (response) {
@@ -388,7 +388,7 @@ function CreateSmartWatch() {
       },
     };
 
-    const bulkUploadAPI = rootPath[0] + "/products/bulkdata";
+    const bulkUploadAPI = rootPath + "/products/bulkdata";
 
     axios
       .post(bulkUploadAPI, data, csvConfig)
@@ -432,7 +432,7 @@ function CreateSmartWatch() {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
+      const refreshTokenAPI = rootPath + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

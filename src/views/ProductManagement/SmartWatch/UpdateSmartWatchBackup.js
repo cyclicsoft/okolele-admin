@@ -73,7 +73,7 @@ const useStyles = makeStyles(styles);
 function UpdateSmartWatch(props) {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
   // accessToken
   const [userToken, setUserToken, updateUserToken] = useGlobalState(
     "accessToken"
@@ -152,7 +152,7 @@ function UpdateSmartWatch(props) {
   const [imgIdToPreview, setImgIdToPreview] = useState("");
 
   useEffect(() => {
-    const swDetailsAPI = rootPath[0] + "/smartwatches/" + props.editProductId;
+    const swDetailsAPI = rootPath + "/smartwatches/" + props.editProductId;
 
     axios
       .get(swDetailsAPI)
@@ -366,7 +366,7 @@ function UpdateSmartWatch(props) {
     setShowProductUpdatePopup(false);
   };
   const swUpdate = () => {
-    const swUpdateAPI = rootPath[0] + "/smartwatches/" + props.editProductId;
+    const swUpdateAPI = rootPath + "/smartwatches/" + props.editProductId;
 
     axios
       .put(swUpdateAPI, swDetails, config)
@@ -492,7 +492,7 @@ function UpdateSmartWatch(props) {
   // Update Comment in DB after removing comments from userComments variable
   const commentsUpdateHandler = () => {
     const commentsUpdateAPI =
-      rootPath[0] + "/smartwatches/deleteComment/" + props.editProductId;
+      rootPath + "/smartwatches/deleteComment/" + props.editProductId;
 
     axios
       .post(commentsUpdateAPI, userComments)
@@ -511,7 +511,7 @@ function UpdateSmartWatch(props) {
       // console.log(
       //   "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
       // );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
+      const refreshTokenAPI = rootPath + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

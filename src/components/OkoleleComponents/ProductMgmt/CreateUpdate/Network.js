@@ -78,7 +78,6 @@ export default function Network({ prodData, setProdData }) {
                       name: "technology",
                       value: prodData.technology,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -94,7 +93,6 @@ export default function Network({ prodData, setProdData }) {
                       name: "speed",
                       value: prodData.speed || "",
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

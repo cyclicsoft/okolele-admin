@@ -75,7 +75,6 @@ export default function Comms({ prodData, setProdData }) {
                       name: "wlan",
                       value: prodData.wlan,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -91,7 +90,6 @@ export default function Comms({ prodData, setProdData }) {
                       name: "bluetooth",
                       value: prodData.bluetooth,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -111,7 +109,6 @@ export default function Comms({ prodData, setProdData }) {
                       name: "gps",
                       value: prodData.gps,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -127,7 +124,6 @@ export default function Comms({ prodData, setProdData }) {
                       name: "nfc",
                       value: prodData.nfc,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -147,7 +143,6 @@ export default function Comms({ prodData, setProdData }) {
                       name: "radio",
                       value: prodData.radio,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -163,7 +158,6 @@ export default function Comms({ prodData, setProdData }) {
                       name: "usb",
                       value: prodData.usb,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

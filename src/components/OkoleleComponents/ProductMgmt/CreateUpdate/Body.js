@@ -73,7 +73,6 @@ export default function Body({ prodData, setProdData }) {
                       name: "dimension",
                       value: prodData.dimension,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -89,7 +88,6 @@ export default function Body({ prodData, setProdData }) {
                       name: "weight",
                       value: prodData.weight,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -109,7 +107,6 @@ export default function Body({ prodData, setProdData }) {
                       name: "build",
                       value: prodData.build,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -125,7 +122,6 @@ export default function Body({ prodData, setProdData }) {
                       name: "sim",
                       value: prodData.sim,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

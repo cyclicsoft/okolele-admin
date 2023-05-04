@@ -1,18 +1,10 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// Global State
-import { useGlobalState } from "state-pool";
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
 import { toast } from "react-toastify";
@@ -36,34 +28,21 @@ import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Feat
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
 import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
-import Variants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Variants";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import { tabDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/tabDataSetter";
 import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
 export default function UpdateTab({ editProductId, prodDetails }) {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  const refreshTkn = {
-    refreshToken: userToken.refreshToken,
-  };
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
   // Product Info
   const [prodData, setProdData] = useState({
     name: "",
@@ -117,12 +96,6 @@ export default function UpdateTab({ editProductId, prodDetails }) {
     models: [],
     performances: [],
   });
-
-  useEffect(() => {
-    const data = tabDataSetter(prodDetails);
-    // console.log("%cupdateTab.js line:130 data", "color: #007acc;", data);
-    setProdData(data);
-  }, [prodDetails]);
 
   // Product create confirmation popup viewar
   const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);
@@ -185,6 +158,18 @@ export default function UpdateTab({ editProductId, prodDetails }) {
     variants: prodData.productAllVariants,
   };
 
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
+  useEffect(() => {
+    const data = tabDataSetter(prodDetails);
+    // console.log("%cupdateTab.js line:130 data", "color: #007acc;", data);
+    setProdData(data);
+  }, [prodDetails]);
+
   const tabUpdateClick = () => {
     setShowProductUpdatePopup(true);
   };
@@ -208,10 +193,10 @@ export default function UpdateTab({ editProductId, prodDetails }) {
 
   const updateTab = () => {
     console.log("updateTab/tabDetails: ", tabDetails);
-    const tabUpdateAPI = rootPath[0] + "/tablets/" + editProductId;
+    const tabUpdateAPI = rootPath + "/tablets/" + editProductId;
 
     axios
-      .put(tabUpdateAPI, tabDetails, config)
+      .put(tabUpdateAPI, tabDetails, headers)
       .then(function (response) {
         console.log("update response: ", response);
         // console.log("response code: ", response.status);
@@ -228,7 +213,7 @@ export default function UpdateTab({ editProductId, prodDetails }) {
     var currentLocalDateTime = new Date();
 
     if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
+      const refreshTokenAPI = rootPath + "/auth/token";
 
       axios
         .post(refreshTokenAPI, refreshTkn)

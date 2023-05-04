@@ -73,7 +73,6 @@ export default function Display({ prodData, setProdData }) {
                       name: "displayType",
                       value: prodData.displayType,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -89,7 +88,6 @@ export default function Display({ prodData, setProdData }) {
                       name: "displaySize",
                       value: prodData.displaySize,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -109,7 +107,6 @@ export default function Display({ prodData, setProdData }) {
                       name: "resolution",
                       value: prodData.resolution,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -125,7 +122,6 @@ export default function Display({ prodData, setProdData }) {
                       name: "protection",
                       value: prodData.protection,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

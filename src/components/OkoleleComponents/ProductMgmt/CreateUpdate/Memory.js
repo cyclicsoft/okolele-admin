@@ -71,7 +71,6 @@ export default function Memory({ prodData, setProdData }) {
                       name: "cardSlot",
                       value: prodData.cardSlot,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>
@@ -87,7 +86,6 @@ export default function Memory({ prodData, setProdData }) {
                       name: "internalStorage",
                       value: prodData.internalStorage,
                       onChange: (event) => inputChangeHandler(event),
-                      maxLength: "100",
                     }}
                   />
                 </GridItem>

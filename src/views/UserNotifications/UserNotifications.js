@@ -2,18 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 // Global State
-import { store, useGlobalState } from "state-pool";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 
 // material-ui icons
 import Assignment from "@material-ui/icons/Assignment";
-import Person from "@material-ui/icons/Person";
 import Edit from "@material-ui/icons/Edit";
-import Close from "@material-ui/icons/Close";
 import InfoIcon from "@mui/icons-material/Info";
-import PermIdentity from "@material-ui/icons/PermIdentity";
 import Search from "@material-ui/icons/Search";
 import SendIcon from "@mui/icons-material/Send";
 
@@ -26,24 +22,13 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardHeader from "components/Card/CardHeader.js";
-
 import Modal from "react-modal";
-
-import avatar from "assets/img/faces/marc.jpg";
-
 import CustomInput from "components/CustomInput/CustomInput.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
-import CardAvatar from "components/Card/CardAvatar.js";
-
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.js";
-
-import AddLocation from "@material-ui/icons/AddLocation";
-
-import Map from "../GhorwaliMap/Map";
 import PaginationComponent from "views/Pagination/PaginationComponent";
-
 import "../../assets/scss/ghorwali-scss/paginations.scss";
 import "../../assets/scss/ghorwali-scss/search-dropdown.scss";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -71,14 +56,10 @@ export default function UserNotifications(props) {
 
   // customerId from props
   var customer_Id = props.location.customerId;
-  console.log("customerId: ", customer_Id);
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   const searchButton = classes.top + " " + classes.searchButton;
 
@@ -99,24 +80,22 @@ export default function UserNotifications(props) {
   const [totalPageNo, setTotalPageNo] = useState(1);
 
   useEffect(() => {
-    getToken((token) => {
-      // console.log("registerClick / TOken: ", token);
-      getNotificationList(token);
+    apiHeader((headers) => {
+      setHeaders(headers);
     });
-  }, [customerID]);
+  }, []);
+
+  useEffect(() => {
+    if (headers) {
+      getNotificationList();
+    }
+  }, [customerID, headers]);
 
   //   get Order List
-  const getNotificationList = (token) => {
-    // API Header
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  const getNotificationList = () => {
     const pageNo = 0;
     const notificationListAPI =
-      rootPath[0] +
+      rootPath +
       "/notification/user?userId=" +
       customerID +
       "&activeStatusType=ALL&page=" +
@@ -124,7 +103,7 @@ export default function UserNotifications(props) {
       "&size=10";
 
     axios
-      .get(notificationListAPI, config)
+      .get(notificationListAPI, headers)
       .then(function (response) {
         setUserNotifications(response.data.content.data);
         console.log("getNotificationList...: ", response.data.content.data);
@@ -165,78 +144,6 @@ export default function UserNotifications(props) {
       pathname: "/admin/update-notification",
       customerId: customerId,
       notificationDetails: notification,
-    });
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
     });
   };
 

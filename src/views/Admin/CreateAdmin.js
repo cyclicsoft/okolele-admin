@@ -1,22 +1,11 @@
 //index->App->Admin->Sidebar->CreateAdmin
 /*eslint-disable*/
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-// Global State
-import { store, useGlobalState } from "state-pool";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormLabel from "@material-ui/core/FormLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import InputAdornment from "@material-ui/core/InputAdornment";
-
 // material ui icons
 import MailOutline from "@material-ui/icons/MailOutline";
-import Contacts from "@material-ui/icons/Contacts";
-import Check from "@material-ui/icons/Check";
-import Close from "@material-ui/icons/Close";
-
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
@@ -24,29 +13,20 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
 import CardHeader from "components/Card/CardHeader.js";
-import CardText from "components/Card/CardText.js";
 import CardIcon from "components/Card/CardIcon.js";
 import CardBody from "components/Card/CardBody.js";
-import CardFooter from "components/Card/CardFooter.js";
-
-import { RefreshTokenGenerator } from "../ReusableFunctions/RefreshTokenGenerator.js";
-
 // style for this view
 import styles from "assets/jss/material-dashboard-pro-react/views/validationFormsStyle.js";
 import "../../assets/scss/ghorwali-scss/create-admin.scss";
+import { apiHeader } from "services/helper-function/api-header.js";
 
 const useStyles = makeStyles(styles);
 
 export default function AdminManagement() {
   const classes = useStyles();
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-
-  console.log("userToken: ", userToken);
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  const [headers, setHeaders] = useState();
 
   // register form
   const [registerPhone, setregisterPhone] = React.useState("");
@@ -64,6 +44,12 @@ export default function AdminManagement() {
   ] = React.useState("");
   //   Empty field check
   const [isEmptyCheck, setIsEmptyCheck] = useState(false);
+
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
 
   // function that returns true if value is email, false otherwise
   const verifyEmail = (value) => {
@@ -113,10 +99,7 @@ export default function AdminManagement() {
       registerPasswordState !== "" &&
       registerConfirmPasswordState !== ""
     ) {
-      getToken((token) => {
-        console.log("registerClick / TOken: ", token);
-        adminCreateHandler(token);
-      });
+      adminCreateHandler();
     }
   };
 
@@ -128,96 +111,16 @@ export default function AdminManagement() {
     email: registerEmail,
     roles: ["ROLE_ADMIN"],
   };
-  const adminCreateHandler = (token) => {
-    // API Header
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
-    console.log("config", config);
-    const registerAPI =rootPath[0] + "/auth/signup?";
+  const adminCreateHandler = () => {
+    const registerAPI = rootPath + "/auth/signup?";
     axios
-      .post(registerAPI, registerData, config)
+      .post(registerAPI, registerData, headers)
       .then(function (response) {
         console.log("Register response: ", response);
       })
       .catch(function (error) {
         console.log(error);
       });
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
   };
 
   return (

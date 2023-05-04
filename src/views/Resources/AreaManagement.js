@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
-// Global State
-import { store, useGlobalState } from "state-pool";
 // Custom Hooks
 import useEmptyObjCheck from "views/OkoleleCustomHooks/useEmptyObjCheck";
-
 // core components
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
@@ -22,18 +19,11 @@ import Table from "components/Table/Table.js";
 
 // material-ui icons
 import Edit from "@material-ui/icons/Edit";
-import Assignment from "@material-ui/icons/Assignment";
-import Person from "@material-ui/icons/Person";
-import Close from "@material-ui/icons/Close";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import UnpublishedIcon from "@mui/icons-material/Unpublished";
-import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 // SCSS File
 import "../../assets/scss/ghorwali-scss/appPrivacy.scss";
-import Add from "@material-ui/icons/Add";
+import { apiHeader } from "services/helper-function/api-header";
 
 const customStyles = {
   content: {
@@ -58,11 +48,9 @@ const useStyles = makeStyles(styles);
 function AreaManagement() {
   const classes = useStyles();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   const [divisionList, setDivisionList] = useState([]);
   const [selectedDivisionName, setSelectedDivisionName] = useState("");
@@ -87,22 +75,22 @@ function AreaManagement() {
   const [modalIsOpen, setIsOpen] = React.useState(false);
 
   useEffect(() => {
-    getToken((token) => {
-      getAreas(token);
+    apiHeader((headers) => {
+      setHeaders(headers);
     });
   }, []);
 
-  const getAreas = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
+  useEffect(() => {
+    if (headers) {
+      getAreas();
+    }
+  }, []);
 
-    const areaListAPI = rootPath[0] + "/area";
+  const getAreas = () => {
+    const areaListAPI = rootPath + "/area";
 
     axios
-      .get(areaListAPI, config)
+      .get(areaListAPI, headers)
       .then(function (response) {
         setDivisionList(response.data.content.divisions);
         setSelectedDivisionName(response.data.content.divisions[0].div_name);
@@ -121,22 +109,11 @@ function AreaManagement() {
   };
   // Division
   const saveDivision = () => {
-    let tkn = "";
-    getToken((token) => {
-      tkn = token;
-    });
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + tkn,
-      },
-    };
-
     const addDivisionAPI =
-      rootPath[0] + "/area/division?div_name=" + newDivisionName;
+      rootPath + "/area/division?div_name=" + newDivisionName;
 
     axios
-      .post(addDivisionAPI, {}, config)
+      .post(addDivisionAPI, {}, headers)
       .then(function (response) {
         console.log("New Division...: ", response);
 
@@ -184,26 +161,15 @@ function AreaManagement() {
     });
   };
   const saveCity = () => {
-    let tkn = "";
-    getToken((token) => {
-      tkn = token;
-    });
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + tkn,
-      },
-    };
-
     const addCityAPI =
-      rootPath[0] +
+      rootPath +
       "/area/cities?div_id=" +
       selectedDivId +
       "&city_name=" +
       newCityName;
 
     axios
-      .post(addCityAPI, {}, config)
+      .post(addCityAPI, {}, headers)
       .then(function (response) {
         console.log("New City...: ", response);
 
@@ -245,19 +211,8 @@ function AreaManagement() {
     });
   };
   const saveArea = () => {
-    let tkn = "";
-    getToken((token) => {
-      tkn = token;
-    });
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + tkn,
-      },
-    };
-
     const addAreaAPI =
-      rootPath[0] +
+      rootPath +
       "/area/areas?div_id=" +
       selectedDivId +
       "&city_id=" +
@@ -268,7 +223,7 @@ function AreaManagement() {
       newAreaDeliveryConst;
 
     axios
-      .post(addAreaAPI, {}, config)
+      .post(addAreaAPI, {}, headers)
       .then(function (response) {
         console.log("Area City...: ", response);
 
@@ -299,28 +254,17 @@ function AreaManagement() {
   }
 
   const updateDivCityArea = () => {
-    let tkn = "";
-    getToken((token) => {
-      tkn = token;
-    });
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + tkn,
-      },
-    };
-
     let updateAPI = "";
     if (toUpdate === "Division") {
       updateAPI =
-        rootPath[0] +
+        rootPath +
         "/area/division/" +
         updatedDivId +
         "?div_name=" +
         nameToUpdate;
     } else if (toUpdate === "City") {
       updateAPI =
-        rootPath[0] +
+        rootPath +
         "/area/cities/" +
         updatedCityId +
         "?div_id=" +
@@ -329,7 +273,7 @@ function AreaManagement() {
         nameToUpdate;
     } else if (toUpdate === "Area") {
       updateAPI =
-        rootPath[0] +
+        rootPath +
         "/area/areas/" +
         updatedAreaId +
         "?div_id=" +
@@ -343,10 +287,8 @@ function AreaManagement() {
     }
 
     axios
-      .put(updateAPI, {}, config)
+      .put(updateAPI, {}, headers)
       .then(function (response) {
-        console.log("After Update...: ", response);
-
         setDivisionList(response.data.content.divisions);
         setSelectedDivisionName(response.data.content.divisions[0].div_name);
         setSelectedDivId(response.data.content.divisions[0].div_id);
@@ -365,26 +307,14 @@ function AreaManagement() {
   };
 
   const deleteDivCityArea = (id, type) => {
-    let tkn = "";
-    getToken((token) => {
-      tkn = token;
-    });
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + tkn,
-      },
-    };
-
     let deleteAPI = "";
     if (type === "Division") {
-      deleteAPI = rootPath[0] + "/area/division/" + id;
+      deleteAPI = rootPath + "/area/division/" + id;
     } else if (type === "City") {
-      deleteAPI =
-        rootPath[0] + "/area/cities/" + id + "?div_id=" + selectedDivId;
+      deleteAPI = rootPath + "/area/cities/" + id + "?div_id=" + selectedDivId;
     } else if (type === "Area") {
       deleteAPI =
-        rootPath[0] +
+        rootPath +
         "/area/areas/" +
         id +
         "?div_id=" +
@@ -394,7 +324,7 @@ function AreaManagement() {
     }
 
     axios
-      .delete(deleteAPI, config)
+      .delete(deleteAPI, headers)
       .then(function (response) {
         console.log("After Delete...: ", response);
       })
@@ -403,78 +333,6 @@ function AreaManagement() {
       });
 
     setIsOpen(false);
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
   };
 
   return (

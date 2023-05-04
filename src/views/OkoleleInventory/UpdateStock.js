@@ -1,37 +1,27 @@
 //index->App->Admin->Sidebar->CreateAdmin
 //Ghorwali Component
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import axios from "axios";
 // Global State
-import { store, useGlobalState } from "state-pool";
+import { useGlobalState } from "state-pool";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "react-modal";
 
 // @material-ui/icons
-import PermIdentity from "@material-ui/icons/PermIdentity";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import TabIcon from "@mui/icons-material/Tab";
-import EarbudsIcon from "@mui/icons-material/Earbuds";
-import WatchIcon from "@mui/icons-material/Watch";
 import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
-import Person from "@material-ui/icons/Person";
 import Edit from "@material-ui/icons/Edit";
-import Close from "@material-ui/icons/Close";
 import Search from "@material-ui/icons/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CachedIcon from "@mui/icons-material/Cached";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import UnpublishedIcon from "@mui/icons-material/Unpublished";
-import UpdateIcon from "@mui/icons-material/Update";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
@@ -40,10 +30,6 @@ import Table from "components/Table/Table.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 
 import styles from "assets/jss/material-dashboard-pro-react/views/userProfileStyles.js";
-// import CreatePhone from "./Phone/CreatePhone";
-// import CreateTab from "./Tab/CreateTab";
-// import CreateSmartWatch from "./SmartWatch/CreateSmartWatch";
-// import CreateAccessory from "./Accessory/CreateAccessory";
 // Loader
 import FillingBottle from "react-cssfx-loading/lib/FillingBottle";
 // Dropdown Select
@@ -58,18 +44,9 @@ import PaginationComponent from "views/Pagination/PaginationComponent";
 import "assets/scss/ghorwali-scss/update-product.scss";
 import "../../assets/scss/ghorwali-scss/create-admin.scss";
 
-// import UpdatePhone from "./Phone/UpdatePhone";
-// import PhoneDetails from "./Phone/PhoneDetails";
-// import TabDetails from "./Tab/TabDetails";
-// import UpdateTab from "./Tab/UpdateTab";
-// import SmartWatchDetails from "./SmartWatch/SmartWatchDetails";
-import { TrendingUpRounded } from "@mui/icons-material";
-// import { RefreshTokenGenerator } from "../ReusableFunctions/RefreshTokenGenerator.js";
 // Warning Popup
 import ProductStatusUpdateWarning from "views/ConfirmationModals/ProductStatusUpdateWarning";
-// import AccessoryDetails from "./Accessory/AccessoryDetails";
-// import UpdateAccessory from "./Accessory/UpdateAccessory";
-// import UpdateSmartWatch from "./SmartWatch/UpdateSmartWatch";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -89,25 +66,10 @@ const customStyles = {
 
 export default function UpdateStock() {
   const classes = useStyles();
-  const history = useHistory();
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
-  // loggedIn Admin Info
-  const [adminInfo, setAdminInfo, updateAdminInfo] = useGlobalState(
-    "loggedInAdminInfo"
-  );
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
-  var accessTknValidity = new Date(userToken.tokenValidity);
-  var refreshTknValidity = new Date(userToken.refreshTokenValidity);
-  // API Header
-  let config = {
-    headers: {
-      Authorization: "Bearer " + userToken.token,
-    },
-  };
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   // Products Info
   const [allProducts, setallProducts] = useState([]);
@@ -135,7 +97,11 @@ export default function UpdateStock() {
   const [editProductId, setEditProductId] = useState("");
   const [editProductCategory, setEditProductCategory] = useState("");
 
-  // useEffect 1
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
   // Initial API Call
   useEffect(() => {
     console.log("useEffect 1 start / dropdownValue", dropdownValue);
@@ -148,7 +114,7 @@ export default function UpdateStock() {
 
     const pageNo = 0;
     const allProductsAPI =
-      rootPath[0] +
+      rootPath +
       "/products?page=" +
       pageNo +
       "&size=10&productType=" +
@@ -185,7 +151,7 @@ export default function UpdateStock() {
     const pageNo = pageNumber - 1;
     setCurrentPage(pageNo);
     const allProductsAPI =
-      rootPath[0] +
+      rootPath +
       "/products?page=" +
       pageNo +
       "&size=10&productType=" +
@@ -216,7 +182,7 @@ export default function UpdateStock() {
     setIsDataLoaded(false);
     // const pageNo = 0;
     const allProductsAPI =
-      rootPath[0] +
+      rootPath +
       "/products?page=" +
       currentPage +
       "&size=10&productType=" +
@@ -258,7 +224,7 @@ export default function UpdateStock() {
       productCategory = "accessories";
     }
     const phoneSearchAPI =
-      rootPath[0] +
+      rootPath +
       "/" +
       productCategory +
       "/searchByTitle?keyword=" +
@@ -307,23 +273,8 @@ export default function UpdateStock() {
   };
   // status Change Flag From Modal
   const statusChangeFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        console.log(
-          "accessTknValidity.getTime() > currentLocalDateTime.getTime()"
-        );
-        updateStatus();
-      } else {
-        console.log(
-          "accessTknValidity.getTime() <= currentLocalDateTime.getTime()"
-        );
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          console.log("isRefreshed: ", isRefreshed);
-          updateStatus();
-        });
-      }
+    if (isConfirmed === true && headers) {
+      updateStatus();
     }
     setShowPublishPopup(false);
   };
@@ -347,7 +298,7 @@ export default function UpdateStock() {
     setIsDataLoaded(false);
 
     const statusUpdateAPI =
-      rootPath[0] +
+      rootPath +
       "/" +
       productCategory +
       "/updatePublishStatus/" +
@@ -356,7 +307,7 @@ export default function UpdateStock() {
       statusToBeChanged;
 
     axios
-      .post(statusUpdateAPI, {}, config)
+      .post(statusUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("Status Update response: ", response);
         alert("Status updated!");
@@ -433,25 +384,15 @@ export default function UpdateStock() {
   };
 
   const updateTotalQtyClick = (innerVariantId, addDeductFlag) => {
-    getToken((token) => {
-      updateTotalQty(token, innerVariantId, addDeductFlag);
-    });
+    updateTotalQty(innerVariantId, addDeductFlag);
   };
 
   // updateTotalQty
-  function updateTotalQty(token, innerVariantId, addDeductFlag) {
-    console.log("updateTotalQty/token: ", token);
-
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  function updateTotalQty(innerVariantId, addDeductFlag) {
     let totalStockUpdateAPI = "";
     if (addDeductFlag == "deduct") {
       totalStockUpdateAPI =
-        rootPath[0] +
+        rootPath +
         "/products/updateStock/" +
         editProductId +
         "?variantId=" +
@@ -463,7 +404,7 @@ export default function UpdateStock() {
         "&stockType=TOTAL";
     } else if (addDeductFlag == "add") {
       totalStockUpdateAPI =
-        rootPath[0] +
+        rootPath +
         "/products/updateStock/" +
         editProductId +
         "?variantId=" +
@@ -476,7 +417,7 @@ export default function UpdateStock() {
     }
 
     axios
-      .post(totalStockUpdateAPI, {}, config)
+      .post(totalStockUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("updateTotalQty / response: ", response);
         if (response.status == 200) {
@@ -493,23 +434,15 @@ export default function UpdateStock() {
   }
 
   const updateSellableQtyClick = (innerVariantId, addDeductFlag) => {
-    getToken((token) => {
-      updateSellableQty(token, innerVariantId, addDeductFlag);
-    });
+    updateSellableQty(innerVariantId, addDeductFlag);
   };
 
   // updateSellableQty
-  function updateSellableQty(token, innerVariantId, addDeductFlag) {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  function updateSellableQty(innerVariantId, addDeductFlag) {
     let sellableStockUpdateAPI = "";
     if (addDeductFlag == "deduct") {
       sellableStockUpdateAPI =
-        rootPath[0] +
+        rootPath +
         "/products/updateStock/" +
         editProductId +
         "?variantId=" +
@@ -521,7 +454,7 @@ export default function UpdateStock() {
         "&stockType=SELL";
     } else if (addDeductFlag == "add") {
       sellableStockUpdateAPI =
-        rootPath[0] +
+        rootPath +
         "/products/updateStock/" +
         editProductId +
         "?variantId=" +
@@ -534,7 +467,7 @@ export default function UpdateStock() {
     }
 
     axios
-      .post(sellableStockUpdateAPI, {}, config)
+      .post(sellableStockUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("updateTotalQty / response: ", response);
         if (response.status == 200) {
@@ -548,71 +481,6 @@ export default function UpdateStock() {
         }
         console.log("updateTotalQty / error: ", error);
       });
-  }
-
-  // get Token
-  function getToken(callback) {
-    // token
-    let token = userToken.token;
-    // tokenValidity
-    var tokenTime = new Date(userToken.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenHandler((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-
-  // refresh Token Handler
-  function refreshTokenHandler(callback) {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      console.log(
-        "refreshTknValidity.getTime() > currentLocalDateTime.getTime()"
-      );
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      axios
-        .post(refreshTokenAPI, userToken.refreshToken)
-        .then(function (response) {
-          console.log("Refresh token response: ", response);
-
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            callback(null);
-            // Logout forcefully from here
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-          callback(null);
-        });
-    } else {
-      console.log(
-        "refreshTknValidity.getTime() <= currentLocalDateTime.getTime()"
-      );
-      // Logout forcefully from here
-      callback(null);
-    }
   }
 
   return (

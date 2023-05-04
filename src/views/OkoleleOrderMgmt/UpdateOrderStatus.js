@@ -1,9 +1,6 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
-// Global State
-import { store, useGlobalState } from "state-pool";
 
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
@@ -11,8 +8,6 @@ import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
-import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardIcon from "components/Card/CardIcon.js";
@@ -20,7 +15,7 @@ import CardHeader from "components/Card/CardHeader.js";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 // Custom Input
 import CustomInput from "components/CustomInput/CustomInput.js";
-import Clearfix from "components/Clearfix/Clearfix.js";
+import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
@@ -30,14 +25,11 @@ const UpdateOrderStatus = (props) => {
 
   //   orderId from props
   var orderId = props.location.orderId;
-  console.log("orderId: ", orderId);
 
-  // accessToken
-  const [userToken, setUserToken, updateUserToken] = useGlobalState(
-    "accessToken"
-  );
   // Root Path URL
-  const rootPath = useGlobalState("rootPathVariable");
+  const rootPath = process.env.REACT_APP_BASE_URL;
+  // headers
+  const [headers, setHeaders] = useState();
 
   //   Order Info
   const [orderDetails, setOrderDetails] = useState([]);
@@ -60,23 +52,21 @@ const UpdateOrderStatus = (props) => {
   const [transactionId, setTransactionId] = useState("");
 
   useEffect(() => {
-    getToken((token) => {
-      getOrderDetails(token);
+    apiHeader((headers) => {
+      setHeaders(headers);
     });
-  }, [orderID]);
+  }, []);
 
-  const getOrderDetails = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
+  useEffect(() => {
+    if (headers) {
+      getOrderDetails();
+    }
+  }, [orderID, headers]);
 
-    console.log("config...: ", config);
-
-    const orderDetailsAPI = rootPath[0] + "/order/" + orderID;
+  const getOrderDetails = () => {
+    const orderDetailsAPI = rootPath + "/order/" + orderID;
     axios
-      .get(orderDetailsAPI, config)
+      .get(orderDetailsAPI, headers)
       .then(function (response) {
         setOrderDetails(response.data.content);
         console.log("Order Details...: ", response.data.content);
@@ -105,19 +95,11 @@ const UpdateOrderStatus = (props) => {
   };
 
   const statusUpdaeClick = () => {
-    getToken((token) => {
-      updateStatus(token);
-    });
+    updateStatus();
   };
-  const updateStatus = (token) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    };
-
+  const updateStatus = () => {
     const statusUpdateAPI =
-      rootPath[0] +
+      rootPath +
       "/order/status/" +
       orderID +
       "?userId=" +
@@ -127,85 +109,13 @@ const UpdateOrderStatus = (props) => {
       "&orderActiveStatus=false";
 
     axios
-      .put(statusUpdateAPI, {}, config)
+      .put(statusUpdateAPI, {}, headers)
       .then(function (response) {
         console.log("Order status update...: ", response);
       })
       .catch(function (error) {
         console.log("Order status update error", error);
       });
-  };
-
-  // get Token
-  function getToken(callback) {
-    let userTkn = userToken;
-    console.log("getToken/userToken: ", userTkn);
-    // token
-    let token = userTkn.token;
-    // tokenValidity
-    var tokenTime = new Date(userTkn.tokenValidity);
-    // current time
-    var now = new Date();
-
-    if (tokenTime.getTime() > now.getTime()) {
-      console.log("getToken/If conditio", token);
-      callback(token);
-    } else {
-      refreshTokenGenerator((newToken) => {
-        console.log("getToken/Else conditio", newToken);
-        if (newToken !== null && newToken.length > 0) {
-          token = newToken;
-          callback(token);
-        }
-      });
-    }
-  }
-  // Refresh Token Generator
-  function refreshTokenGenerator(callback) {
-    var refreshTokenTime = new Date(userToken.refreshTokenValidity);
-    var now = new Date();
-
-    if (refreshTokenTime.getTime() > now.getTime()) {
-      const refreshTokenAPI = rootPath[0] + "/auth/token";
-      console.log(
-        "RefreshTokenGenerator/refreshToken before generation: ",
-        userToken.refreshToken
-      );
-
-      axios
-        .post(refreshTokenAPI, {
-          refreshToken: userToken.refreshToken,
-        })
-        .then(function (response) {
-          if (response.status == 403) {
-            alert(response.data.message);
-            localStorage.clear();
-            window.location.href = "/";
-          } else {
-            tokenUdateHandler(response.data);
-
-            console.log("RefreshTokenGenerator/response.data: ", response.data);
-            callback(response.data.token);
-          }
-        })
-        .catch(function (error) {
-          console.log("RefreshTokenGenerator / error: ", error);
-          localStorage.clear();
-          window.location.href = "/";
-        });
-    } else {
-      localStorage.clear();
-      window.location.href = "/";
-    }
-  }
-  // token Udate to Global state
-  const tokenUdateHandler = (TokenContent) => {
-    updateUserToken(function (accessToken) {
-      accessToken.token = TokenContent.token;
-      accessToken.tokenValidity = TokenContent.tokenValidity;
-      accessToken.refreshToken = TokenContent.refreshToken;
-      accessToken.refreshTokenValidity = TokenContent.refreshTokenValidity;
-    });
   };
 
   return (

@@ -6,6 +6,7 @@ import VariantInnerObj from "./VariantInnerObj";
 import DynamicImgElmntCreator from "../DynamicInputs/DynamicImgElmntCreator";
 // SCSS
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
+import DynamicImgElmntUpdate from "../DynamicInputs/DynamicImgElmntUpdate";
 
 const ProductVariants = ({ productVariants, setProductVariants }) => {
   const productImagesSetter = (images, index) => {
@@ -104,7 +105,7 @@ const ProductVariants = ({ productVariants, setProductVariants }) => {
                 Aspect Ratio 1:1 & Dimension 1080px X 1080px
               </div>
               <GridItem xs={12} sm={12} md={12} key={i}>
-                <DynamicImgElmntCreator
+                <DynamicImgElmntUpdate
                   productImages={productVariants[i].images}
                   setProductImages={(list) => productImagesSetter(list, i)}
                 />
