@@ -66,24 +66,30 @@ export default function UpdateProducts(props) {
           <Card>
             <CardBody>
               {prodCategory == "mobiles" ? (
-                <UpdatePhone editProductId={prodId} prodDetails={prodDetails} />
+                <UpdatePhone
+                  editProductId={prodId}
+                  prodDetailInfo={prodDetails}
+                />
               ) : null}
 
               {prodCategory == "tablets" ? (
-                <UpdateTab editProductId={prodId} prodDetails={prodDetails} />
+                <UpdateTab
+                  editProductId={prodId}
+                  prodDetailInfo={prodDetails}
+                />
               ) : null}
 
               {prodCategory == "smartwatches" ? (
                 <UpdateSmartWatch
                   editProductId={prodId}
-                  prodDetails={prodDetails}
+                  prodDetailInfo={prodDetails}
                 />
               ) : null}
 
               {prodCategory == "accessories" ? (
                 <UpdateAccessory
                   editProductId={prodId}
-                  prodDetails={prodDetails}
+                  prodDetailInfo={prodDetails}
                 />
               ) : null}
 

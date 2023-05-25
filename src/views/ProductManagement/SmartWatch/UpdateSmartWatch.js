@@ -7,11 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
-toast.configure();
-
 import GeneralInfo from "components/OkoleleComponents/ProductMgmt/CreateUpdate/GeneralInfo";
 import { enums } from "services/enum/enums";
 import Network from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Network";
@@ -20,22 +16,27 @@ import Body from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Body";
 import Display from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Display";
 import Platform from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Platform";
 import Memory from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Memory";
+import MainCam from "components/OkoleleComponents/ProductMgmt/CreateUpdate/MainCam";
+import SelfiCam from "components/OkoleleComponents/ProductMgmt/CreateUpdate/SelfiCam";
+import Sound from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Sound";
 import Comms from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Comms";
 import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Features";
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
+import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
+import { swDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/swDataSetter";
+import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
+import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
+import { apiHeader } from "services/helper-function/api-header";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
-import { swDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/swDataSetter";
-import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
 import Models from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Models";
 import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/OtherDetails";
-import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
-export default function UpdateSmartWatch({ editProductId, prodDetails }) {
+export default function UpdateSmartWatch({ editProductId, prodDetailInfo }) {
   const classes = useStyles();
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
@@ -97,9 +98,9 @@ export default function UpdateSmartWatch({ editProductId, prodDetails }) {
   });
 
   useEffect(() => {
-    const data = swDataSetter(prodDetails);
+    const data = swDataSetter(prodDetailInfo);
     setProdData(data);
-  }, [prodDetails]);
+  }, [prodDetailInfo]);
 
   // Product create confirmation popup viewar
   const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);
@@ -107,7 +108,7 @@ export default function UpdateSmartWatch({ editProductId, prodDetails }) {
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
 
-  const swDetails = {
+  const prodDetails = {
     category: prodData.prodType,
     title: prodData.name,
     brand: prodData.brand,
@@ -169,52 +170,50 @@ export default function UpdateSmartWatch({ editProductId, prodDetails }) {
     });
   }, []);
 
-  const swUpdateClick = () => {
+  const prodUpdateClick = () => {
     setShowProductUpdatePopup(true);
   };
-  // Product Create Flag From Modal
+  // Product Update Flag From Modal
   const productUpdateFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true && headers) {
-      updateSw();
+    if (isConfirmed && headers) {
+      updateProd();
     }
 
     setShowHttpResponseMsg(false);
     setShowProductUpdatePopup(false);
   };
 
-  const updateSw = () => {
-    console.log("updateSw/swDetails: ", swDetails);
-    const swUpdateAPI = rootPath + "/smartwatches/" + editProductId;
+  const updateProd = async () => {
+    let productDetails = await removeDbImgIdfromVariants(prodDetails);
+
+    const prodUpdateAPI = rootPath + "/smartwatches/" + editProductId;
 
     axios
-      .put(swUpdateAPI, swDetails, headers)
+      .put(prodUpdateAPI, productDetails, headers)
       .then(function (response) {
-        console.log("update response: ", response);
-        // console.log("response code: ", response.status);
-        // setHttpResponseCode(response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(response.status);
+        setShowHttpResponseMsg(true);
       })
       .catch(function (error) {
-        // setHttpResponseCode(error.response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(error.response.status);
+        setShowHttpResponseMsg(true);
       });
   };
 
   return (
     <>
-      {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductUpdatePopup ? (
+        {showProductUpdatePopup && (
           <ProductCreateConfirmation
             productCreateFlagFromModal={productUpdateFlagFromModal}
           />
-        ) : null}
+        )}
 
         {/* Show HTTP response code  */}
-        {showHttpResponseMsg === true ? (
+        {showHttpResponseMsg && (
           <HttpStatusCode responseCode={httpResponseCode} />
-        ) : null}
+        )}
       </div>
 
       <h4 className={classes.cardIconTitle}>Update Smart Watch</h4>
@@ -252,7 +251,7 @@ export default function UpdateSmartWatch({ editProductId, prodDetails }) {
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={swUpdateClick}
+        onClick={prodUpdateClick}
       >
         Update
       </Button>

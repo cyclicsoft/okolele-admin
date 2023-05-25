@@ -7,11 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
-toast.configure();
-
 import GeneralInfo from "components/OkoleleComponents/ProductMgmt/CreateUpdate/GeneralInfo";
 import { enums } from "services/enum/enums";
 import Network from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Network";
@@ -28,16 +24,17 @@ import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Feat
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
 import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
+import { tabDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/tabDataSetter";
+import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
+import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
+import { apiHeader } from "services/helper-function/api-header";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
-import { tabDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/tabDataSetter";
-import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
-import { apiHeader } from "services/helper-function/api-header";
 
 const useStyles = makeStyles(styles);
 
-export default function UpdateTab({ editProductId, prodDetails }) {
+export default function UpdateTab({ editProductId, prodDetailInfo }) {
   const classes = useStyles();
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
@@ -97,13 +94,18 @@ export default function UpdateTab({ editProductId, prodDetails }) {
     performances: [],
   });
 
+  useEffect(() => {
+    const data = tabDataSetter(prodDetailInfo);
+    setProdData(data);
+  }, [prodDetailInfo]);
+
   // Product create confirmation popup viewar
   const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
 
-  const tabDetails = {
+  const prodDetails = {
     category: prodData.prodType,
     title: prodData.name,
     brand: prodData.brand,
@@ -164,107 +166,53 @@ export default function UpdateTab({ editProductId, prodDetails }) {
     });
   }, []);
 
-  useEffect(() => {
-    const data = tabDataSetter(prodDetails);
-    // console.log("%cupdateTab.js line:130 data", "color: #007acc;", data);
-    setProdData(data);
-  }, [prodDetails]);
-
-  const tabUpdateClick = () => {
+  const prodUpdateClick = () => {
     setShowProductUpdatePopup(true);
   };
-  // Product Create Flag From Modal
-  const productCreateFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        updateTab();
-      } else {
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          updateTab();
-        });
-      }
+  // Product Update Flag From Modal
+  const productUpdateFlagFromModal = (isConfirmed) => {
+    if (isConfirmed && headers) {
+      updateProd();
     }
 
     setShowHttpResponseMsg(false);
     setShowProductUpdatePopup(false);
   };
 
-  const updateTab = () => {
-    console.log("updateTab/tabDetails: ", tabDetails);
-    const tabUpdateAPI = rootPath + "/tablets/" + editProductId;
+  const updateProd = async () => {
+    let productDetails = await removeDbImgIdfromVariants(prodDetails);
+
+    const prodUpdateAPI = rootPath + "/tablets/" + editProductId;
 
     axios
-      .put(tabUpdateAPI, tabDetails, headers)
+      .put(prodUpdateAPI, productDetails, headers)
       .then(function (response) {
-        console.log("update response: ", response);
-        // console.log("response code: ", response.status);
-        // setHttpResponseCode(response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(response.status);
+        setShowHttpResponseMsg(true);
       })
       .catch(function (error) {
-        // setHttpResponseCode(error.response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(error.response.status);
+        setShowHttpResponseMsg(true);
       });
-  };
-
-  const refreshTokenHandler = () => {
-    var currentLocalDateTime = new Date();
-
-    if (refreshTknValidity.getTime() > currentLocalDateTime.getTime()) {
-      const refreshTokenAPI = rootPath + "/auth/token";
-
-      axios
-        .post(refreshTokenAPI, refreshTkn)
-        .then(function (response) {
-          if (response.data.code == 403) {
-            alert(response.data.message);
-            return false;
-            // Logout forcefully from here
-          } else {
-            updateUserToken(function (accessToken) {
-              accessToken.token = response.data.token;
-              accessToken.tokenValidity = response.data.tokenValidity;
-              accessToken.refreshToken = response.data.refreshToken;
-              accessToken.refreshTokenValidity =
-                response.data.refreshTokenValidity;
-            });
-            return true;
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      // Logout forcefully from here
-      try {
-        localStorage.clear();
-        window.location.href = "/";
-      } catch (e) {
-        console.log(e.message);
-      }
-    }
   };
 
   return (
     <>
-      {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductUpdatePopup ? (
+        {showProductUpdatePopup && (
           <ProductCreateConfirmation
-            productCreateFlagFromModal={productCreateFlagFromModal}
+            productCreateFlagFromModal={productUpdateFlagFromModal}
           />
-        ) : null}
+        )}
 
         {/* Show HTTP response code  */}
-        {showHttpResponseMsg === true ? (
+        {showHttpResponseMsg && (
           <HttpStatusCode responseCode={httpResponseCode} />
-        ) : null}
+        )}
       </div>
 
-      <h4 className={classes.cardIconTitle}>Update Tab</h4>
+      <h4 className={classes.cardIconTitle}>Update Tablet</h4>
 
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
@@ -303,7 +251,7 @@ export default function UpdateTab({ editProductId, prodDetails }) {
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={tabUpdateClick}
+        onClick={prodUpdateClick}
       >
         Update
       </Button>

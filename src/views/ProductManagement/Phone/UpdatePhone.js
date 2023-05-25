@@ -1,18 +1,13 @@
 /*eslint-disable*/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-// Global State
 // core components
 import Button from "components/CustomButtons/Button.js";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
-toast.configure();
-
 import GeneralInfo from "components/OkoleleComponents/ProductMgmt/CreateUpdate/GeneralInfo";
 import { enums } from "services/enum/enums";
 import Network from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Network";
@@ -29,17 +24,17 @@ import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Feat
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
 import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
-// SCSS File
-import "assets/scss/ghorwali-scss/voucherCard.scss";
-import "assets/scss/ghorwali-scss/create-products.scss";
 import { phoneDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/phoneDataSetter";
 import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
 import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
 import { apiHeader } from "services/helper-function/api-header";
+// SCSS File
+import "assets/scss/ghorwali-scss/voucherCard.scss";
+import "assets/scss/ghorwali-scss/create-products.scss";
 
 const useStyles = makeStyles(styles);
 
-export default function UpdatePhone({ editProductId, prodDetails }) {
+export default function UpdatePhone({ editProductId, prodDetailInfo }) {
   const classes = useStyles();
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
@@ -100,17 +95,17 @@ export default function UpdatePhone({ editProductId, prodDetails }) {
   });
 
   useEffect(() => {
-    const data = phoneDataSetter(prodDetails);
+    const data = phoneDataSetter(prodDetailInfo);
     setProdData(data);
-  }, [prodDetails]);
+  }, [prodDetailInfo]);
 
   // Product create confirmation popup viewar
-  const [showProductCreatePopup, setShowProductCreatePopup] = useState(false);
+  const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);
   // Http Response Msg
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
 
-  const phoneDetails = {
+  const prodDetails = {
     category: prodData.prodType,
     title: prodData.name,
     brand: prodData.brand,
@@ -171,53 +166,50 @@ export default function UpdatePhone({ editProductId, prodDetails }) {
     });
   }, []);
 
-  const phoneUpdateClick = () => {
-    setShowProductCreatePopup(true);
+  const prodUpdateClick = () => {
+    setShowProductUpdatePopup(true);
   };
-  // Product Create Flag From Modal
-  const productCreateFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true && headers) {
-      updatePhone();
+  // Product Update Flag From Modal
+  const productUpdateFlagFromModal = (isConfirmed) => {
+    if (isConfirmed && headers) {
+      updateProd();
     }
 
     setShowHttpResponseMsg(false);
-    setShowProductCreatePopup(false);
+    setShowProductUpdatePopup(false);
   };
 
-  const updatePhone = async () => {
-    let prodDetails = await removeDbImgIdfromVariants(phoneDetails);
+  const updateProd = async () => {
+    let productDetails = await removeDbImgIdfromVariants(prodDetails);
 
-    const phoneUpdateAPI = rootPath + "/mobiles/" + editProductId;
+    const prodUpdateAPI = rootPath + "/mobiles/" + editProductId;
 
     axios
-      .put(phoneUpdateAPI, prodDetails, headers)
+      .put(prodUpdateAPI, productDetails, headers)
       .then(function (response) {
-        console.log("update response: ", response);
-        // console.log("response code: ", response.status);
-        // setHttpResponseCode(response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(response.status);
+        setShowHttpResponseMsg(true);
       })
       .catch(function (error) {
-        // setHttpResponseCode(error.response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(error.response.status);
+        setShowHttpResponseMsg(true);
       });
   };
 
   return (
     <>
-      {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductCreatePopup ? (
+        {showProductUpdatePopup && (
           <ProductCreateConfirmation
-            productCreateFlagFromModal={productCreateFlagFromModal}
+            productCreateFlagFromModal={productUpdateFlagFromModal}
           />
-        ) : null}
+        )}
 
         {/* Show HTTP response code  */}
-        {showHttpResponseMsg === true ? (
+        {showHttpResponseMsg && (
           <HttpStatusCode responseCode={httpResponseCode} />
-        ) : null}
+        )}
       </div>
 
       <h4 className={classes.cardIconTitle}>Update Phone</h4>
@@ -259,7 +251,7 @@ export default function UpdatePhone({ editProductId, prodDetails }) {
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={phoneUpdateClick}
+        onClick={prodUpdateClick}
       >
         Update
       </Button>
