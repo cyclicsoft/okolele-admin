@@ -28,17 +28,17 @@ import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Feat
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
 import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
-import Variants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Variants";
 import { apiHeader } from "services/helper-function/api-header";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
+import VariantsContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsContainer";
 
 const useStyles = makeStyles(styles);
 
 function CreatePhone() {
   const classes = useStyles();
-  
+
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
   // headers
@@ -195,19 +195,18 @@ function CreatePhone() {
 
   return (
     <>
-      {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductCreatePopup ? (
+        {showProductCreatePopup && (
           <ProductCreateConfirmation
             productCreateFlagFromModal={productCreateFlagFromModal}
           />
-        ) : null}
+        )}
 
         {/* Show HTTP response code  */}
-        {showHttpResponseMsg === true ? (
+        {showHttpResponseMsg && (
           <HttpStatusCode responseCode={httpResponseCode} />
-        ) : null}
+        )}
       </div>
 
       <h4 className={classes.cardIconTitle}>Create New Phone</h4>
@@ -218,18 +217,12 @@ function CreatePhone() {
           {/* <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "} */}
           Reset A~Z
         </div>
-
-        {/* Search To Clone */}
-        {/* <SearchToClone
-          getSearchedProduct={getSearchedProduct}
-          productType={"mobiles"}
-        /> */}
       </div>
 
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
       {/* Variants */}
-      <Variants prodData={prodData} setProdData={setProdData} />
+      <VariantsContainer prodData={prodData} setProdData={setProdData} />
       {/* Network */}
       <Network prodData={prodData} setProdData={setProdData} />
       {/* Launch */}

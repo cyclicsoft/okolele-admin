@@ -13,6 +13,11 @@ import { apiHeader } from "services/helper-function/api-header";
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
 const DynamicImgElmntUpdate = ({ productImages, setProductImages }) => {
+  console.log(
+    "%cDynamicImgElmntUpdate.js line:16 productImages",
+    "color: #007acc;",
+    productImages
+  );
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
   const [headers, setHeaders] = useState();
@@ -46,12 +51,10 @@ const DynamicImgElmntUpdate = ({ productImages, setProductImages }) => {
       .delete(imgDeleteAPI, headers)
       .then(function (response) {
         console.log("Delete response: ", response);
-        // console.log("response code: ", response.status);
         // setHttpResponseCode(response.status);
         // setShowHttpResponseMsg(true);
       })
       .catch(function (error) {
-        console.log("Delete error: ", error);
         // setHttpResponseCode(error.response.status);
         // setShowHttpResponseMsg(true);
       });
@@ -59,7 +62,6 @@ const DynamicImgElmntUpdate = ({ productImages, setProductImages }) => {
 
   // select Img From Loacl Storage
   const imgAddRemoveHandler = async (event, id, addRemoveFlag) => {
-    console.log("event >>> ", event);
     event.persist(); //To use React synthetic events inside an asynchronous callback function
     if (addRemoveFlag === "add") {
       if (event.target.files && event.target.files[0]) {

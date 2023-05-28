@@ -16,16 +16,11 @@ import Body from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Body";
 import Display from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Display";
 import Platform from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Platform";
 import Memory from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Memory";
-import MainCam from "components/OkoleleComponents/ProductMgmt/CreateUpdate/MainCam";
-import SelfiCam from "components/OkoleleComponents/ProductMgmt/CreateUpdate/SelfiCam";
-import Sound from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Sound";
 import Comms from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Comms";
 import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Features";
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
-import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
 import { swDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/swDataSetter";
-import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
 import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
 import { apiHeader } from "services/helper-function/api-header";
 // SCSS File
@@ -33,6 +28,7 @@ import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import Models from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Models";
 import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/OtherDetails";
+import VariantsUpdateContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdateContainer";
 
 const useStyles = makeStyles(styles);
 
@@ -221,7 +217,7 @@ export default function UpdateSmartWatch({ editProductId, prodDetailInfo }) {
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
       {/* Variants */}
-      <VariantsUpdate prodData={prodData} setProdData={setProdData} />
+      <VariantsUpdateContainer prodData={prodData} setProdData={setProdData} />
       {/* Network */}
       <Network prodData={prodData} setProdData={setProdData} />
       {/* Launch */}

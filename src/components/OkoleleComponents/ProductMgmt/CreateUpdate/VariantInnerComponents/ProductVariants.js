@@ -1,14 +1,18 @@
+/*eslint-disable*/
 import React from "react";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import VariantInnerObj from "./VariantInnerObj";
-import DynamicImgElmntCreator from "../DynamicInputs/DynamicImgElmntCreator";
+import DynamicImgElmntUpdate from "../DynamicInputs/DynamicImgElmntUpdate";
 // SCSS
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
-import DynamicImgElmntUpdate from "../DynamicInputs/DynamicImgElmntUpdate";
 
-const ProductVariants = ({ productVariants, setProductVariants }) => {
+const ProductVariants = ({
+  actionType,
+  productVariants,
+  setProductVariants,
+}) => {
   const productImagesSetter = (images, index) => {
     const list = [...productVariants];
     list[index]["images"] = images;
@@ -26,6 +30,13 @@ const ProductVariants = ({ productVariants, setProductVariants }) => {
     const list = [...productVariants];
     const { name, value } = e.target;
     list[index][name] = value;
+    setProductVariants(list);
+  };
+
+  // handle click event of the Remove button
+  const handleRemoveVariant = (index) => {
+    const list = [...productVariants];
+    list.splice(index, 1);
     setProductVariants(list);
   };
 
@@ -50,11 +61,16 @@ const ProductVariants = ({ productVariants, setProductVariants }) => {
     ]);
   };
 
-  // handle click event of the Remove button
-  const handleRemoveVariant = (index) => {
-    const list = [...productVariants];
-    list.splice(index, 1);
-    setProductVariants(list);
+  // Clone button click
+  const handleCloneVariant = (variantToClone) => {
+    // setProductVariants([...productVariants, { ...variantToClone }]);
+    if (actionType === "create") {
+      setProductVariants([...productVariants, { ...variantToClone }]);
+    } else if (actionType === "update") {
+      let tempObj = { ...variantToClone };
+      tempObj["images"] = [""];
+      setProductVariants([...productVariants, { ...tempObj }]);
+    }
   };
 
   return (
@@ -119,7 +135,7 @@ const ProductVariants = ({ productVariants, setProductVariants }) => {
                   style={{ marginLeft: "0", marginRight: "10px" }}
                   onClick={() => handleRemoveVariant(i)}
                 >
-                  Remove Variant
+                  Remove
                 </button>
               )}
 
@@ -129,9 +145,17 @@ const ProductVariants = ({ productVariants, setProductVariants }) => {
                   style={{ marginLeft: "0", marginRight: "10px" }}
                   onClick={handleAddVariant}
                 >
-                  Add New Variant
+                  Add New
                 </button>
               )}
+
+              <button
+                className="add-remove-btn"
+                style={{ marginLeft: "0", marginRight: "10px" }}
+                onClick={() => handleCloneVariant(x)}
+              >
+                Clone
+              </button>
             </div>
           </div>
         );

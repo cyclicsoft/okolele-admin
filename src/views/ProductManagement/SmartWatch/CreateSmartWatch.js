@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 // Global State
 // core components
@@ -8,10 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
-toast.configure();
 
 import GeneralInfo from "components/OkoleleComponents/ProductMgmt/CreateUpdate/GeneralInfo";
 import { enums } from "services/enum/enums";
@@ -25,13 +22,13 @@ import Comms from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Comms";
 import Features from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Features";
 import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Battery";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
-import Variants from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Variants";
 import Models from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Models";
 import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/OtherDetails";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import { apiHeader } from "services/helper-function/api-header";
+import VariantsContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsContainer";
 
 const useStyles = makeStyles(styles);
 
@@ -224,7 +221,7 @@ function CreateSmartWatch() {
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
       {/* Variants */}
-      <Variants prodData={prodData} setProdData={setProdData} />
+      <VariantsContainer prodData={prodData} setProdData={setProdData} />
       {/* Network */}
       <Network prodData={prodData} setProdData={setProdData} />
       {/* Launch */}

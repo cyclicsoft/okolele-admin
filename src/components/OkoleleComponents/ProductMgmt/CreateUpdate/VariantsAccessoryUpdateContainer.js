@@ -8,36 +8,30 @@ import GridContainer from "components/Grid/GridContainer";
 import GridItem from "components/Grid/GridItem";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
-import ProductVariants from "./ProductVariants/ProductVariants";
-import "assets/scss/ghorwali-scss/voucherCard.scss";
-import "assets/scss/ghorwali-scss/create-products.scss";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-toast.configure();
+import AccessoryVariants from "./VariantInnerComponents/AccessoryVariants";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 
-export default function Variants({ prodData, setProdData }) {
-  console.log('%cVariants.js line:22 prodData', 'color: #007acc;', prodData);
+export default function VariantsAccessoryUpdateContainer({
+  prodData,
+  setProdData,
+}) {
   const [productVariants, setProductVariants] = useState([
     {
       color: "",
       colorCode: "",
+      basePrice: 0,
       images: [""],
-      variants: [
-        {
-          ramUnit: "GB",
-          ram: "",
-          romUnit: "GB",
-          rom: "",
-          basePrice: "",
-        },
-      ],
     },
   ]);
 
   useEffect(() => {
+    console.log(
+      "%cVariantsAccessoryUpdate.js line:27 productVariants",
+      "color: #007acc;",
+      productVariants
+    );
     setProdData((prevState) => ({
       ...prevState,
       productAllVariants: productVariants,
@@ -56,7 +50,6 @@ export default function Variants({ prodData, setProdData }) {
       {/* [VARIANTS] */}
       <GridContainer>
         <GridItem xs={12} sm={12}>
-          {/* md={8} */}
           <Card style={{ marginTop: "0" }}>
             <CardBody>
               {/* Section Ttitle and Reset button */}
@@ -80,8 +73,9 @@ export default function Variants({ prodData, setProdData }) {
 
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
-                  <ProductVariants
-                    productVariants={productVariants}
+                  <AccessoryVariants
+                    actionType="update"
+                    productVariants={prodData.productAllVariants}
                     setProductVariants={setProductVariants}
                   />
                 </GridItem>

@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 // core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -7,28 +7,27 @@ import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsS
 import Button from "components/CustomButtons/Button.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
 import GeneralInfo from "components/OkoleleComponents/ProductMgmt/CreateUpdate/GeneralInfo";
 import { enums } from "services/enum/enums";
 import Launch from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Launch";
 import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/OtherDetails";
-import AccessoryVariantsComp from "components/OkoleleComponents/ProductMgmt/CreateUpdate/AccessoryVariantsComp";
-toast.configure();
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import { apiHeader } from "services/helper-function/api-header";
+import VariantsAccessoryContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsAccessoryContainer";
 
 const useStyles = makeStyles(styles);
 
 function CreateAccessory() {
   const classes = useStyles();
+
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
   // headers
   const [headers, setHeaders] = useState();
+
   // Product Info
   const [prodData, setProdData] = useState({
     name: "",
@@ -76,15 +75,7 @@ function CreateAccessory() {
   // Product Create Flag From Modal
   const productCreateFlagFromModal = (isConfirmed) => {
     if (isConfirmed === true) {
-      var currentLocalDateTime = new Date();
-      if (accessTknValidity.getTime() > currentLocalDateTime.getTime()) {
-        saveNewAccesory();
-      } else {
-        // If access token validity expires, call refresh token api
-        refreshTokenHandler((isRefreshed) => {
-          saveNewAccesory();
-        });
-      }
+      saveNewAccesory();
     }
 
     setShowHttpResponseMsg(false);
@@ -107,22 +98,19 @@ function CreateAccessory() {
 
   return (
     <>
-      {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductCreatePopup ? (
+        {showProductCreatePopup && (
           <ProductCreateConfirmation
             productCreateFlagFromModal={productCreateFlagFromModal}
           />
-        ) : null}
+        )}
 
         {/* Show HTTP response code  */}
-        {showHttpResponseMsg === true ? (
+        {showHttpResponseMsg && (
           <HttpStatusCode responseCode={httpResponseCode} />
-        ) : null}
+        )}
       </div>
-
-
 
       <h4 className={classes.cardIconTitle}>Create New Accessory</h4>
       {/* Reset & Search To Clone */}
@@ -132,18 +120,12 @@ function CreateAccessory() {
           {/* <RefreshIcon className="reset-input" onClick={inputsResetHandler} />{" "} */}
           Reset A~Z
         </div>
-
-        {/* Search To Clone */}
-        {/* <SearchToClone
-          getSearchedProduct={getSearchedProduct}
-          productType={"mobiles"}
-        /> */}
       </div>
 
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
       {/* Variants */}
-      <AccessoryVariantsComp prodData={prodData} setProdData={setProdData} />
+      <VariantsAccessoryContainer prodData={prodData} setProdData={setProdData} />
       {/* Launch */}
       <Launch prodData={prodData} setProdData={setProdData} />
       {/* OtherDetails */}

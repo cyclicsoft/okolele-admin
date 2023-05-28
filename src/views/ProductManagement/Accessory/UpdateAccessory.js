@@ -7,25 +7,21 @@ import { makeStyles } from "@material-ui/core/styles";
 import styles from "assets/jss/material-dashboard-pro-react/views/extendedFormsStyle.js";
 import moment from "moment";
 import ProductCreateConfirmation from "views/ConfirmationModals/ProductCreateConfirmation";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import HttpStatusCode from "views/OkoleleHttpStatusCode/HttpStatusCode";
-toast.configure();
-
 import GeneralInfo from "components/OkoleleComponents/ProductMgmt/CreateUpdate/GeneralInfo";
 import { enums } from "services/enum/enums";
 import Launch from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Launch";
+import { accessoryDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/accessoryDataSetter";
+import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/OtherDetails";
+import { apiHeader } from "services/helper-function/api-header";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
-import { accessoryDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/accessoryDataSetter";
-import OtherDetails from "components/OkoleleComponents/ProductMgmt/CreateUpdate/OtherDetails";
-import AccessoryVariantsComp from "components/OkoleleComponents/ProductMgmt/CreateUpdate/AccessoryVariantsComp";
-import { apiHeader } from "services/helper-function/api-header";
+import VariantsAccessoryUpdateContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsAccessoryUpdateContainer";
 
 const useStyles = makeStyles(styles);
 
-export default function UpdateAccessory({ editProductId, prodDetails }) {
+export default function UpdateAccessory({ editProductId, prodDetailInfo }) {
   const classes = useStyles();
   // Root Path URL
   const rootPath = process.env.REACT_APP_BASE_URL;
@@ -46,15 +42,9 @@ export default function UpdateAccessory({ editProductId, prodDetails }) {
   });
 
   useEffect(() => {
-    apiHeader((headers) => {
-      setHeaders(headers);
-    });
-  }, []);
-
-  useEffect(() => {
-    const data = accessoryDataSetter(prodDetails);
+    const data = accessoryDataSetter(prodDetailInfo);
     setProdData(data);
-  }, [prodDetails]);
+  }, [prodDetailInfo]);
 
   // Product create confirmation popup viewar
   const [showProductUpdatePopup, setShowProductUpdatePopup] = useState(false);
@@ -62,7 +52,7 @@ export default function UpdateAccessory({ editProductId, prodDetails }) {
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
 
-  const accessoryDetails = {
+  const productDetails = {
     category: prodData.prodType,
     title: prodData.name,
     brand: prodData.brand,
@@ -73,51 +63,65 @@ export default function UpdateAccessory({ editProductId, prodDetails }) {
     others: prodData.otherDetails,
   };
 
-  const accessoryUpdateClick = () => {
+  useEffect(() => {
+    apiHeader((headers) => {
+      setHeaders(headers);
+    });
+  }, []);
+
+  const prodUpdateClick = () => {
     setShowProductUpdatePopup(true);
   };
   // Product Create Flag From Modal
   const productUpdateFlagFromModal = (isConfirmed) => {
-    if (isConfirmed === true && headers) {
-      updateAccessory();
+    if (isConfirmed && headers) {
+      updateProd();
     }
 
     setShowHttpResponseMsg(false);
     setShowProductUpdatePopup(false);
   };
 
-  const updateAccessory = () => {
-    const accesoryUpdateAPI = rootPath + "/accessories/" + editProductId;
+  console.log(
+    "%cUpdateAccessory.js line:86 prodData",
+    "color: #007acc;",
+    prodData
+  );
+
+  const updateProd = () => {
+    const productUpdateApi = rootPath + "/accessories/" + editProductId;
+    console.log(
+      "%cUpdateAccessory.js line:88 productDetails",
+      "color: #007acc;",
+      productDetails
+    );
 
     axios
-      .put(accesoryUpdateAPI, accessoryDetails, headers)
+      .put(productUpdateApi, productDetails, headers)
       .then(function (response) {
-        console.log("update response: ", response);
-        // console.log("response code: ", response.status);
-        // setHttpResponseCode(response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(response.status);
+        setShowHttpResponseMsg(true);
       })
       .catch(function (error) {
-        // setHttpResponseCode(error.response.status);
-        // setShowHttpResponseMsg(true);
+        setHttpResponseCode(error.response.status);
+        setShowHttpResponseMsg(true);
       });
   };
 
   return (
     <>
-      {/* Confirmation Modal */}
       <div>
         {/* Confirmation Modal */}
-        {showProductUpdatePopup ? (
+        {showProductUpdatePopup && (
           <ProductCreateConfirmation
             productCreateFlagFromModal={productUpdateFlagFromModal}
           />
-        ) : null}
+        )}
 
         {/* Show HTTP response code  */}
-        {showHttpResponseMsg === true ? (
+        {showHttpResponseMsg && (
           <HttpStatusCode responseCode={httpResponseCode} />
-        ) : null}
+        )}
       </div>
 
       <h4 className={classes.cardIconTitle}>Update Accessory</h4>
@@ -125,7 +129,10 @@ export default function UpdateAccessory({ editProductId, prodDetails }) {
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
       {/* Variants */}
-      <AccessoryVariantsComp prodData={prodData} setProdData={setProdData} />
+      <VariantsAccessoryUpdateContainer
+        prodData={prodData}
+        setProdData={setProdData}
+      />
       {/* Launch */}
       <Launch prodData={prodData} setProdData={setProdData} />
       {/* OtherDetails */}
@@ -135,7 +142,7 @@ export default function UpdateAccessory({ editProductId, prodDetails }) {
       <Button
         color="rose"
         className={classes.updateProfileButton}
-        onClick={accessoryUpdateClick}
+        onClick={prodUpdateClick}
       >
         Update
       </Button>

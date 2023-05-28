@@ -3,11 +3,15 @@ import React from "react";
 // core components
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import DynamicImgElmntCreator from "../DynamicInputs/DynamicImgElmntCreator";
+import DynamicImgElmntUpdate from "../DynamicInputs/DynamicImgElmntUpdate";
 // SCSS
 import "../../../../../assets/scss/ghorwali-scss/dynamic-element-creator.scss";
 
-const AccessoryVariants = ({ productVariants, setProductVariants }) => {
+const AccessoryVariants = ({
+  actionType,
+  productVariants,
+  setProductVariants,
+}) => {
   const productImagesSetter = (images, index) => {
     const list = [...productVariants];
     list[index]["images"] = images;
@@ -18,7 +22,15 @@ const AccessoryVariants = ({ productVariants, setProductVariants }) => {
   const handleInputChange = (e, index) => {
     const list = [...productVariants];
     const { name, value } = e.target;
+    console.log("%cAccessoryVariants.js line:21 name,value", name, value);
     list[index][name] = value;
+    setProductVariants(list);
+  };
+
+  // handle click event of the Remove button
+  const handleRemoveVariant = (index) => {
+    const list = [...productVariants];
+    list.splice(index, 1);
     setProductVariants(list);
   };
 
@@ -35,15 +47,18 @@ const AccessoryVariants = ({ productVariants, setProductVariants }) => {
     ]);
   };
 
-  // handle click event of the Remove button
-  const handleRemoveVariant = (index) => {
-    const list = [...productVariants];
-    list.splice(index, 1);
-    setProductVariants(list);
+  // Clone button click
+  const handleCloneVariant = (variantToClone) => {
+    if (actionType === "create") {
+      setProductVariants([...productVariants, { ...variantToClone }]);
+    } else if (actionType === "update") {
+      let tempObj = { ...variantToClone };
+      tempObj["images"] = [""];
+      setProductVariants([...productVariants, { ...tempObj }]);
+    }
   };
 
   return (
-    // onBlur={callBackDataSender}
     <div style={{ marginBottom: "15px" }}>
       {productVariants.map((x, i) => {
         return (
@@ -91,7 +106,12 @@ const AccessoryVariants = ({ productVariants, setProductVariants }) => {
                 Aspect Ratio 1:1 & Dimension 1080px X 1080px
               </div>
               <GridItem xs={12} sm={12} md={12} key={i}>
-                <DynamicImgElmntCreator
+                {/* <DynamicImgElmntCreator
+                  productImages={productVariants[i].images}
+                  setProductImages={(list) => productImagesSetter(list, i)}
+                /> */}
+
+                <DynamicImgElmntUpdate
                   productImages={productVariants[i].images}
                   setProductImages={(list) => productImagesSetter(list, i)}
                 />
@@ -105,7 +125,7 @@ const AccessoryVariants = ({ productVariants, setProductVariants }) => {
                   style={{ marginLeft: "0", marginRight: "10px" }}
                   onClick={() => handleRemoveVariant(i)}
                 >
-                  Remove Variant
+                  Remove
                 </button>
               )}
 
@@ -115,9 +135,17 @@ const AccessoryVariants = ({ productVariants, setProductVariants }) => {
                   style={{ marginLeft: "0", marginRight: "10px" }}
                   onClick={handleAddVariant}
                 >
-                  Add New Variant
+                  Add New
                 </button>
               )}
+
+              <button
+                className="add-remove-btn"
+                style={{ marginLeft: "0", marginRight: "10px" }}
+                onClick={() => handleCloneVariant(x)}
+              >
+                Clone
+              </button>
             </div>
           </div>
         );

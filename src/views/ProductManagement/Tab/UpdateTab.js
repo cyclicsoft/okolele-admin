@@ -25,12 +25,12 @@ import Battery from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Batte
 import Misc from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Misc";
 import Tests from "components/OkoleleComponents/ProductMgmt/CreateUpdate/Tests";
 import { tabDataSetter } from "components/OkoleleComponents/ProductMgmt/CreateUpdate/DataMapping/tabDataSetter";
-import VariantsUpdate from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdate";
 import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
 import { apiHeader } from "services/helper-function/api-header";
 // SCSS File
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
+import VariantsUpdateContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsUpdateContainer";
 
 const useStyles = makeStyles(styles);
 
@@ -217,7 +217,7 @@ export default function UpdateTab({ editProductId, prodDetailInfo }) {
       {/* GeneralInfo */}
       <GeneralInfo prodData={prodData} setProdData={setProdData} />
       {/* Variants */}
-      <VariantsUpdate prodData={prodData} setProdData={setProdData} />
+      <VariantsUpdateContainer prodData={prodData} setProdData={setProdData} />
       {/* Network */}
       <Network prodData={prodData} setProdData={setProdData} />
       {/* Launch */}
