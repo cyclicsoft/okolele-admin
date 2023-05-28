@@ -183,6 +183,11 @@ export default function UpdatePhone({ editProductId, prodDetailInfo }) {
     let productDetails = await removeDbImgIdfromVariants(prodDetails);
 
     const prodUpdateAPI = rootPath + "/mobiles/" + editProductId;
+    console.log(
+      "%cUpdatePhone.js line:186 productDetails",
+      "color: #007acc;",
+      productDetails
+    );
 
     axios
       .put(prodUpdateAPI, productDetails, headers)

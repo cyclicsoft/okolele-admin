@@ -69,6 +69,7 @@ const ProductVariants = ({
     } else if (actionType === "update") {
       let tempObj = { ...variantToClone };
       tempObj["images"] = [""];
+      delete tempObj.variantId
       setProductVariants([...productVariants, { ...tempObj }]);
     }
   };

@@ -18,6 +18,7 @@ import { apiHeader } from "services/helper-function/api-header";
 import "assets/scss/ghorwali-scss/voucherCard.scss";
 import "assets/scss/ghorwali-scss/create-products.scss";
 import VariantsAccessoryUpdateContainer from "components/OkoleleComponents/ProductMgmt/CreateUpdate/VariantsAccessoryUpdateContainer";
+import { removeDbImgIdfromVariants } from "services/helper-function/removeDbImgIdfromVariants";
 
 const useStyles = makeStyles(styles);
 
@@ -52,7 +53,7 @@ export default function UpdateAccessory({ editProductId, prodDetailInfo }) {
   const [showHttpResponseMsg, setShowHttpResponseMsg] = useState(false);
   const [httpResponseCode, setHttpResponseCode] = useState("");
 
-  const productDetails = {
+  const prodDetails = {
     category: prodData.prodType,
     title: prodData.name,
     brand: prodData.brand,
@@ -82,13 +83,9 @@ export default function UpdateAccessory({ editProductId, prodDetailInfo }) {
     setShowProductUpdatePopup(false);
   };
 
-  console.log(
-    "%cUpdateAccessory.js line:86 prodData",
-    "color: #007acc;",
-    prodData
-  );
+  const updateProd = async () => {
+    let productDetails = await removeDbImgIdfromVariants(prodDetails);
 
-  const updateProd = () => {
     const productUpdateApi = rootPath + "/accessories/" + editProductId;
     console.log(
       "%cUpdateAccessory.js line:88 productDetails",
